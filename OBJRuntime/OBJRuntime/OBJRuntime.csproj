@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<GenerateEvergineContent>True</GenerateEvergineContent>
@@ -6,7 +6,15 @@
 		<GenerateEvergineScenesCode>True</GenerateEvergineScenesCode>
 	</PropertyGroup>
 	<ItemGroup>
-	  <AdditionalFiles Include="stylecop.json" />
+		<Compile Remove="Core\**" />
+		<Compile Remove="DTOs\**" />
+		<Compile Remove="MTL\**" />
+		<EmbeddedResource Remove="Core\**" />
+		<EmbeddedResource Remove="DTOs\**" />
+		<EmbeddedResource Remove="MTL\**" />
+		<None Remove="Core\**" />
+		<None Remove="DTOs\**" />
+		<None Remove="MTL\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Evergine.Common" Version="2025.3.18.7" />
@@ -16,14 +24,5 @@
 		<PackageReference Include="Evergine.Bullet" Version="2025.3.18.7" />
 		<PackageReference Include="Evergine.Targets" Version="2025.3.18.7" />
 		<PackageReference Include="Evergine.CodeScenes" Version="2025.3.18.7" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="DTOs\" />
-	  <Folder Include="MTL\" />
-	  <Folder Include="Core\" />
 	</ItemGroup>
 </Project>
