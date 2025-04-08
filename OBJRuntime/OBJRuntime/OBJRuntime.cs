@@ -27,12 +27,12 @@ namespace Evergine.Runtimes.OBJ
         {
             Model model = null;
 
-            if (this.assetsDirectory == null)
+            if (assetsDirectory == null)
             {
-                this.assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
+                assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
             }
 
-            using (var stream = this.assetsDirectory.Open(filePath))
+            using (var stream = assetsDirectory.Open(filePath))
             {
                 if (stream == null || !stream.CanRead)
                 {
@@ -45,12 +45,12 @@ namespace Evergine.Runtimes.OBJ
                     {
                         stream.CopyTo(memoryStream);
                         memoryStream.Position = 0;
-                        model = await this.Read(memoryStream, materialAssigner);
+                        model = await Read(memoryStream, materialAssigner);
                     }
                 }
                 else
                 {
-                    model = await this.Read(stream, materialAssigner);
+                    model = await Read(stream, materialAssigner);
                 }
             }
 

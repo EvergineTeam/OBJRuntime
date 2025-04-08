@@ -14,4 +14,9 @@
 		<PackageReference Include="Evergine.Targets" Version="2025.3.18.7" />
 		<PackageReference Include="Evergine.CodeScenes" Version="2025.3.18.7" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="DTOs\" />
+	  <Folder Include="MTL\" />
+	  <Folder Include="Core\" />
+	</ItemGroup>
 </Project>
