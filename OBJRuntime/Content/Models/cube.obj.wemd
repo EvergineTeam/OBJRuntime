@@ -1,0 +1,37 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 719bc836-cb4f-4b6d-a5c5-a786ce0b5e1f
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 8f4a2f22-1828-4588-aee2-9b9a4f2d483a
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: c8dd57bb-568b-4678-aade-790a7ed3ed73
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: white
+        Item2: e02eff7b-75bf-4a0c-8e08-02dfb5f3907e
+      - Item1: green
+        Item2: 2cd4509d-462b-4886-9c5a-1777aa1ec515
+      - Item1: red
+        Item2: f24035ce-5eb3-493d-8e72-a189b4f031de
+    Nodes:
+      - RootNode
+      - cube_root
+      - cube_root.back__cube
+      - cube_root.bottom_cube
+      - cube_root.front_cube
+      - cube_root.left_cube
+      - cube_root.right_cube
+      - cube_root.top_cube
+SwapWindingOrder: false
