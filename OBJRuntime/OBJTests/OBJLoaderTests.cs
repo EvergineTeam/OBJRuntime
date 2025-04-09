@@ -160,17 +160,10 @@ namespace OBJTests
         }
 
         [Fact]
-        public void CheckVertexColor()
+        public void CheckVertexWeights()
         {
             // Arrange
-            var expectedColors = new float[] {  0, 0, 0,
-                                                0, 0, 1,
-                                                0, 1, 0,
-                                                0, 1, 1,
-                                                1, 0, 0,
-                                                1, 0, 1,
-                                                1, 1, 0,
-                                                1, 1, 1};
+            var expectedW = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f };
 
             var attrib = new Attrib();
             var shapes = new List<Shape>();
@@ -179,7 +172,7 @@ namespace OBJTests
             var error = "";
 
             // Act
-            using (var streamObj = assetsDirectory.Open("cube-vertexcol.obj"))
+            using (var streamObj = assetsDirectory.Open("cube-vertex-w-component.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
@@ -187,7 +180,157 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.True(attrib.Colors.SequenceEqual(expectedColors));
+                    Assert.True(attrib.VertexWeights.SequenceEqual(expectedW));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestPointCloud()
+        {
+            // Arrange
+            var expectedVertices = new float[] { -0.207717f, -0.953997f, 2.554110f, -0.275607f, -0.965401f, 2.541530f, -0.270155f, -0.963170f, 2.548000f };
+            var expectedNormals = new float[] { -0.281034f, -0.057252f, 0.957989f, -0.139126f, -0.135672f, 0.980937f, -0.163133f, -0.131576f, 0.977791f };
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("point-cloud.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(9, attrib.Vertices.Count);
+                    Assert.Empty(shapes);
+                    Assert.True(attrib.Vertices.SequenceEqual(expectedVertices));
+                    Assert.True(attrib.Normals.SequenceEqual(expectedNormals));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestPoints()
+        {
+            // Arrange
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("testpoints.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(24, attrib.Vertices.Count);
+                    Assert.Single(shapes);
+                    Assert.Equal(24, shapes[0].Points.Indices.Count);
+                    Assert.Equal(3, shapes[0].Points.Indices[15].VertexIndex);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestLines()
+        {
+            // Arrange
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("testlines.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(24, attrib.Vertices.Count);
+                    Assert.Single(shapes);
+                    Assert.Equal(24, shapes[0].Lines.Indices.Count);
+                    Assert.Equal(7, shapes[0].Lines.Indices[17].VertexIndex);
+                }
+            }
+        }
+
+        [Fact]
+        public void CheckTexcoords()
+        {
+            // Arrange
+            var expectedTexcoords = new float[] { 1.0f, 2.0f, 3.0f,
+                                                 2.0f, 3.0f, 1.0f,
+                                                 3.0f, 1.0f, 2.0f,
+                                                 1.0f, 2.0f, 3.0f};
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("multiple-spaces.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(12, attrib.Vertices.Count);
+                    Assert.Equal(8, attrib.Texcoords.Count);
+                    Assert.True(attrib.Vertices.SequenceEqual(expectedTexcoords));
+                    Assert.Single(shapes);
+                }
+            }
+        }
+
+        [Fact]
+        public void CheckNormals()
+        {
+            // Arrange
+            var expectedNormals = new float[] {  0.0f,  0.0f,  1.0f,
+                                                   0.0f,  0.0f, -1.0f,
+                                                   0.0f,  1.0f,  0.0f,
+                                                   0.0f, -1.0f,  0.0f,
+                                                   1.0f,  0.0f,  0.0f,
+                                                  -1.0f,  0.0f,  0.0f};
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-normals.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(24, attrib.Vertices.Count);
+                    Assert.Equal(18, attrib.Normals.Count);
+                    Assert.True(attrib.Normals.SequenceEqual(expectedNormals));
+                    Assert.Single(shapes);
                 }
             }
         }

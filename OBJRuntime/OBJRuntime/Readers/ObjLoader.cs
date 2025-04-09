@@ -118,7 +118,7 @@ namespace OBJRuntime.Readers
                             vertexWeights.Add(r);
                             foundAllColors = false;
                         }
-                        else if (count >= 6)
+                        else if (count == 6)
                         {
                             // x y z r g b ...
                             TryParseFloat(tokens[4], out r);
