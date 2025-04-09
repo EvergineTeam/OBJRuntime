@@ -24,12 +24,6 @@ namespace OBJRuntime.Readers
             return tokens;
         }
 
-        // We do a line read. .NET has StreamReader.ReadLine already, so we won't replicate safeGetline exactly.
-        private static string SafeGetLine(StreamReader sr)
-        {
-            return sr.ReadLine();
-        }
-
         public static bool LoadObj(
             StreamReader inStream,
             ref Attrib attrib,
@@ -79,19 +73,23 @@ namespace OBJRuntime.Readers
             while (!inStream.EndOfStream)
             {
                 lineNo++;
-                string line = SafeGetLine(inStream);
-                if (line == null) break;
+                string line = inStream.ReadLine();
+                if (line == null) 
+                    break;
                 line = line.TrimEnd(); // remove trailing spaces
-                if (line.Length < 1) continue;
+                if (line.Length < 1) 
+                    continue;
 
                 // skip leading spaces
-                if (line.StartsWith("#")) continue; // comment
+                if (line.StartsWith("#")) 
+                    continue; // comment
 
                 // parse tokens
                 var tokens = Tokenize(line);
-                if (tokens.Count < 1) continue;
-                var cmd = tokens[0];
+                if (tokens.Count < 1) 
+                    continue;
 
+                var cmd = tokens[0];
                 if (cmd == "v")
                 {
                     // vertex
@@ -112,27 +110,36 @@ namespace OBJRuntime.Readers
                         {
                             // interpret the 4th as 'w'
                             TryParseFloat(tokens[4], out r);
+                            
                             // store w into vertexWeights
-                            v.Add(x); v.Add(y); v.Add(z);
+                            v.Add(x);
+                            v.Add(y);
+                            v.Add(z);
                             vertexWeights.Add(r);
                             foundAllColors = false;
                         }
-                        else if (count >= 7)
+                        else if (count >= 6)
                         {
                             // x y z r g b ...
                             TryParseFloat(tokens[4], out r);
                             TryParseFloat(tokens[5], out g);
                             TryParseFloat(tokens[6], out b);
 
-                            v.Add(x); v.Add(y); v.Add(z);
+                            v.Add(x);
+                            v.Add(y);
+                            v.Add(z);
                             vertexWeights.Add(1.0f); // default w=1
-                            vc.Add(r); vc.Add(g); vc.Add(b);
+                            vc.Add(r);
+                            vc.Add(g);
+                            vc.Add(b);
 
                         }
                         else
                         {
                             // just x,y,z
-                            v.Add(x); v.Add(y); v.Add(z);
+                            v.Add(x);
+                            v.Add(y);
+                            v.Add(z);
                             vertexWeights.Add(1.0f);
                             foundAllColors = false;
                         }
@@ -159,8 +166,13 @@ namespace OBJRuntime.Readers
                     {
                         float u = 0, vv = 0, w = 0;
                         TryParseFloat(tokens[1], out u);
-                        if (tokens.Count > 2) TryParseFloat(tokens[2], out vv);
-                        if (tokens.Count > 3) TryParseFloat(tokens[3], out w);
+
+                        if (tokens.Count > 2) 
+                            TryParseFloat(tokens[2], out vv);
+
+                        if (tokens.Count > 3) 
+                            TryParseFloat(tokens[3], out w);
+
                         vt.Add(u); vt.Add(vv);
                         // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
                     }
@@ -182,8 +194,13 @@ namespace OBJRuntime.Readers
                             {
                                 int j = 0;
                                 float w = 0.0f;
-                                if (!int.TryParse(tokens[idx], out j)) break;
-                                if (!TryParseFloat(tokens[idx + 1], out w)) break;
+                                
+                                if (!int.TryParse(tokens[idx], out j)) 
+                                    break;
+
+                                if (!TryParseFloat(tokens[idx + 1], out w)) 
+                                    break;
+
                                 JointAndWeight jw = new JointAndWeight();
                                 jw.JointId = j;
                                 jw.Weight = w;
@@ -197,9 +214,11 @@ namespace OBJRuntime.Readers
                 else if (cmd == "f")
                 {
                     // face
-                    if (tokens.Count < 2) continue;
+                    if (tokens.Count < 2)
+                        continue;
 
                     Face f = new Face() { SmoothingGroupId = currentSmoothingId };
+
                     // parse
                     for (int i = 1; i < tokens.Count; i++)
                     {
@@ -212,25 +231,31 @@ namespace OBJRuntime.Readers
                 else if (cmd == "l")
                 {
                     // line
-                    if (tokens.Count < 2) continue;
+                    if (tokens.Count < 2)
+                        continue;
+
                     var lineGroup = new LineElm();
                     for (int i = 1; i < tokens.Count; i++)
                     {
                         var vix = ParseRawTriple(tokens[i]);
                         lineGroup.VertexIndices.Add(vix);
                     }
+
                     primGroup.LineGroup.Add(lineGroup);
                 }
                 else if (cmd == "p")
                 {
                     // points
-                    if (tokens.Count < 2) continue;
+                    if (tokens.Count < 2)
+                        continue;
+
                     var pointGroup = new PointsElm();
                     for (int i = 1; i < tokens.Count; i++)
                     {
                         var vix = ParseRawTriple(tokens[i]);
                         pointGroup.VertexIndices.Add(vix);
                     }
+
                     primGroup.PointsGroup.Add(pointGroup);
                 }
                 else if (cmd == "usemtl")
@@ -246,6 +271,7 @@ namespace OBJRuntime.Readers
                         ref warning);
 
                     primGroup.Clear();
+
                     // read the next material name
                     string matName = tokens.Count > 1 ? tokens[1] : "";
                     if (!materialMap.TryGetValue(matName, out materialId))
@@ -264,7 +290,9 @@ namespace OBJRuntime.Readers
                         for (int i = 1; i < tokens.Count; i++)
                         {
                             string filename = tokens[i];
-                            if (materialFilenames.Contains(filename)) continue; // skip repeated
+                            if (materialFilenames.Contains(filename))
+                                continue; // skip repeated
+
                             if (!readMatFn.Read(filename, materials, materialMap, out string warnMtl, out string errMtl))
                             {
                                 // failed
@@ -304,7 +332,9 @@ namespace OBJRuntime.Readers
                         currentGroupName = "";
                         for (int i = 1; i < tokens.Count; i++)
                         {
-                            if (i > 1) currentGroupName += " ";
+                            if (i > 1) 
+                                currentGroupName += " ";
+
                             currentGroupName += tokens[i];
                         }
                     }
@@ -417,7 +447,9 @@ namespace OBJRuntime.Readers
 
         private static int FixIndex(int idx)
         {
-            if (idx > 0) return idx - 1;
+            if (idx > 0)
+                return idx - 1;
+
             return idx - 1; // negative or zero
         }
 
@@ -430,7 +462,8 @@ namespace OBJRuntime.Readers
             bool triangulate,
             ref string warning)
         {
-            if (!primGroup.HasData()) return;
+            if (!primGroup.HasData())
+                return;
 
             Shape shape = new Shape();
             shape.Name = groupName;

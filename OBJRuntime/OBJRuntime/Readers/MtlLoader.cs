@@ -54,14 +54,19 @@ namespace OBJRuntime.Readers
             {
                 lineNo++;
                 string line = SafeGetLine(sr);
-                if (line == null) break;
+                if (line == null)
+                    break;
 
                 line = line.Trim();
-                if (line.Length < 1) continue;  // skip blank lines
-                if (line.StartsWith("#")) continue; // skip comments
+                if (line.Length < 1)
+                    continue;  // skip blank lines
+
+                if (line.StartsWith("#"))
+                    continue; // skip comments
 
                 var tokens = Tokenize(line);
-                if (tokens.Count == 0) continue;
+                if (tokens.Count == 0)
+                    continue;
 
                 string key = tokens[0];
                 if (key == "newmtl" && tokens.Count > 1)
