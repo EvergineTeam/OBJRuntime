@@ -57,6 +57,7 @@ namespace Evergine.Runtimes.OBJ
                   
                     Debug.WriteLine("Warnings: " + warning);
                     Debug.WriteLine($"Vertices count = {attrib.Vertices.Count/3}");
+
                     Debug.WriteLine($"Shapes count   = {shapes.Count}");                                                           
                 }
             }                        

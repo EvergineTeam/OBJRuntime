@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OBJRuntime", "OBJRuntime\OB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OBJRuntime.Editor", "OBJRuntime.Editor\OBJRuntime.Editor.csproj", "{56C65D63-2DFD-42C3-9E72-376FFB81F413}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBJTests", "OBJTests\OBJTests.csproj", "{C4D23862-9552-4A39-84BF-5E211884AF60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{56C65D63-2DFD-42C3-9E72-376FFB81F413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56C65D63-2DFD-42C3-9E72-376FFB81F413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56C65D63-2DFD-42C3-9E72-376FFB81F413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D23862-9552-4A39-84BF-5E211884AF60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D23862-9552-4A39-84BF-5E211884AF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D23862-9552-4A39-84BF-5E211884AF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D23862-9552-4A39-84BF-5E211884AF60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
