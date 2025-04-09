@@ -7,7 +7,7 @@ namespace OBJRuntime.DataTypes
     /// <summary>
     /// TinyObj material definition
     /// </summary>
-    public class MaterialInfo
+    public class Material
     {
         public string Name = "";
 

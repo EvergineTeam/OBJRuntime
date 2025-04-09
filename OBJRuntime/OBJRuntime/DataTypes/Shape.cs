@@ -5,7 +5,7 @@ namespace OBJRuntime.DataTypes
     public class Shape
     {
         public string Name;
-        public MeshInfo Mesh = new MeshInfo();
+        public Mesh Mesh = new Mesh();
         public Lines Lines = new Lines();
         public Points Points = new Points();
     }

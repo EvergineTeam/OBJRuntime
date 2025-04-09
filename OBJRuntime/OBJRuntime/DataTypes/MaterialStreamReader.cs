@@ -9,7 +9,7 @@ namespace OBJRuntime.DataTypes
     /// <summary>
     /// Reads MTL data from a Stream (like a MemoryStream).
     /// </summary>
-    public class MaterialStreamReader : IMaterialReader
+    public class MaterialStreamReader
     {
         private readonly Stream _inStream;
 
@@ -20,7 +20,7 @@ namespace OBJRuntime.DataTypes
 
         public bool Read(
             string matId,
-            List<MaterialInfo> materials,
+            List<Material> materials,
             Dictionary<string, int> matMap,
             out string warning,
             out string error)

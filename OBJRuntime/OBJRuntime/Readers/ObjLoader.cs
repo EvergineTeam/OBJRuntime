@@ -34,10 +34,10 @@ namespace OBJRuntime.Readers
             StreamReader inStream,
             ref Attrib attrib,
             List<Shape> shapes,
-            List<MaterialInfo> materials,
+            List<Material> materials,
             ref string warning,
             ref string error,
-            IMaterialReader readMatFn,
+            MaterialStreamReader readMatFn,
             bool triangulate,
             bool defaultVcolsFallback)
         {
@@ -138,18 +138,21 @@ namespace OBJRuntime.Readers
                         }
                     }
                 }
-                else if (cmd == "vn")
+                else if (cmd == "vn") // normal
                 {
                     if (tokens.Count >= 4)
                     {
                         float x = 0, y = 0, z = 0;
+
                         TryParseFloat(tokens[1], out x);
                         TryParseFloat(tokens[2], out y);
                         TryParseFloat(tokens[3], out z);
-                        vn.Add(x); vn.Add(y); vn.Add(z);
+                        vn.Add(x);
+                        vn.Add(y); 
+                        vn.Add(z);
                     }
                 }
-                else if (cmd == "vt")
+                else if (cmd == "vt") // texcoord
                 {
                     // vt u v [w]
                     if (tokens.Count >= 2)
@@ -496,8 +499,6 @@ namespace OBJRuntime.Readers
             primGroup.Clear();
         }
 
-        #region Helper Classes for "PrimGroup"
-
         private class Face
         {
             public uint SmoothingGroupId = 0;
@@ -532,7 +533,5 @@ namespace OBJRuntime.Readers
                 return FaceGroup.Count > 0 || LineGroup.Count > 0 || PointsGroup.Count > 0;
             }
         }
-
-        #endregion
     }
 }

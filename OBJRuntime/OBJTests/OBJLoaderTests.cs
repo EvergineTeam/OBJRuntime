@@ -7,6 +7,7 @@ using System.IO;
 using OBJRuntime.DataTypes;
 using System.Collections.Generic;
 using OBJRuntime.Readers;
+using System.Linq;
 
 namespace OBJTests
 {
@@ -37,7 +38,7 @@ namespace OBJTests
 
             var attrib = new Attrib();
             var shapes = new List<Shape>();
-            var materials = new List<MaterialInfo>();
+            var materials = new List<Material>();
             var warning = "";
             var error = "";
 
@@ -65,7 +66,7 @@ namespace OBJTests
             // Arrange
             var attrib = new Attrib();
             var shapes = new List<Shape>();
-            var materials = new List<MaterialInfo>();
+            var materials = new List<Material>();
             var warning = "";
             var error = "";
 
@@ -97,7 +98,7 @@ namespace OBJTests
 
             var attrib = new Attrib();
             var shapes = new List<Shape>();
-            var materials = new List<MaterialInfo>();
+            var materials = new List<Material>();
             var warning = "";
             var error = "";
 
@@ -117,6 +118,76 @@ namespace OBJTests
                     {
                         Assert.Equal(expectedVertices[i], indices[i].VertexIndex);
                     }
+                }
+            }
+        }
+
+        [Fact]
+        public void CheckDiffuseMaterials()
+        {
+            // Arrange
+            var expectedColor1 = new float[] { 1, 1, 1 };
+            var expectedColor2 = new float[] { 1, 0, 0 };
+            var expectedColor3 = new float[] { 0, 1, 0 };
+            var expectedColor4 = new float[] { 0, 0, 1 };
+            var expectedColor5 = new float[] { 1, 1, 1 };
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("Cube.obj"))
+            using (var streamMtl = assetsDirectory.Open("Cube.mtl"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    var mtlReader = new MaterialStreamReader(streamMtl);
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(5, materials.Count);
+                    Assert.True(expectedColor1.SequenceEqual(materials[0].Diffuse));
+                    Assert.True(expectedColor2.SequenceEqual(materials[1].Diffuse));
+                    Assert.True(expectedColor3.SequenceEqual(materials[2].Diffuse));
+                    Assert.True(expectedColor4.SequenceEqual(materials[3].Diffuse));
+                    Assert.True(expectedColor5.SequenceEqual(materials[4].Diffuse));
+                }
+            }
+        }
+
+        [Fact]
+        public void CheckVertexColor()
+        {
+            // Arrange
+            var expectedColors = new float[] {  0, 0, 0,
+                                                0, 0, 1,
+                                                0, 1, 0,
+                                                0, 1, 1,
+                                                1, 0, 0,
+                                                1, 0, 1,
+                                                1, 1, 0,
+                                                1, 1, 1};
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-vertexcol.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.True(attrib.Colors.SequenceEqual(expectedColors));
                 }
             }
         }

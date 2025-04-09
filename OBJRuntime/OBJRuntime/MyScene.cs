@@ -36,7 +36,7 @@ namespace Evergine.Runtimes.OBJ
             //Test
             var attrib = new Attrib();
             var shapes = new List<Shape>();
-            var materials = new List<MaterialInfo>();
+            var materials = new List<global::OBJRuntime.DataTypes.Material>();
             var warning = "";
             var error = "";
 

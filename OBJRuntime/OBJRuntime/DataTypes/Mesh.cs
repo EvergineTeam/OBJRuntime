@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
 {
-    public class MeshInfo
+    public class Mesh
     {
         public List<Index> Indices = new List<Index>();
         public List<uint> NumFaceVertices = new List<uint>();   // number of vertices per face
