@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
 {
-    public class Lines
+    public class OBJPoints
     {
-        public List<Index> Indices = new List<Index>();
-        public List<int> NumLineVertices = new List<int>();
+        public List<OBJIndex> Indices = new List<OBJIndex>();
     }
 }

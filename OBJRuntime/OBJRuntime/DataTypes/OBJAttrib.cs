@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
 {
-    public class Attrib
+    public class OBJAttrib
     {
         public List<float> Vertices = new List<float>();       // 'v' xyz
         public List<float> VertexWeights = new List<float>();  // 'v' w
@@ -13,6 +13,6 @@ namespace OBJRuntime.DataTypes
         public List<float> TexcoordWs = new List<float>();     // 'vt' w (if present, else unused)
         public List<float> Colors = new List<float>();         // vertex colors, if present
         // extension
-        public List<SkinWeight> SkinWeights = new List<SkinWeight>();
+        public List<OBJSkinWeight> SkinWeights = new List<OBJSkinWeight>();
     }
 }

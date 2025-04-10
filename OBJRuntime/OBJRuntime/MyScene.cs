@@ -27,16 +27,16 @@ namespace Evergine.Runtimes.OBJ
 
         protected override async void CreateScene()
         {
-            /*var model = await OBJRuntime.Instance.Read("MyModel.obj");
+            /*var model = await OBJRuntime.Instance.Read("Models/Cube.obj");
             
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);
             this.Managers.EntityManager.Add(entity);*/
 
             //Test
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<global::OBJRuntime.DataTypes.Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -47,8 +47,8 @@ namespace Evergine.Runtimes.OBJ
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new MaterialStreamReader(streamMtl);
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
                     if (!ok)
                     {
                         Debug.WriteLine("Load failed. Error = " + error);

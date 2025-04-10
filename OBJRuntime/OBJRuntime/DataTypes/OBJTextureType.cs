@@ -2,7 +2,7 @@
 
 namespace OBJRuntime.DataTypes
 {
-    public enum TextureType
+    public enum OBJTextureType
     {
         None,
         Sphere,

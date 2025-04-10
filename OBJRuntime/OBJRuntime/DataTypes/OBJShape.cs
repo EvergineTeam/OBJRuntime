@@ -2,11 +2,11 @@
 
 namespace OBJRuntime.DataTypes
 {
-    public class Shape
+    public class OBJShape
     {
         public string Name;
-        public Mesh Mesh = new Mesh();
-        public Lines Lines = new Lines();
-        public Points Points = new Points();
+        public OBJMesh Mesh = new OBJMesh();
+        public OBJLines Lines = new OBJLines();
+        public OBJPoints Points = new OBJPoints();
     }
 }

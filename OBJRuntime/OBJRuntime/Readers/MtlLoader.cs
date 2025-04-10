@@ -35,13 +35,13 @@ namespace OBJRuntime.Readers
         // The main function to load .mtl data:
         public static void Load(
             StreamReader sr,
-            List<Material> materials,
+            List<OBJMaterial> materials,
             Dictionary<string, int> materialMap,
             ref string warning,
             ref string error)
         {
             // If there's no "newmtl" at all, we still push a default material at the end.
-            Material material = new Material();
+            OBJMaterial material = new OBJMaterial();
             bool firstMaterial = true;
 
             bool hasD = false;
@@ -80,7 +80,7 @@ namespace OBJRuntime.Readers
                         materials.Add(material);
                     }
                     // reset
-                    material = new Material();
+                    material = new OBJMaterial();
                     hasD = false;
                     hasTr = false;
                     hasKd = false;
@@ -267,7 +267,7 @@ namespace OBJRuntime.Readers
             materials.Add(material);
         }
 
-        private static void ParseTextureAndOption(string line, string texName, TextureOption texOpt, string prefix)
+        private static void ParseTextureAndOption(string line, string texName, OBJTextureOption texOpt, string prefix)
         {
             // We parse the line for texture name and possible sub‐options like -o, -s, etc.
             // This can be somewhat simplified, but let's keep a structure close to the original.

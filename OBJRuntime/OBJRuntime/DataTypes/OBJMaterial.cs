@@ -7,7 +7,7 @@ namespace OBJRuntime.DataTypes
     /// <summary>
     /// TinyObj material definition
     /// </summary>
-    public class Material
+    public class OBJMaterial
     {
         public string Name = "";
 
@@ -31,14 +31,14 @@ namespace OBJRuntime.DataTypes
         public string AlphaTexname = "";              // map_d
         public string ReflectionTexname = "";         // refl
 
-        public TextureOption AmbientTexopt = new TextureOption();
-        public TextureOption DiffuseTexopt = new TextureOption();
-        public TextureOption SpecularTexopt = new TextureOption();
-        public TextureOption SpecularHighlightTexopt = new TextureOption();
-        public TextureOption BumpTexopt = new TextureOption();
-        public TextureOption DisplacementTexopt = new TextureOption();
-        public TextureOption AlphaTexopt = new TextureOption();
-        public TextureOption ReflectionTexopt = new TextureOption();
+        public OBJTextureOption AmbientTexopt = new OBJTextureOption();
+        public OBJTextureOption DiffuseTexopt = new OBJTextureOption();
+        public OBJTextureOption SpecularTexopt = new OBJTextureOption();
+        public OBJTextureOption SpecularHighlightTexopt = new OBJTextureOption();
+        public OBJTextureOption BumpTexopt = new OBJTextureOption();
+        public OBJTextureOption DisplacementTexopt = new OBJTextureOption();
+        public OBJTextureOption AlphaTexopt = new OBJTextureOption();
+        public OBJTextureOption ReflectionTexopt = new OBJTextureOption();
 
         // PBR extension
         public float Roughness = 0.0f;           // map_Pr
@@ -55,11 +55,11 @@ namespace OBJRuntime.DataTypes
         public string EmissiveTexname = "";   // map_Ke
         public string NormalTexname = "";     // norm
 
-        public TextureOption roughness_texopt;
-        public TextureOption metallic_texopt;
-        public TextureOption sheen_texopt;
-        public TextureOption emissive_texopt;
-        public TextureOption normal_texopt;
+        public OBJTextureOption roughness_texopt;
+        public OBJTextureOption metallic_texopt;
+        public OBJTextureOption sheen_texopt;
+        public OBJTextureOption emissive_texopt;
+        public OBJTextureOption normal_texopt;
 
         public int pad2;
 

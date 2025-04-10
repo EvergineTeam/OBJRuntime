@@ -36,9 +36,9 @@ namespace OBJTests
                 2.000000f, 2.000000f, 0.000000f
             };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -47,7 +47,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -64,9 +64,9 @@ namespace OBJTests
         public void CheckShapeNames()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -75,7 +75,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -96,9 +96,9 @@ namespace OBJTests
             // Arrange
             var expectedVertices = new float[] { 0, 1, 2, 0, 2, 3 };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -107,7 +107,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -132,9 +132,9 @@ namespace OBJTests
             var expectedColor4 = new float[] { 0, 0, 1 };
             var expectedColor5 = new float[] { 1, 1, 1 };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -144,8 +144,8 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new MaterialStreamReader(streamMtl);
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -165,9 +165,9 @@ namespace OBJTests
             // Arrange
             var expectedW = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -176,7 +176,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -192,9 +192,9 @@ namespace OBJTests
             var expectedVertices = new float[] { -0.207717f, -0.953997f, 2.554110f, -0.275607f, -0.965401f, 2.541530f, -0.270155f, -0.963170f, 2.548000f };
             var expectedNormals = new float[] { -0.281034f, -0.057252f, 0.957989f, -0.139126f, -0.135672f, 0.980937f, -0.163133f, -0.131576f, 0.977791f };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -203,7 +203,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -219,9 +219,9 @@ namespace OBJTests
         public void TestPoints()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -230,7 +230,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -246,9 +246,9 @@ namespace OBJTests
         public void TestLines()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -257,7 +257,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -278,9 +278,9 @@ namespace OBJTests
                                                  3.0f, 1.0f, 2.0f,
                                                  1.0f, 2.0f, 3.0f};
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -289,7 +289,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -312,9 +312,9 @@ namespace OBJTests
                                                    1.0f,  0.0f,  0.0f,
                                                   -1.0f,  0.0f,  0.0f};
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -323,7 +323,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
