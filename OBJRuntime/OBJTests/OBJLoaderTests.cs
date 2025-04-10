@@ -214,7 +214,7 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(9, attrib.Vertices.Count);
+                    Assert.Equal(3, attrib.Vertices.Count);
                     Assert.Empty(shapes);
                     Assert.True(attrib.Vertices.SequenceEqual(expectedVertices));
                     Assert.True(attrib.Normals.SequenceEqual(expectedNormals));
@@ -359,9 +359,9 @@ namespace OBJTests
                 "texture_bottom.jpg"
             };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -371,8 +371,8 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new MaterialStreamReader(streamMtl);
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
 
                     // Assert
                     Assert.True(ok);

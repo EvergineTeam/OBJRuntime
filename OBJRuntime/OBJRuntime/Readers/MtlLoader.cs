@@ -260,7 +260,7 @@ namespace OBJRuntime.Readers
             materials.Add(material);
         }
 
-        private static void ParseTextureAndOption(string line, ref string texName, TextureOption texOpt, string prefix)
+        private static void ParseTextureAndOption(string line, ref string texName, OBJTextureOption texOpt, string prefix)
         {
             // We parse the line for texture name and possible sub‐options like -o, -s, etc.
             // This can be somewhat simplified, but let's keep a structure close to the original.
