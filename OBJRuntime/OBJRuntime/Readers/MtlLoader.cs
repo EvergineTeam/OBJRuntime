@@ -83,24 +83,24 @@ namespace OBJRuntime.Readers
                 }
                 else if ((key == "Ka" || key == "ka") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, material.Ambient);
+                    ParseReal3(tokens, 1, ref material.Ambient);
                 }
                 else if ((key == "Kd" || key == "kd") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, material.Diffuse);
+                    ParseReal3(tokens, 1, ref material.Diffuse);
                     hasKd = true;
                 }
                 else if ((key == "Ks" || key == "ks") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, material.Specular);
+                    ParseReal3(tokens, 1, ref material.Specular);
                 }
                 else if (key == "Ke" && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, material.Emission);
+                    ParseReal3(tokens, 1, ref material.Emission);
                 }
                 else if ((key == "Tf" || key == "Kt") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, material.Transmittance);
+                    ParseReal3(tokens, 1, ref material.Transmittance);
                 }
                 else if (key == "Ns" && tokens.Count >= 2)
                 {
@@ -414,7 +414,7 @@ namespace OBJRuntime.Readers
             }
         }
 
-        private static void ParseReal3(List<string> tokens, int startIndex, Vector3 arr)
+        private static void ParseReal3(List<string> tokens, int startIndex, ref Vector3 arr)
         {
             // tokens: e.g. ["Kd", "0.1", "0.2", "0.3"]
             // parse from tokens[startIndex] up to 3.

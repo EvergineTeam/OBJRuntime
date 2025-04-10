@@ -214,7 +214,7 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(9, attrib.Vertices.Count);
+                    Assert.Equal(3, attrib.Vertices.Count);
                     Assert.Empty(shapes);
                     Assert.True(attrib.Vertices.SequenceEqual(expectedVertices));
                     Assert.True(attrib.Normals.SequenceEqual(expectedNormals));
@@ -241,7 +241,7 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(24, attrib.Vertices.Count);
+                    Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Points.Indices.Count);
                     Assert.Equal(3, shapes[0].Points.Indices[15].VertexIndex);
@@ -268,7 +268,7 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(24, attrib.Vertices.Count);
+                    Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Lines.Indices.Count);
                     Assert.Equal(7, shapes[0].Lines.Indices[17].VertexIndex);
@@ -303,8 +303,8 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(12, attrib.Vertices.Count);
-                    Assert.Equal(8, attrib.Texcoords.Count);
+                    Assert.Equal(4, attrib.Vertices.Count);
+                    Assert.Equal(4, attrib.Texcoords.Count);
                     Assert.True(attrib.Vertices.SequenceEqual(expectedTexcoords));
                     Assert.Single(shapes);
                 }
@@ -337,8 +337,8 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(24, attrib.Vertices.Count);
-                    Assert.Equal(18, attrib.Normals.Count);
+                    Assert.Equal(8, attrib.Vertices.Count);
+                    Assert.Equal(6, attrib.Normals.Count);
                     Assert.True(attrib.Normals.SequenceEqual(expectedNormals));
                     Assert.Single(shapes);
                 }
@@ -359,9 +359,9 @@ namespace OBJTests
                 "texture_bottom.jpg"
             };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
             var warning = "";
             var error = "";
 
@@ -371,8 +371,8 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new MaterialStreamReader(streamMtl);
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
 
                     // Assert
                     Assert.True(ok);
