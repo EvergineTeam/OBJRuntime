@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using OBJRuntime.DataTypes;
+using Evergine.Mathematics;
 
 namespace OBJRuntime.Readers
 {
@@ -48,11 +49,11 @@ namespace OBJRuntime.Readers
             attrib.SkinWeights.Clear();
             shapes.Clear();
 
-            var v = new List<float>();
+            var v = new List<Vector3>();
             var vertexWeights = new List<float>();  // for the optional w in 'v' lines
-            var vn = new List<float>();
-            var vt = new List<float>();
-            var vc = new List<float>();  // optional vertex colors
+            var vn = new List<Vector3>();
+            var vt = new List<Vector2>();
+            var vc = new List<Vector3>();  // optional vertex colors
             var vw = new List<OBJSkinWeight>(); // extension: vertex skin weights
 
             int materialId = -1;
@@ -112,9 +113,7 @@ namespace OBJRuntime.Readers
                             TryParseFloat(tokens[4], out r);
                             
                             // store w into vertexWeights
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x,y,z));
                             vertexWeights.Add(r);
                             foundAllColors = false;
                         }
@@ -125,21 +124,15 @@ namespace OBJRuntime.Readers
                             TryParseFloat(tokens[5], out g);
                             TryParseFloat(tokens[6], out b);
 
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x,y,z));
                             vertexWeights.Add(1.0f); // default w=1
-                            vc.Add(r);
-                            vc.Add(g);
-                            vc.Add(b);
+                            vc.Add(new Vector3(r,g,b));
 
                         }
                         else
                         {
                             // just x,y,z
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x, y, z));
                             vertexWeights.Add(1.0f);
                             foundAllColors = false;
                         }
@@ -154,9 +147,7 @@ namespace OBJRuntime.Readers
                         TryParseFloat(tokens[1], out x);
                         TryParseFloat(tokens[2], out y);
                         TryParseFloat(tokens[3], out z);
-                        vn.Add(x);
-                        vn.Add(y); 
-                        vn.Add(z);
+                        vn.Add(new Vector3(x,y,z));
                     }
                 }
                 else if (cmd == "vt") // texcoord
@@ -173,7 +164,7 @@ namespace OBJRuntime.Readers
                         if (tokens.Count > 3) 
                             TryParseFloat(tokens[3], out w);
 
-                        vt.Add(u); vt.Add(vv);
+                        vt.Add(new Vector2(u,vv));
                         // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
                     }
                 }
@@ -458,7 +449,7 @@ namespace OBJRuntime.Readers
             ref PrimGroup primGroup,
             string groupName,
             int materialId,
-            List<float> v,
+            List<Vector3> v,
             bool triangulate,
             ref string warning)
         {

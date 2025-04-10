@@ -8,6 +8,7 @@ using OBJRuntime.DataTypes;
 using System.Collections.Generic;
 using OBJRuntime.Readers;
 using System.Linq;
+using Evergine.Mathematics;
 
 namespace OBJTests
 {
@@ -24,16 +25,16 @@ namespace OBJTests
         public void CheckVertexValues()
         {
             // Arrange
-            var expectedVertices = new float[]
+            var expectedVertices = new Vector3[]
             {
-                0.000000f, 2.000000f, 2.000000f,
-                0.000000f, 0.000000f, 2.000000f,
-                2.000000f, 0.000000f, 2.000000f,
-                2.000000f, 2.000000f, 2.000000f,
-                0.000000f, 2.000000f, 0.000000f,
-                0.000000f, 0.000000f, 0.000000f,
-                2.000000f, 0.000000f, 0.000000f,
-                2.000000f, 2.000000f, 0.000000f
+                new Vector3(0.000000f, 2.000000f, 2.000000f),
+                new Vector3(0.000000f, 0.000000f, 2.000000f),
+                new Vector3(2.000000f, 0.000000f, 2.000000f),
+                new Vector3(2.000000f, 2.000000f, 2.000000f),
+                new Vector3(0.000000f, 2.000000f, 0.000000f),
+                new Vector3(0.000000f, 0.000000f, 0.000000f),
+                new Vector3(2.000000f, 0.000000f, 0.000000f),
+                new Vector3(2.000000f, 2.000000f, 0.000000f)
             };
 
             var attrib = new OBJAttrib();
@@ -54,7 +55,7 @@ namespace OBJTests
                     Assert.Equal(expectedVertices.Length, attrib.Vertices.Count);
                     for (int i = 0; i < expectedVertices.Length; i++)
                     {
-                        Assert.Equal(expectedVertices[i], attrib.Vertices[i], 6);
+                        Assert.Equal(expectedVertices[i], attrib.Vertices[i]);
                     }
                 }
             }
@@ -189,7 +190,11 @@ namespace OBJTests
         public void TestPointCloud()
         {
             // Arrange
-            var expectedVertices = new float[] { -0.207717f, -0.953997f, 2.554110f, -0.275607f, -0.965401f, 2.541530f, -0.270155f, -0.963170f, 2.548000f };
+            var expectedVertices = new Vector3[]
+            {
+                new Vector3(-0.207717f, -0.953997f, 2.554110f),
+                new Vector3(-0.275607f, -0.965401f, 2.541530f),
+                new Vector3(-0.270155f, -0.963170f, 2.548000f) };
             var expectedNormals = new float[] { -0.281034f, -0.057252f, 0.957989f, -0.139126f, -0.135672f, 0.980937f, -0.163133f, -0.131576f, 0.977791f };
 
             var attrib = new OBJAttrib();
@@ -295,7 +300,7 @@ namespace OBJTests
                     Assert.True(ok);
                     Assert.Equal(12, attrib.Vertices.Count);
                     Assert.Equal(8, attrib.Texcoords.Count);
-                    Assert.True(attrib.Vertices.SequenceEqual(expectedTexcoords));
+                    Assert.True(attrib.Texcoords.SequenceEqual(expectedTexcoords));
                     Assert.Single(shapes);
                 }
             }

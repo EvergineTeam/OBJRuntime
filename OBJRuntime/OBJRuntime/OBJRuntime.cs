@@ -1,6 +1,7 @@
 ﻿// Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
 using Evergine.Common.Graphics;
+using Evergine.Common.Graphics.VertexFormats;
 using Evergine.Common.IO;
 using Evergine.Framework;
 using Evergine.Framework.Graphics;
@@ -14,7 +15,9 @@ using OBJRuntime.Readers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Buffer = Evergine.Common.Graphics.Buffer;
 
 namespace Evergine.Runtimes.OBJ
 {
@@ -166,9 +169,31 @@ namespace Evergine.Runtimes.OBJ
 
         private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes)
         {
+            List<VertexBuffer> vertexBuffersList = new List<VertexBuffer>();
 
+            // Positions
+            if (attrib.Vertices.Count > 0)
+            {
+                var positions = attrib.Vertices.ToArray();
+                var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<Vector3>() * positions.Length),
+                                             BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
+                                             ResourceUsage.Default);
+                Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(positions, ref pBufferDescription);
+                VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPosition.VertexFormat);
 
-            return new List<Mesh>();
+                vertexBuffersList.Add(vertexBuffer);
+            }
+
+            VertexBuffer[] meshVertexBuffers = vertexBuffersList.ToArray();
+
+            List<Mesh> meshes = new List<Mesh>(shapes.Count);
+            List<ushort> indices = new List<ushort>();
+            for (int s = 0; s < shapes.Count; s++)
+            {
+                var shape = shapes[s];                               
+            }
+
+            return meshes;
         }
 
         private Material CreateEvergineMaterial(MaterialData data)
