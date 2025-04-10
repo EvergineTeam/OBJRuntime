@@ -23,14 +23,14 @@ namespace OBJRuntime.DataTypes
         public int Illum = 0;          // Illumination model
 
         // Texture information
-        public string AmbientTexname = "";    // map_Ka
-        public string DiffuseTexname = "";    // map_Kd
-        public string SpecularTexname = "";   // map_Ks
-        public string SpecularHighlightTexname = "";  // map_Ns
-        public string BumpTexname = "";               // map_bump
-        public string DisplacementTexname = "";        // disp
-        public string AlphaTexname = "";              // map_d
-        public string ReflectionTexname = "";         // refl
+        public string AmbientTexname = string.Empty;    // map_Ka
+        public string DiffuseTexname = string.Empty;    // map_Kd
+        public string SpecularTexname = string.Empty;   // map_Ks
+        public string SpecularHighlightTexname = string.Empty;  // map_Ns
+        public string BumpTexname = string.Empty;               // map_bump
+        public string DisplacementTexname = string.Empty;        // disp
+        public string AlphaTexname = string.Empty;              // map_d
+        public string ReflectionTexname = string.Empty;         // refl
 
         public OBJTextureOption AmbientTexopt = new OBJTextureOption();
         public OBJTextureOption DiffuseTexopt = new OBJTextureOption();
@@ -50,11 +50,11 @@ namespace OBJRuntime.DataTypes
         public float Anisotropy = 0.0f;          // aniso
         public float AnisotropyRotation = 0.0f;  // anisor
 
-        public string RoughnessTexname = "";  // map_Pr
-        public string MetallicTexname = "";   // map_Pm
-        public string SheenTexname = "";      // map_Ps
-        public string EmissiveTexname = "";   // map_Ke
-        public string NormalTexname = "";     // norm
+        public string RoughnessTexname = string.Empty;  // map_Pr
+        public string MetallicTexname = string.Empty;   // map_Pm
+        public string SheenTexname = string.Empty;      // map_Ps
+        public string EmissiveTexname = string.Empty;   // map_Ke
+        public string NormalTexname = string.Empty;     // norm
 
         public OBJTextureOption roughness_texopt;
         public OBJTextureOption metallic_texopt;
