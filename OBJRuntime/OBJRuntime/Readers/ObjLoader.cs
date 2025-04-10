@@ -13,18 +13,6 @@ namespace OBJRuntime.Readers
     /// </summary>
     public static class OBJLoader
     {
-        // Helper method: Splits a string into tokens, but doesn't handle advanced escaping rules.
-        private static List<string> Tokenize(string line)
-        {
-            var tokens = new List<string>();
-            var parts = line.Split((char[])null, System.StringSplitOptions.RemoveEmptyEntries);
-            foreach (var p in parts)
-            {
-                tokens.Add(p.Trim());
-            }
-            return tokens;
-        }
-
         public static bool Load(
             StreamReader inStream,
             ref OBJAttrib attrib,
@@ -86,7 +74,7 @@ namespace OBJRuntime.Readers
                     continue; // comment
 
                 // parse tokens
-                var tokens = Tokenize(line);
+                var tokens = Helpers.Tokenize(line);
                 if (tokens.Count < 1) 
                     continue;
 
@@ -100,9 +88,9 @@ namespace OBJRuntime.Readers
                         float r = 1, g = 1, b = 1; // either color or 'w'
 
                         // parse x,y,z
-                        TryParseFloat(tokens[1], out x);
-                        TryParseFloat(tokens[2], out y);
-                        TryParseFloat(tokens[3], out z);
+                        Helpers.TryParseFloat(tokens[1], out x);
+                        Helpers.TryParseFloat(tokens[2], out y);
+                        Helpers.TryParseFloat(tokens[3], out z);
 
                         // if we have 4 tokens => might be w or color
                         // if we have 7 tokens => x y z r g b
@@ -110,7 +98,7 @@ namespace OBJRuntime.Readers
                         if (count == 4)
                         {
                             // interpret the 4th as 'w'
-                            TryParseFloat(tokens[4], out r);
+                            Helpers.TryParseFloat(tokens[4], out r);
                             
                             // store w into vertexWeights
                             v.Add(new Vector3(x,y,z));
@@ -120,9 +108,9 @@ namespace OBJRuntime.Readers
                         else if (count == 6)
                         {
                             // x y z r g b ...
-                            TryParseFloat(tokens[4], out r);
-                            TryParseFloat(tokens[5], out g);
-                            TryParseFloat(tokens[6], out b);
+                            Helpers.TryParseFloat(tokens[4], out r);
+                            Helpers.TryParseFloat(tokens[5], out g);
+                            Helpers.TryParseFloat(tokens[6], out b);
 
                             v.Add(new Vector3(x,y,z));
                             vertexWeights.Add(1.0f); // default w=1
@@ -144,9 +132,9 @@ namespace OBJRuntime.Readers
                     {
                         float x = 0, y = 0, z = 0;
 
-                        TryParseFloat(tokens[1], out x);
-                        TryParseFloat(tokens[2], out y);
-                        TryParseFloat(tokens[3], out z);
+                        Helpers.TryParseFloat(tokens[1], out x);
+                        Helpers.TryParseFloat(tokens[2], out y);
+                        Helpers.TryParseFloat(tokens[3], out z);
                         vn.Add(new Vector3(x,y,z));
                     }
                 }
@@ -156,13 +144,13 @@ namespace OBJRuntime.Readers
                     if (tokens.Count >= 2)
                     {
                         float u = 0, vv = 0, w = 0;
-                        TryParseFloat(tokens[1], out u);
+                        Helpers.TryParseFloat(tokens[1], out u);
 
                         if (tokens.Count > 2) 
-                            TryParseFloat(tokens[2], out vv);
+                            Helpers.TryParseFloat(tokens[2], out vv);
 
                         if (tokens.Count > 3) 
-                            TryParseFloat(tokens[3], out w);
+                            Helpers.TryParseFloat(tokens[3], out w);
 
                         vt.Add(new Vector2(u,vv));
                         // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
@@ -189,7 +177,7 @@ namespace OBJRuntime.Readers
                                 if (!int.TryParse(tokens[idx], out j)) 
                                     break;
 
-                                if (!TryParseFloat(tokens[idx + 1], out w)) 
+                                if (!Helpers.TryParseFloat(tokens[idx + 1], out w)) 
                                     break;
 
                                 OBJJointAndWeight jw = new OBJJointAndWeight();
@@ -401,15 +389,6 @@ namespace OBJRuntime.Readers
             return true;
         }
 
-        private static bool TryParseFloat(string s, out float val)
-        {
-            return float.TryParse(
-                s,
-                NumberStyles.Float | NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture,
-                out val);
-        }
-
         // Raw triple parse: i, i/j, i/j/k, i//k
         private static OBJIndex ParseRawTriple(string token)
         {
@@ -429,19 +408,11 @@ namespace OBJRuntime.Readers
                 int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
 
             // Convert from 1-based to 0-based. Negative means relative.
-            idx.VertexIndex = FixIndex(vIdx);
-            idx.TexcoordIndex = FixIndex(vtIdx);
-            idx.NormalIndex = FixIndex(vnIdx);
+            idx.VertexIndex = vIdx - 1;
+            idx.TexcoordIndex = vtIdx - 1;
+            idx.NormalIndex = vnIdx - 1;
 
             return idx;
-        }
-
-        private static int FixIndex(int idx)
-        {
-            if (idx > 0)
-                return idx - 1;
-
-            return idx - 1; // negative or zero
         }
 
         private static void ExportGroupsToShape(

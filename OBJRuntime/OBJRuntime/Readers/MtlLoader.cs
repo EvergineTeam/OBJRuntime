@@ -14,17 +14,6 @@ namespace OBJRuntime.Readers
     /// </summary>
     public static class MtlLoader
     {
-        // Specialized read that tries to parse float from a substring.
-        private static bool TryParseFloat(string s, out float result)
-        {
-            // Try with CultureInfo.InvariantCulture
-            return float.TryParse(
-                s,
-                NumberStyles.Float | NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture,
-                out result);
-        }
-
         // The main function to load .mtl data:
         public static void Load(
             StreamReader sr,
@@ -57,7 +46,7 @@ namespace OBJRuntime.Readers
                 if (line.StartsWith("#"))
                     continue; // skip comments
 
-                var tokens = Tokenize(line);
+                var tokens = Helpers.Tokenize(line);
                 if (tokens.Count == 0)
                     continue;
 
@@ -83,33 +72,33 @@ namespace OBJRuntime.Readers
                 }
                 else if ((key == "Ka" || key == "ka") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, ref material.Ambient);
+                    ParseVector3(tokens, 1, ref material.Ambient);
                 }
                 else if ((key == "Kd" || key == "kd") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, ref material.Diffuse);
+                    ParseVector3(tokens, 1, ref material.Diffuse);
                     hasKd = true;
                 }
                 else if ((key == "Ks" || key == "ks") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, ref material.Specular);
+                    ParseVector3(tokens, 1, ref material.Specular);
                 }
                 else if (key == "Ke" && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, ref material.Emission);
+                    ParseVector3(tokens, 1, ref material.Emission);
                 }
                 else if ((key == "Tf" || key == "Kt") && tokens.Count >= 4)
                 {
-                    ParseReal3(tokens, 1, ref material.Transmittance);
+                    ParseVector3(tokens, 1, ref material.Transmittance);
                 }
                 else if (key == "Ns" && tokens.Count >= 2)
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Shininess = val;
                 }
                 else if (key == "Ni" && tokens.Count >= 2)
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Ior = val;
                 }
                 else if (key == "illum" && tokens.Count >= 2)
@@ -121,7 +110,7 @@ namespace OBJRuntime.Readers
                 }
                 else if (key == "d" && tokens.Count >= 2)
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Dissolve = val;
                     if (hasTr)
                     {
@@ -139,7 +128,7 @@ namespace OBJRuntime.Readers
                     else
                     {
                         // invert
-                        if (TryParseFloat(tokens[1], out float val))
+                        if (Helpers.TryParseFloat(tokens[1], out float val))
                             material.Dissolve = 1.0f - val;
                     }
                     hasTr = true;
@@ -210,37 +199,37 @@ namespace OBJRuntime.Readers
                 }
                 else if (key == "Pr")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Roughness = val;
                 }
                 else if (key == "Pm")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Metallic = val;
                 }
                 else if (key == "Ps")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Sheen = val;
                 }
                 else if (key == "Pc")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.ClearcoatThickness = val;
                 }
                 else if (key == "Pcr")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.ClearcoatRoughness = val;
                 }
                 else if (key == "aniso")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.Anisotropy = val;
                 }
                 else if (key == "anisor")
                 {
-                    if (TryParseFloat(tokens[1], out float val))
+                    if (Helpers.TryParseFloat(tokens[1], out float val))
                         material.AnisotropyRotation = val;
                 }
                 else
@@ -256,7 +245,10 @@ namespace OBJRuntime.Readers
 
             // push last material
             if (!materialMap.ContainsKey(material.Name))
+            {
                 materialMap.Add(material.Name, materials.Count);
+            }
+
             materials.Add(material);
         }
 
@@ -267,7 +259,7 @@ namespace OBJRuntime.Readers
             // For a more robust approach, you can do additional tokenization of the entire line.
 
             // We do a naive split for demonstration, real code might do more refined parse.
-            var tokens = Tokenize(line);
+            var tokens = Helpers.Tokenize(line);
 
             // We keep a local pointer to the final texture name we actually set in 'texName'.
             // Because in C# strings are passed by value, we might set it after we find the main token.
@@ -307,12 +299,12 @@ namespace OBJRuntime.Readers
                 else if (t.StartsWith("-boost"))
                 {
                     idx++;
-                    if (idx < tokens.Count && TryParseFloat(tokens[idx], out float val)) texOpt.Sharpness = val;
+                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float val)) texOpt.Sharpness = val;
                 }
                 else if (t.StartsWith("-bm"))
                 {
                     idx++;
-                    if (idx < tokens.Count && TryParseFloat(tokens[idx], out float val)) texOpt.BumpMultiplier = val;
+                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float val)) texOpt.BumpMultiplier = val;
                 }
                 else if (t.StartsWith("-o"))
                 {
@@ -321,7 +313,7 @@ namespace OBJRuntime.Readers
                     int maxCoords = 3;
                     int coordCount = 0;
                     idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && TryParseFloat(tokens[idx], out float oval))
+                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float oval))
                     {
                         texOpt.OriginOffset[coordCount] = oval;
                         coordCount++; idx++;
@@ -335,7 +327,7 @@ namespace OBJRuntime.Readers
                     int maxCoords = 3;
                     int coordCount = 0;
                     idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && TryParseFloat(tokens[idx], out float sval))
+                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float sval))
                     {
                         texOpt.Scale[coordCount] = sval;
                         coordCount++; idx++;
@@ -348,7 +340,7 @@ namespace OBJRuntime.Readers
                     int maxCoords = 3;
                     int coordCount = 0;
                     idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && TryParseFloat(tokens[idx], out float tval))
+                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float tval))
                     {
                         texOpt.Turbulence[coordCount] = tval;
                         coordCount++; idx++;
@@ -376,11 +368,11 @@ namespace OBJRuntime.Readers
                     // e.g. -mm baseValue gainValue
                     // parse 2 floats
                     idx++;
-                    if (idx < tokens.Count && TryParseFloat(tokens[idx], out float bval))
+                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float bval))
                     {
                         texOpt.Brightness = bval;
                         idx++;
-                        if (idx < tokens.Count && TryParseFloat(tokens[idx], out float cval))
+                        if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float cval))
                         {
                             texOpt.Contrast = cval;
                             idx++;
@@ -414,7 +406,7 @@ namespace OBJRuntime.Readers
             }
         }
 
-        private static void ParseReal3(List<string> tokens, int startIndex, ref Vector3 arr)
+        private static void ParseVector3(List<string> tokens, int startIndex, ref Vector3 arr)
         {
             // tokens: e.g. ["Kd", "0.1", "0.2", "0.3"]
             // parse from tokens[startIndex] up to 3.
@@ -422,23 +414,12 @@ namespace OBJRuntime.Readers
             {
                 if (startIndex + i < tokens.Count)
                 {
-                    if (TryParseFloat(tokens[startIndex + i], out float val))
+                    if (Helpers.TryParseFloat(tokens[startIndex + i], out float val))
                     {
                         arr[i] = val;
                     }
                 }
             }
-        }
-
-        private static List<string> Tokenize(string line)
-        {
-            var tokens = new List<string>();
-            var parts = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var p in parts)
-            {
-                tokens.Add(p.Trim());
-            }
-            return tokens;
         }
     }
 }

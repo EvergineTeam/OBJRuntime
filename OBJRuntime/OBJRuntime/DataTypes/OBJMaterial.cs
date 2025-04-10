@@ -23,12 +23,12 @@ namespace OBJRuntime.DataTypes
         public int Illum = 0;          // Illumination model
 
         // Texture information
-        public string AmbientTexname = string.Empty;    // map_Ka
-        public string DiffuseTexname = string.Empty;    // map_Kd
-        public string SpecularTexname = string.Empty;   // map_Ks
+        public string AmbientTexname = string.Empty;            // map_Ka
+        public string DiffuseTexname = string.Empty;            // map_Kd
+        public string SpecularTexname = string.Empty;           // map_Ks
         public string SpecularHighlightTexname = string.Empty;  // map_Ns
         public string BumpTexname = string.Empty;               // map_bump
-        public string DisplacementTexname = string.Empty;        // disp
+        public string DisplacementTexname = string.Empty;       // disp
         public string AlphaTexname = string.Empty;              // map_d
         public string ReflectionTexname = string.Empty;         // refl
 
