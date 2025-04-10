@@ -1,12 +1,11 @@
 // Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
 using Evergine.Common.IO;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
-using System.IO;
+using Evergine.Mathematics;
 using OBJRuntime.DataTypes;
-using System.Collections.Generic;
 using OBJRuntime.Readers;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace OBJTests
@@ -24,37 +23,37 @@ namespace OBJTests
         public void CheckVertexValues()
         {
             // Arrange
-            var expectedVertices = new float[]
+            var expectedVertices = new Vector3[]
             {
-                0.000000f, 2.000000f, 2.000000f,
-                0.000000f, 0.000000f, 2.000000f,
-                2.000000f, 0.000000f, 2.000000f,
-                2.000000f, 2.000000f, 2.000000f,
-                0.000000f, 2.000000f, 0.000000f,
-                0.000000f, 0.000000f, 0.000000f,
-                2.000000f, 0.000000f, 0.000000f,
-                2.000000f, 2.000000f, 0.000000f
+                new Vector3(0.000000f, 2.000000f, 2.000000f),
+                new Vector3(0.000000f, 0.000000f, 2.000000f),
+                new Vector3(2.000000f, 0.000000f, 2.000000f),
+                new Vector3(2.000000f, 2.000000f, 2.000000f),
+                new Vector3(0.000000f, 2.000000f, 0.000000f),
+                new Vector3(0.000000f, 0.000000f, 0.000000f),
+                new Vector3(2.000000f, 0.000000f, 0.000000f),
+                new Vector3(2.000000f, 2.000000f, 0.000000f)
             };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
                     Assert.Equal(expectedVertices.Length, attrib.Vertices.Count);
                     for (int i = 0; i < expectedVertices.Length; i++)
                     {
-                        Assert.Equal(expectedVertices[i], attrib.Vertices[i], 6);
+                        Assert.Equal(expectedVertices[i], attrib.Vertices[i]);
                     }
                 }
             }
@@ -64,18 +63,18 @@ namespace OBJTests
         public void CheckShapeNames()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -96,18 +95,18 @@ namespace OBJTests
             // Arrange
             var expectedVertices = new float[] { 0, 1, 2, 0, 2, 3 };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -126,17 +125,17 @@ namespace OBJTests
         public void CheckDiffuseMaterials()
         {
             // Arrange
-            var expectedColor1 = new float[] { 1, 1, 1 };
-            var expectedColor2 = new float[] { 1, 0, 0 };
-            var expectedColor3 = new float[] { 0, 1, 0 };
-            var expectedColor4 = new float[] { 0, 0, 1 };
-            var expectedColor5 = new float[] { 1, 1, 1 };
+            var expectedColor1 = new Vector3(1, 1, 1);
+            var expectedColor2 = new Vector3(1, 0, 0);
+            var expectedColor3 = new Vector3(0, 1, 0);
+            var expectedColor4 = new Vector3(0, 0, 1);
+            var expectedColor5 = new Vector3(1, 1, 1);
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
@@ -144,17 +143,17 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new MaterialStreamReader(streamMtl);
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(5, materials.Count);
-                    Assert.True(expectedColor1.SequenceEqual(materials[0].Diffuse));
-                    Assert.True(expectedColor2.SequenceEqual(materials[1].Diffuse));
-                    Assert.True(expectedColor3.SequenceEqual(materials[2].Diffuse));
-                    Assert.True(expectedColor4.SequenceEqual(materials[3].Diffuse));
-                    Assert.True(expectedColor5.SequenceEqual(materials[4].Diffuse));
+                    Assert.Equal(5, materials.Count);                    
+                    Assert.True(expectedColor1.Equals(materials[0].Diffuse));
+                    Assert.True(expectedColor2.Equals(materials[1].Diffuse));
+                    Assert.True(expectedColor3.Equals(materials[2].Diffuse));
+                    Assert.True(expectedColor4.Equals(materials[3].Diffuse));
+                    Assert.True(expectedColor5.Equals(materials[4].Diffuse));
                 }
             }
         }
@@ -165,18 +164,18 @@ namespace OBJTests
             // Arrange
             var expectedW = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("cube-vertex-w-component.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -189,21 +188,29 @@ namespace OBJTests
         public void TestPointCloud()
         {
             // Arrange
-            var expectedVertices = new float[] { -0.207717f, -0.953997f, 2.554110f, -0.275607f, -0.965401f, 2.541530f, -0.270155f, -0.963170f, 2.548000f };
-            var expectedNormals = new float[] { -0.281034f, -0.057252f, 0.957989f, -0.139126f, -0.135672f, 0.980937f, -0.163133f, -0.131576f, 0.977791f };
+            var expectedVertices = new Vector3[]
+            {
+                new Vector3(-0.207717f, -0.953997f, 2.554110f),
+                new Vector3(-0.275607f, -0.965401f, 2.541530f),
+                new Vector3(-0.270155f, -0.963170f, 2.548000f) };
+            var expectedNormals = new Vector3[] 
+            { 
+                new Vector3(-0.281034f, -0.057252f, 0.957989f), 
+                new Vector3(-0.139126f, -0.135672f, 0.980937f), 
+                new Vector3(-0.163133f, -0.131576f, 0.977791f)};
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("point-cloud.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -219,18 +226,18 @@ namespace OBJTests
         public void TestPoints()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("testpoints.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -246,18 +253,18 @@ namespace OBJTests
         public void TestLines()
         {
             // Arrange
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("testlines.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -273,23 +280,26 @@ namespace OBJTests
         public void CheckTexcoords()
         {
             // Arrange
-            var expectedTexcoords = new float[] { 1.0f, 2.0f, 3.0f,
-                                                 2.0f, 3.0f, 1.0f,
-                                                 3.0f, 1.0f, 2.0f,
-                                                 1.0f, 2.0f, 3.0f};
+            var expectedTexcoords = new Vector3[]
+                                        {
+                                            new Vector3(1.0f, 2.0f, 3.0f),
+                                            new Vector3(2.0f, 3.0f, 1.0f),
+                                            new Vector3(3.0f, 1.0f, 2.0f),
+                                            new Vector3(1.0f, 2.0f, 3.0f)
+                                        };
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("multiple-spaces.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -305,25 +315,25 @@ namespace OBJTests
         public void CheckNormals()
         {
             // Arrange
-            var expectedNormals = new float[] {  0.0f,  0.0f,  1.0f,
-                                                   0.0f,  0.0f, -1.0f,
-                                                   0.0f,  1.0f,  0.0f,
-                                                   0.0f, -1.0f,  0.0f,
-                                                   1.0f,  0.0f,  0.0f,
-                                                  -1.0f,  0.0f,  0.0f};
+            var expectedNormals = new Vector3[] { new Vector3( 0.0f,  0.0f,  1.0f),
+                                                  new Vector3( 0.0f,  0.0f, -1.0f),
+                                                  new Vector3( 0.0f,  1.0f,  0.0f),
+                                                  new Vector3( 0.0f, -1.0f,  0.0f),
+                                                  new Vector3( 1.0f,  0.0f,  0.0f),
+                                                  new Vector3(-1.0f,  0.0f,  0.0f)};
 
-            var attrib = new Attrib();
-            var shapes = new List<Shape>();
-            var materials = new List<Material>();
-            var warning = "";
-            var error = "";
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("cube-normals.obj"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
 
                     // Assert
                     Assert.True(ok);

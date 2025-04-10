@@ -2,7 +2,7 @@
 
 namespace OBJRuntime.DataTypes
 {
-    public struct JointAndWeight
+    public struct OBJJointAndWeight
     {
         public int JointId;
         public float Weight;

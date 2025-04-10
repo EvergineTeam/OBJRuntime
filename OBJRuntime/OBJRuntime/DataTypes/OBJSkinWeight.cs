@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
 {
-    public class SkinWeight
+    public class OBJSkinWeight
     {
         // Index in the "attrib_t.vertices" array
         public int VertexId;
-        public List<JointAndWeight> WeightValues = new List<JointAndWeight>();
+        public List<OBJJointAndWeight> WeightValues = new List<OBJJointAndWeight>();
     }
 }

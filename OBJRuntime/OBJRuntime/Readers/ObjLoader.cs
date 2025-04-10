@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using OBJRuntime.DataTypes;
+using Evergine.Mathematics;
 
 namespace OBJRuntime.Readers
 {
     /// <summary>
     /// Main OBJ loading logic in a static class, adapted from your code snippet.
     /// </summary>
-    public static class ObjLoader
+    public static class OBJLoader
     {
         // Helper method: Splits a string into tokens, but doesn't handle advanced escaping rules.
         private static List<string> Tokenize(string line)
@@ -24,14 +25,14 @@ namespace OBJRuntime.Readers
             return tokens;
         }
 
-        public static bool LoadObj(
+        public static bool Load(
             StreamReader inStream,
-            ref Attrib attrib,
-            List<Shape> shapes,
-            List<Material> materials,
+            ref OBJAttrib attrib,
+            List<OBJShape> shapes,
+            List<OBJMaterial> materials,
             ref string warning,
             ref string error,
-            MaterialStreamReader readMatFn,
+            OBJMaterialStreamReader readMatFn,
             bool triangulate,
             bool defaultVcolsFallback)
         {
@@ -48,12 +49,12 @@ namespace OBJRuntime.Readers
             attrib.SkinWeights.Clear();
             shapes.Clear();
 
-            var v = new List<float>();
+            var v = new List<Vector3>();
             var vertexWeights = new List<float>();  // for the optional w in 'v' lines
-            var vn = new List<float>();
-            var vt = new List<float>();
-            var vc = new List<float>();  // optional vertex colors
-            var vw = new List<SkinWeight>(); // extension: vertex skin weights
+            var vn = new List<Vector3>();
+            var vt = new List<Vector2>();
+            var vc = new List<Vector3>();  // optional vertex colors
+            var vw = new List<OBJSkinWeight>(); // extension: vertex skin weights
 
             int materialId = -1;
             uint currentSmoothingId = 0;
@@ -112,9 +113,7 @@ namespace OBJRuntime.Readers
                             TryParseFloat(tokens[4], out r);
                             
                             // store w into vertexWeights
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x,y,z));
                             vertexWeights.Add(r);
                             foundAllColors = false;
                         }
@@ -125,21 +124,15 @@ namespace OBJRuntime.Readers
                             TryParseFloat(tokens[5], out g);
                             TryParseFloat(tokens[6], out b);
 
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x,y,z));
                             vertexWeights.Add(1.0f); // default w=1
-                            vc.Add(r);
-                            vc.Add(g);
-                            vc.Add(b);
+                            vc.Add(new Vector3(r,g,b));
 
                         }
                         else
                         {
                             // just x,y,z
-                            v.Add(x);
-                            v.Add(y);
-                            v.Add(z);
+                            v.Add(new Vector3(x, y, z));
                             vertexWeights.Add(1.0f);
                             foundAllColors = false;
                         }
@@ -154,9 +147,7 @@ namespace OBJRuntime.Readers
                         TryParseFloat(tokens[1], out x);
                         TryParseFloat(tokens[2], out y);
                         TryParseFloat(tokens[3], out z);
-                        vn.Add(x);
-                        vn.Add(y); 
-                        vn.Add(z);
+                        vn.Add(new Vector3(x,y,z));
                     }
                 }
                 else if (cmd == "vt") // texcoord
@@ -173,7 +164,7 @@ namespace OBJRuntime.Readers
                         if (tokens.Count > 3) 
                             TryParseFloat(tokens[3], out w);
 
-                        vt.Add(u); vt.Add(vv);
+                        vt.Add(new Vector2(u,vv));
                         // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
                     }
                 }
@@ -184,7 +175,7 @@ namespace OBJRuntime.Readers
                     // first token is "vw", second is vertex id:
                     if (tokens.Count > 1)
                     {
-                        SkinWeight sw = new SkinWeight();
+                        OBJSkinWeight sw = new OBJSkinWeight();
                         int vid = 0;
                         if (int.TryParse(tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out vid))
                         {
@@ -201,7 +192,7 @@ namespace OBJRuntime.Readers
                                 if (!TryParseFloat(tokens[idx + 1], out w)) 
                                     break;
 
-                                JointAndWeight jw = new JointAndWeight();
+                                OBJJointAndWeight jw = new OBJJointAndWeight();
                                 jw.JointId = j;
                                 jw.Weight = w;
                                 sw.WeightValues.Add(jw);
@@ -420,9 +411,9 @@ namespace OBJRuntime.Readers
         }
 
         // Raw triple parse: i, i/j, i/j/k, i//k
-        private static Index ParseRawTriple(string token)
+        private static OBJIndex ParseRawTriple(string token)
         {
-            Index idx = new Index() { VertexIndex = 0, TexcoordIndex = 0, NormalIndex = 0 };
+            OBJIndex idx = new OBJIndex() { VertexIndex = 0, TexcoordIndex = 0, NormalIndex = 0 };
             // We just do naive splitting by '/'
             // If there's no '/', it's just the v index
             string[] parts = token.Split('/');
@@ -454,18 +445,18 @@ namespace OBJRuntime.Readers
         }
 
         private static void ExportGroupsToShape(
-            List<Shape> shapes,
+            List<OBJShape> shapes,
             ref PrimGroup primGroup,
             string groupName,
             int materialId,
-            List<float> v,
+            List<Vector3> v,
             bool triangulate,
             ref string warning)
         {
             if (!primGroup.HasData())
                 return;
 
-            Shape shape = new Shape();
+            OBJShape shape = new OBJShape();
             shape.Name = groupName;
 
             // faceGroup => shape.Mesh
@@ -486,8 +477,8 @@ namespace OBJRuntime.Readers
                     var baseIndex = face.VertexIndices[0];
                     for (int i = 1; i < nVerts - 1; i++)
                     {
-                        Index i1 = face.VertexIndices[i];
-                        Index i2 = face.VertexIndices[i + 1];
+                        OBJIndex i1 = face.VertexIndices[i];
+                        OBJIndex i2 = face.VertexIndices[i + 1];
                         shape.Mesh.Indices.Add(baseIndex);
                         shape.Mesh.Indices.Add(i1);
                         shape.Mesh.Indices.Add(i2);
@@ -535,17 +526,17 @@ namespace OBJRuntime.Readers
         private class Face
         {
             public uint SmoothingGroupId = 0;
-            public List<Index> VertexIndices = new List<Index>();
+            public List<OBJIndex> VertexIndices = new List<OBJIndex>();
         }
 
         private class LineElm
         {
-            public List<Index> VertexIndices = new List<Index>();
+            public List<OBJIndex> VertexIndices = new List<OBJIndex>();
         }
 
         private class PointsElm
         {
-            public List<Index> VertexIndices = new List<Index>();
+            public List<OBJIndex> VertexIndices = new List<OBJIndex>();
         }
 
         private class PrimGroup

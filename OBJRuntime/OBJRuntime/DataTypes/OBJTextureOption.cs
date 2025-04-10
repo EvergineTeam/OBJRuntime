@@ -2,9 +2,9 @@
 
 namespace OBJRuntime.DataTypes
 {
-    public class TextureOption
+    public class OBJTextureOption
     {
-        public TextureType Type = TextureType.None;
+        public OBJTextureType Type = OBJTextureType.None;
         public float Sharpness = 1.0f;
         public float Brightness = 0.0f;
         public float Contrast = 1.0f;

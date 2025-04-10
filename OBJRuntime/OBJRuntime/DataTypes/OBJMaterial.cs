@@ -1,5 +1,6 @@
 ﻿// Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
+using Evergine.Mathematics;
 using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
@@ -7,15 +8,15 @@ namespace OBJRuntime.DataTypes
     /// <summary>
     /// TinyObj material definition
     /// </summary>
-    public class Material
+    public class OBJMaterial
     {
         public string Name = "";
 
-        public float[] Ambient = new float[3] { 0, 0, 0 };
-        public float[] Diffuse = new float[3] { 0, 0, 0 };
-        public float[] Specular = new float[3] { 0, 0, 0 };
-        public float[] Transmittance = new float[3] { 0, 0, 0 };
-        public float[] Emission = new float[3] { 0, 0, 0 };
+        public Vector3 Ambient = Vector3.Zero;
+        public Vector3 Diffuse = Vector3.One;
+        public Vector3 Specular = Vector3.Zero;
+        public Vector3 Transmittance = Vector3.Zero;
+        public Vector3 Emission = Vector3.Zero;
         public float Shininess = 1.0f;
         public float Ior = 1.0f;        // Index of refraction
         public float Dissolve = 1.0f;   // 1=opaque; 0=fully transparent
@@ -31,14 +32,14 @@ namespace OBJRuntime.DataTypes
         public string AlphaTexname = "";              // map_d
         public string ReflectionTexname = "";         // refl
 
-        public TextureOption AmbientTexopt = new TextureOption();
-        public TextureOption DiffuseTexopt = new TextureOption();
-        public TextureOption SpecularTexopt = new TextureOption();
-        public TextureOption SpecularHighlightTexopt = new TextureOption();
-        public TextureOption BumpTexopt = new TextureOption();
-        public TextureOption DisplacementTexopt = new TextureOption();
-        public TextureOption AlphaTexopt = new TextureOption();
-        public TextureOption ReflectionTexopt = new TextureOption();
+        public OBJTextureOption AmbientTexopt = new OBJTextureOption();
+        public OBJTextureOption DiffuseTexopt = new OBJTextureOption();
+        public OBJTextureOption SpecularTexopt = new OBJTextureOption();
+        public OBJTextureOption SpecularHighlightTexopt = new OBJTextureOption();
+        public OBJTextureOption BumpTexopt = new OBJTextureOption();
+        public OBJTextureOption DisplacementTexopt = new OBJTextureOption();
+        public OBJTextureOption AlphaTexopt = new OBJTextureOption();
+        public OBJTextureOption ReflectionTexopt = new OBJTextureOption();
 
         // PBR extension
         public float Roughness = 0.0f;           // map_Pr
@@ -55,11 +56,11 @@ namespace OBJRuntime.DataTypes
         public string EmissiveTexname = "";   // map_Ke
         public string NormalTexname = "";     // norm
 
-        public TextureOption roughness_texopt;
-        public TextureOption metallic_texopt;
-        public TextureOption sheen_texopt;
-        public TextureOption emissive_texopt;
-        public TextureOption normal_texopt;
+        public OBJTextureOption roughness_texopt;
+        public OBJTextureOption metallic_texopt;
+        public OBJTextureOption sheen_texopt;
+        public OBJTextureOption emissive_texopt;
+        public OBJTextureOption normal_texopt;
 
         public int pad2;
 

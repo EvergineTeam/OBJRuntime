@@ -6,7 +6,7 @@ namespace OBJRuntime.DataTypes
     /// Index struct to support different indices for vtx/normal/texcoord.
     /// -1 means "not used".
     /// </summary>
-    public struct Index
+    public struct OBJIndex
     {
         public int VertexIndex;
         public int NormalIndex;

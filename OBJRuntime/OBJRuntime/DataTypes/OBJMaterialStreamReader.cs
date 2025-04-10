@@ -9,18 +9,18 @@ namespace OBJRuntime.DataTypes
     /// <summary>
     /// Reads MTL data from a Stream (like a MemoryStream).
     /// </summary>
-    public class MaterialStreamReader
+    public class OBJMaterialStreamReader
     {
         private readonly Stream _inStream;
 
-        public MaterialStreamReader(Stream inStream)
+        public OBJMaterialStreamReader(Stream inStream)
         {
             _inStream = inStream;
         }
 
         public bool Read(
             string matId,
-            List<Material> materials,
+            List<OBJMaterial> materials,
             Dictionary<string, int> matMap,
             out string warning,
             out string error)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
 {
-    public class Tag
+    public class OBJTag
     {
         public string Name;
         public List<int> IntValues = new List<int>();

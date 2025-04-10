@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using OBJRuntime.DataTypes;
+using Evergine.Mathematics;
 
 namespace OBJRuntime.Readers
 {
@@ -27,13 +28,13 @@ namespace OBJRuntime.Readers
         // The main function to load .mtl data:
         public static void Load(
             StreamReader sr,
-            List<Material> materials,
+            List<OBJMaterial> materials,
             Dictionary<string, int> materialMap,
             ref string warning,
             ref string error)
         {
             // If there's no "newmtl" at all, we still push a default material at the end.
-            Material material = new Material();
+            OBJMaterial material = new OBJMaterial();
             bool firstMaterial = true;
 
             bool hasD = false;
@@ -72,7 +73,7 @@ namespace OBJRuntime.Readers
                         materials.Add(material);
                     }
                     // reset
-                    material = new Material();
+                    material = new OBJMaterial();
                     hasD = false;
                     hasTr = false;
                     hasKd = false;
@@ -413,7 +414,7 @@ namespace OBJRuntime.Readers
             }
         }
 
-        private static void ParseReal3(List<string> tokens, int startIndex, float[] arr)
+        private static void ParseReal3(List<string> tokens, int startIndex, Vector3 arr)
         {
             // tokens: e.g. ["Kd", "0.1", "0.2", "0.3"]
             // parse from tokens[startIndex] up to 3.
