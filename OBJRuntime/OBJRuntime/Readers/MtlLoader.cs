@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using OBJRuntime.DataTypes;
+using Evergine.Mathematics;
 
 namespace OBJRuntime.Readers
 {
@@ -421,7 +422,7 @@ namespace OBJRuntime.Readers
             }
         }
 
-        private static void ParseReal3(List<string> tokens, int startIndex, float[] arr)
+        private static void ParseReal3(List<string> tokens, int startIndex, Vector3 arr)
         {
             // tokens: e.g. ["Kd", "0.1", "0.2", "0.3"]
             // parse from tokens[startIndex] up to 3.

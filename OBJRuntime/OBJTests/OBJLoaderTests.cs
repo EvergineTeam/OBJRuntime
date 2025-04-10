@@ -1,14 +1,12 @@
 // Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
 using Evergine.Common.IO;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
-using System.IO;
-using OBJRuntime.DataTypes;
-using System.Collections.Generic;
-using OBJRuntime.Readers;
-using System.Linq;
 using Evergine.Mathematics;
+using OBJRuntime.DataTypes;
+using OBJRuntime.Readers;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace OBJTests
 {
@@ -40,8 +38,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
@@ -68,8 +66,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
@@ -100,8 +98,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
@@ -127,17 +125,17 @@ namespace OBJTests
         public void CheckDiffuseMaterials()
         {
             // Arrange
-            var expectedColor1 = new float[] { 1, 1, 1 };
-            var expectedColor2 = new float[] { 1, 0, 0 };
-            var expectedColor3 = new float[] { 0, 1, 0 };
-            var expectedColor4 = new float[] { 0, 0, 1 };
-            var expectedColor5 = new float[] { 1, 1, 1 };
+            var expectedColor1 = new Vector3(1, 1, 1);
+            var expectedColor2 = new Vector3(1, 0, 0);
+            var expectedColor3 = new Vector3(0, 1, 0);
+            var expectedColor4 = new Vector3(0, 0, 1);
+            var expectedColor5 = new Vector3(1, 1, 1);
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
@@ -150,12 +148,12 @@ namespace OBJTests
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(5, materials.Count);
-                    Assert.True(expectedColor1.SequenceEqual(materials[0].Diffuse));
-                    Assert.True(expectedColor2.SequenceEqual(materials[1].Diffuse));
-                    Assert.True(expectedColor3.SequenceEqual(materials[2].Diffuse));
-                    Assert.True(expectedColor4.SequenceEqual(materials[3].Diffuse));
-                    Assert.True(expectedColor5.SequenceEqual(materials[4].Diffuse));
+                    Assert.Equal(5, materials.Count);                    
+                    Assert.True(expectedColor1.Equals(materials[0].Diffuse));
+                    Assert.True(expectedColor2.Equals(materials[1].Diffuse));
+                    Assert.True(expectedColor3.Equals(materials[2].Diffuse));
+                    Assert.True(expectedColor4.Equals(materials[3].Diffuse));
+                    Assert.True(expectedColor5.Equals(materials[4].Diffuse));
                 }
             }
         }
@@ -169,8 +167,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("cube-vertex-w-component.obj"))
@@ -195,13 +193,17 @@ namespace OBJTests
                 new Vector3(-0.207717f, -0.953997f, 2.554110f),
                 new Vector3(-0.275607f, -0.965401f, 2.541530f),
                 new Vector3(-0.270155f, -0.963170f, 2.548000f) };
-            var expectedNormals = new float[] { -0.281034f, -0.057252f, 0.957989f, -0.139126f, -0.135672f, 0.980937f, -0.163133f, -0.131576f, 0.977791f };
+            var expectedNormals = new Vector3[] 
+            { 
+                new Vector3(-0.281034f, -0.057252f, 0.957989f), 
+                new Vector3(-0.139126f, -0.135672f, 0.980937f), 
+                new Vector3(-0.163133f, -0.131576f, 0.977791f)};
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("point-cloud.obj"))
@@ -227,8 +229,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("testpoints.obj"))
@@ -254,8 +256,8 @@ namespace OBJTests
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("testlines.obj"))
@@ -278,16 +280,19 @@ namespace OBJTests
         public void CheckTexcoords()
         {
             // Arrange
-            var expectedTexcoords = new float[] { 1.0f, 2.0f, 3.0f,
-                                                 2.0f, 3.0f, 1.0f,
-                                                 3.0f, 1.0f, 2.0f,
-                                                 1.0f, 2.0f, 3.0f};
+            var expectedTexcoords = new Vector3[]
+                                        {
+                                            new Vector3(1.0f, 2.0f, 3.0f),
+                                            new Vector3(2.0f, 3.0f, 1.0f),
+                                            new Vector3(3.0f, 1.0f, 2.0f),
+                                            new Vector3(1.0f, 2.0f, 3.0f)
+                                        };
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("multiple-spaces.obj"))
@@ -300,7 +305,7 @@ namespace OBJTests
                     Assert.True(ok);
                     Assert.Equal(12, attrib.Vertices.Count);
                     Assert.Equal(8, attrib.Texcoords.Count);
-                    Assert.True(attrib.Texcoords.SequenceEqual(expectedTexcoords));
+                    Assert.True(attrib.Vertices.SequenceEqual(expectedTexcoords));
                     Assert.Single(shapes);
                 }
             }
@@ -310,18 +315,18 @@ namespace OBJTests
         public void CheckNormals()
         {
             // Arrange
-            var expectedNormals = new float[] {  0.0f,  0.0f,  1.0f,
-                                                   0.0f,  0.0f, -1.0f,
-                                                   0.0f,  1.0f,  0.0f,
-                                                   0.0f, -1.0f,  0.0f,
-                                                   1.0f,  0.0f,  0.0f,
-                                                  -1.0f,  0.0f,  0.0f};
+            var expectedNormals = new Vector3[] { new Vector3( 0.0f,  0.0f,  1.0f),
+                                                  new Vector3( 0.0f,  0.0f, -1.0f),
+                                                  new Vector3( 0.0f,  1.0f,  0.0f),
+                                                  new Vector3( 0.0f, -1.0f,  0.0f),
+                                                  new Vector3( 1.0f,  0.0f,  0.0f),
+                                                  new Vector3(-1.0f,  0.0f,  0.0f)};
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
-            var warning = "";
-            var error = "";
+            var warning = string.Empty;
+            var error = string.Empty;
 
             // Act
             using (var streamObj = assetsDirectory.Open("cube-normals.obj"))

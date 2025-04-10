@@ -1,5 +1,6 @@
 ﻿// Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
+using Evergine.Mathematics;
 using System.Collections.Generic;
 
 namespace OBJRuntime.DataTypes
@@ -11,11 +12,11 @@ namespace OBJRuntime.DataTypes
     {
         public string Name = "";
 
-        public float[] Ambient = new float[3] { 0, 0, 0 };
-        public float[] Diffuse = new float[3] { 0, 0, 0 };
-        public float[] Specular = new float[3] { 0, 0, 0 };
-        public float[] Transmittance = new float[3] { 0, 0, 0 };
-        public float[] Emission = new float[3] { 0, 0, 0 };
+        public Vector3 Ambient = Vector3.Zero;
+        public Vector3 Diffuse = Vector3.One;
+        public Vector3 Specular = Vector3.Zero;
+        public Vector3 Transmittance = Vector3.Zero;
+        public Vector3 Emission = Vector3.Zero;
         public float Shininess = 1.0f;
         public float Ior = 1.0f;        // Index of refraction
         public float Dissolve = 1.0f;   // 1=opaque; 0=fully transparent
