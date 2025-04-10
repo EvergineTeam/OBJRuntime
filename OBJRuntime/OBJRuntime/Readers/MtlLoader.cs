@@ -72,24 +72,24 @@ namespace OBJRuntime.Readers
                 }
                 else if ((key == "Ka" || key == "ka") && tokens.Count >= 4)
                 {
-                    ParseVector3(tokens, 1, ref material.Ambient);
+                    Helpers.ParseVector3(tokens, 1, ref material.Ambient);
                 }
                 else if ((key == "Kd" || key == "kd") && tokens.Count >= 4)
                 {
-                    ParseVector3(tokens, 1, ref material.Diffuse);
+                    Helpers.ParseVector3(tokens, 1, ref material.Diffuse);
                     hasKd = true;
                 }
                 else if ((key == "Ks" || key == "ks") && tokens.Count >= 4)
                 {
-                    ParseVector3(tokens, 1, ref material.Specular);
+                    Helpers.ParseVector3(tokens, 1, ref material.Specular);
                 }
                 else if (key == "Ke" && tokens.Count >= 4)
                 {
-                    ParseVector3(tokens, 1, ref material.Emission);
+                    Helpers.ParseVector3(tokens, 1, ref material.Emission);
                 }
                 else if ((key == "Tf" || key == "Kt") && tokens.Count >= 4)
                 {
-                    ParseVector3(tokens, 1, ref material.Transmittance);
+                    Helpers.ParseVector3(tokens, 1, ref material.Transmittance);
                 }
                 else if (key == "Ns" && tokens.Count >= 2)
                 {
@@ -403,22 +403,6 @@ namespace OBJRuntime.Readers
             if (foundTexName && !string.IsNullOrEmpty(foundName))
             {
                 texName = foundName;
-            }
-        }
-
-        private static void ParseVector3(List<string> tokens, int startIndex, ref Vector3 arr)
-        {
-            // tokens: e.g. ["Kd", "0.1", "0.2", "0.3"]
-            // parse from tokens[startIndex] up to 3.
-            for (int i = 0; i < 3; i++)
-            {
-                if (startIndex + i < tokens.Count)
-                {
-                    if (Helpers.TryParseFloat(tokens[startIndex + i], out float val))
-                    {
-                        arr[i] = val;
-                    }
-                }
             }
         }
     }

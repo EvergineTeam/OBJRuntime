@@ -11,11 +11,11 @@ namespace OBJRuntime.DataTypes
     /// </summary>
     public class OBJMaterialStreamReader
     {
-        private readonly Stream _inStream;
+        private readonly Stream inStream;
 
         public OBJMaterialStreamReader(Stream inStream)
         {
-            _inStream = inStream;
+            this.inStream = inStream;
         }
 
         public bool Read(
@@ -28,13 +28,13 @@ namespace OBJRuntime.DataTypes
             warning = "";
             error = "";
 
-            if (_inStream == null)
+            if (inStream == null)
             {
                 warning += "Material stream in error state.\n";
                 return false;
             }
 
-            using (var sr = new StreamReader(_inStream, leaveOpen: true))
+            using (var sr = new StreamReader(inStream, leaveOpen: true))
             {
                 MtlLoader.Load(sr, materials, matMap, ref warning, ref error);
             }
