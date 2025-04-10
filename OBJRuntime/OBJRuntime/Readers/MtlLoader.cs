@@ -25,14 +25,6 @@ namespace OBJRuntime.Readers
                 out result);
         }
 
-        // Similar to std::getline but in C#. We can just read line by line.
-        // Already have StreamReader.ReadLine() so it's simpler.
-        // (We just keep a naming consistency.)
-        public static string SafeGetLine(StreamReader sr)
-        {
-            return sr.ReadLine();
-        }
-
         // The main function to load .mtl data:
         public static void Load(
             StreamReader sr,
@@ -54,7 +46,7 @@ namespace OBJRuntime.Readers
             while (!sr.EndOfStream)
             {
                 lineNo++;
-                string line = SafeGetLine(sr);
+                string line = sr.ReadLine();
                 if (line == null)
                     break;
 
@@ -154,11 +146,11 @@ namespace OBJRuntime.Readers
                 }
                 else if (key == "map_Ka")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.AmbientTexname, material.AmbientTexopt, "Ka");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.AmbientTexname, material.AmbientTexopt, "Ka");
                 }
                 else if (key == "map_Kd")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.DiffuseTexname, material.DiffuseTexopt, "Kd");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.DiffuseTexname, material.DiffuseTexopt, "Kd");
                     if (!hasKd)
                     {
                         // set a default
@@ -169,52 +161,52 @@ namespace OBJRuntime.Readers
                 }
                 else if (key == "map_Ks")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.SpecularTexname, material.SpecularTexopt, "Ks");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularTexname, material.SpecularTexopt, "Ks");
                 }
                 else if (key == "map_Ns")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.SpecularHighlightTexname, material.SpecularHighlightTexopt, "Ns");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularHighlightTexname, material.SpecularHighlightTexopt, "Ns");
                 }
                 else if (key == "map_d")
                 {
-                    ParseTextureAndOption(line.Substring(5).Trim(), material.AlphaTexname, material.AlphaTexopt, "d");
+                    ParseTextureAndOption(line.Substring(5).Trim(), ref material.AlphaTexname, material.AlphaTexopt, "d");
                 }
                 else if (key == "map_bump" || key == "map_Bump")
                 {
-                    ParseTextureAndOption(line.Substring(key.Length).Trim(), material.BumpTexname, material.BumpTexopt, "bump");
+                    ParseTextureAndOption(line.Substring(key.Length).Trim(), ref material.BumpTexname, material.BumpTexopt, "bump");
                 }
                 else if (key == "bump")
                 {
-                    ParseTextureAndOption(line.Substring(4).Trim(), material.BumpTexname, material.BumpTexopt, "bump");
+                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.BumpTexname, material.BumpTexopt, "bump");
                 }
                 else if (key == "map_disp" || key == "map_Disp" || key == "disp")
                 {
                     int skipLen = key == "disp" ? 4 : 8;
-                    ParseTextureAndOption(line.Substring(skipLen).Trim(), material.DisplacementTexname, material.DisplacementTexopt, "disp");
+                    ParseTextureAndOption(line.Substring(skipLen).Trim(), ref material.DisplacementTexname, material.DisplacementTexopt, "disp");
                 }
                 else if (key == "refl")
                 {
-                    ParseTextureAndOption(line.Substring(4).Trim(), material.ReflectionTexname, material.ReflectionTexopt, "refl");
+                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.ReflectionTexname, material.ReflectionTexopt, "refl");
                 }
                 else if (key == "map_Pr")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.RoughnessTexname, material.roughness_texopt, "Pr");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.RoughnessTexname, material.roughness_texopt, "Pr");
                 }
                 else if (key == "map_Pm")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.MetallicTexname, material.metallic_texopt, "Pm");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.MetallicTexname, material.metallic_texopt, "Pm");
                 }
                 else if (key == "map_Ps")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.SheenTexname, material.sheen_texopt, "Ps");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SheenTexname, material.sheen_texopt, "Ps");
                 }
                 else if (key == "map_Ke")
                 {
-                    ParseTextureAndOption(line.Substring(6).Trim(), material.EmissiveTexname, material.emissive_texopt, "Ke");
+                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.EmissiveTexname, material.emissive_texopt, "Ke");
                 }
                 else if (key == "norm")
                 {
-                    ParseTextureAndOption(line.Substring(4).Trim(), material.NormalTexname, material.normal_texopt, "norm");
+                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.NormalTexname, material.normal_texopt, "norm");
                 }
                 else if (key == "Pr")
                 {
@@ -268,7 +260,7 @@ namespace OBJRuntime.Readers
             materials.Add(material);
         }
 
-        private static void ParseTextureAndOption(string line, string texName, OBJTextureOption texOpt, string prefix)
+        private static void ParseTextureAndOption(string line, ref string texName, TextureOption texOpt, string prefix)
         {
             // We parse the line for texture name and possible sub‐options like -o, -s, etc.
             // This can be somewhat simplified, but let's keep a structure close to the original.

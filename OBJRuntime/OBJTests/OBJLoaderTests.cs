@@ -344,5 +344,46 @@ namespace OBJTests
                 }
             }
         }
+
+        [Fact]
+        public void CheckDiffuseTextures()
+        {
+            // Arrange
+            var expectedTextures = new[]
+            {
+                "texture_front.jpg",
+                "texture_back.jpg",
+                "texture_left.jpg",
+                "texture_right.jpg",
+                "texture_top.jpg",
+                "texture_bottom.jpg"
+            };
+
+            var attrib = new Attrib();
+            var shapes = new List<Shape>();
+            var materials = new List<Material>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("texturedCube.obj"))
+            using (var streamMtl = assetsDirectory.Open("texturedCube.mtl"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    var mtlReader = new MaterialStreamReader(streamMtl);
+                    bool ok = ObjLoader.LoadObj(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.Equal(6, materials.Count);
+
+                    for (int i = 0; i < materials.Count; i++)
+                    {
+                        Assert.Equal(expectedTextures[i], materials[i].DiffuseTexname);
+                    }
+                }
+            }
+        }
     }
 }

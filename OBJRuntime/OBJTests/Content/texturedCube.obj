@@ -1,0 +1,49 @@
+mtllib cube.mtl
+
+# Vertices
+v -1 -1  1
+v  1 -1  1
+v  1  1  1
+v -1  1  1
+v -1 -1 -1
+v  1 -1 -1
+v  1  1 -1
+v -1  1 -1
+
+# Texture coordinates
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+
+# Normals (optional for shading)
+vn 0 0 1
+vn 0 0 -1
+vn -1 0 0
+vn 1 0 0
+vn 0 1 0
+vn 0 -1 0
+
+# Front face
+usemtl front
+f 1/1/1 2/2/1 3/3/1 4/4/1
+
+# Back face
+usemtl back
+f 6/1/2 5/2/2 8/3/2 7/4/2
+
+# Left face
+usemtl left
+f 5/1/3 1/2/3 4/3/3 8/4/3
+
+# Right face
+usemtl right
+f 2/1/4 6/2/4 7/3/4 3/4/4
+
+# Top face
+usemtl top
+f 4/1/5 3/2/5 7/3/5 8/4/5
+
+# Bottom face
+usemtl bottom
+f 5/1/6 6/2/6 2/3/6 1/4/6

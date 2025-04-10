@@ -1,0 +1,17 @@
+newmtl front
+map_Kd texture_front.jpg
+
+newmtl back
+map_Kd texture_back.jpg
+
+newmtl left
+map_Kd texture_left.jpg
+
+newmtl right
+map_Kd texture_right.jpg
+
+newmtl top
+map_Kd texture_top.jpg
+
+newmtl bottom
+map_Kd texture_bottom.jpg
