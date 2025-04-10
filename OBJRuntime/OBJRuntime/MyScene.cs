@@ -27,14 +27,15 @@ namespace Evergine.Runtimes.OBJ
 
         protected override async void CreateScene()
         {
-            /*var model = await OBJRuntime.Instance.Read("Models/Cube.obj");
+            var model = await OBJRuntime.Instance.Read("Models/cube.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/bunny.obj");
             
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);
-            this.Managers.EntityManager.Add(entity);*/
+            this.Managers.EntityManager.Add(entity);
 
             //Test
-            var attrib = new OBJAttrib();
+            /*var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
             var warning = "";
@@ -60,7 +61,7 @@ namespace Evergine.Runtimes.OBJ
 
                     Debug.WriteLine($"Shapes count   = {shapes.Count}");                                                           
                 }
-            }                        
+            } */                       
         }
     }
 }

@@ -9,6 +9,7 @@ using Evergine.Framework.Graphics.Effects;
 using Evergine.Framework.Graphics.Materials;
 using Evergine.Framework.Runtimes;
 using Evergine.Framework.Services;
+using Evergine.Framework.Threading;
 using Evergine.Mathematics;
 using OBJRuntime.DataTypes;
 using OBJRuntime.Readers;
@@ -146,7 +147,7 @@ namespace Evergine.Runtimes.OBJ
             {
                 material = await materialAssigner(data);
             }
-            
+
             this.assetsService.RegisterInstance<Material>(material);
             var materialCollection = new List<(string, Guid)>()
             {
@@ -169,29 +170,61 @@ namespace Evergine.Runtimes.OBJ
 
         private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes)
         {
+            List<Mesh> meshes = null;
+
+
             List<VertexBuffer> vertexBuffersList = new List<VertexBuffer>();
 
             // Positions
             if (attrib.Vertices.Count > 0)
             {
                 var positions = attrib.Vertices.ToArray();
-                var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<Vector3>() * positions.Length),
-                                             BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
-                                             ResourceUsage.Default);
-                Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(positions, ref pBufferDescription);
-                VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPosition.VertexFormat);
 
-                vertexBuffersList.Add(vertexBuffer);
+                await EvergineForegroundTask.Run(() =>
+                {
+                    var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<Vector3>() * positions.Length),
+                                                 BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
+                                                 ResourceUsage.Default);
+                    Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(positions, ref pBufferDescription);
+                    VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPosition.VertexFormat);
+
+                    vertexBuffersList.Add(vertexBuffer);
+                });
             }
 
             VertexBuffer[] meshVertexBuffers = vertexBuffersList.ToArray();
 
-            List<Mesh> meshes = new List<Mesh>(shapes.Count);
+            meshes = new List<Mesh>(shapes.Count);
             List<ushort> indices = new List<ushort>();
             for (int s = 0; s < shapes.Count; s++)
             {
-                var shape = shapes[s];                               
+                var shape = shapes[s];
+                var meshIndices = shape.Mesh.Indices;
+                for (int i = 0; i < meshIndices.Count; i++)
+                {
+                    indices.Add((ushort)meshIndices[i].VertexIndex);
+                }
             }
+
+            IndexBuffer indexBuffer = null;
+
+            await EvergineForegroundTask.Run(() =>
+            {
+                var indicesArray = indices.ToArray();
+                var ibufferDescription = new BufferDescription(
+                                                           sizeof(ushort) * (uint)indicesArray.Length,
+                                                           BufferFlags.IndexBuffer,
+                                                           ResourceUsage.Default);
+                var iBuffer = this.graphicsContext.Factory.CreateBuffer(indicesArray, ref ibufferDescription);
+                indexBuffer = new IndexBuffer(iBuffer);
+            });
+
+            var Mesh = new Mesh(meshVertexBuffers, indexBuffer, PrimitiveTopology.TriangleList)
+            {
+                BoundingBox = null,
+            };
+
+            meshes.Add(Mesh);
 
             return meshes;
         }
