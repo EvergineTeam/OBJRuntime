@@ -59,9 +59,17 @@ namespace Evergine.Runtimes.OBJ
         }
 
         /// <inheritdoc/>
-        public override Task<(Texture Texture, SamplerState Sampler)> GetBaseColorTextureAndSampler()
+        public override async Task<(Texture Texture, SamplerState Sampler)> GetBaseColorTextureAndSampler()
         {
-            return Task.FromResult<(Texture, SamplerState)>(default);
+            Texture diffuseTexture = null;
+            SamplerState diffuseSampler = null;
+            if (this.OBJMaterial != null && !string.IsNullOrEmpty(this.OBJMaterial.DiffuseTexname))
+            {
+                diffuseTexture = await this.OBJ.ReadTexture(this.OBJMaterial.DiffuseTexname);
+                diffuseSampler = this.OBJ.LinearWrapSampler;
+            }
+
+            return (diffuseTexture, diffuseSampler);
         }
 
         /// <inheritdoc/>

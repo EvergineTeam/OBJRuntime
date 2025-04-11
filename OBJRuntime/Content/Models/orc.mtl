@@ -1,4 +1,5 @@
 newmtl defaultMat
 Ka 0 0 0
-Kd 1 0 0
+Kd 1 1 1
 Ks 0 0 0
+map_Kd orc_diffuse.png

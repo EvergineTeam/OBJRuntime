@@ -14,11 +14,11 @@ using Evergine.Mathematics;
 using OBJRuntime;
 using OBJRuntime.DataTypes;
 using OBJRuntime.Readers;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Buffer = Evergine.Common.Graphics.Buffer;
@@ -35,6 +35,8 @@ namespace Evergine.Runtimes.OBJ
         private GraphicsContext graphicsContext;
         private AssetsService assetsService;
         private AssetsDirectory assetsDirectory;
+
+        public SamplerState LinearWrapSampler = null;
 
         private Dictionary<int, (string name, Material material)> materials = new Dictionary<int, (string, Material)>();
         private Func<MaterialData, Task<Material>> materialAssigner = null;
@@ -106,18 +108,14 @@ namespace Evergine.Runtimes.OBJ
 
             this.materialAssigner = materialAssigner;
 
-            if (this.graphicsContext == null || this.assetsService == null)
-            {
-                this.graphicsContext = Application.Current.Container.Resolve<GraphicsContext>();
-                this.assetsService = Application.Current.Container.Resolve<AssetsService>();
-            }
+            this.LoadStaticResources();
 
             // Read OBJ data
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
             var warning = string.Empty;
-            var error = string.Empty;            
+            var error = string.Empty;
             using (var srObj = new StreamReader(stream))
             {
                 bool success = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, this.assetsDirectory, this.WorkingDirectory, true, true);
@@ -175,6 +173,17 @@ namespace Evergine.Runtimes.OBJ
             return model;
         }
 
+        private void LoadStaticResources()
+        {
+            if (this.graphicsContext == null)
+            {
+                this.graphicsContext = Application.Current.Container.Resolve<GraphicsContext>();
+                this.assetsService = Application.Current.Container.Resolve<AssetsService>();
+
+                this.LinearWrapSampler = this.assetsService?.Load<SamplerState>(DefaultResourcesIDs.LinearWrapSamplerID);
+            }
+        }
+
         private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes, List<OBJMaterial> materials)
         {
             List<Mesh> meshes = new List<Mesh>(shapes.Count);
@@ -196,9 +205,14 @@ namespace Evergine.Runtimes.OBJ
                         int normalId = meshIndices[i].NormalIndex;
                         int texcoordId = meshIndices[i].TexcoordIndex;
 
-                        vertices[i] = new VertexPositionNormalTexture(positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero,
-                                                                      normalId != -1 ? attrib.Vertices[normalId] : Vector3.Zero,
-                                                                      texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero);
+                        var vertex = new VertexPositionNormalTexture();
+
+                        vertex.Position = positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero;
+                        vertex.Normal = normalId != -1 ? attrib.Vertices[normalId] : Vector3.Zero;
+                        vertex.TexCoord = texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero;
+                        vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
+
+                        vertices[i] = vertex;
 
                         Vector3.Max(ref vertices[i].Position, ref max, out max);
                         Vector3.Min(ref vertices[i].Position, ref min, out min);
@@ -281,6 +295,8 @@ namespace Evergine.Runtimes.OBJ
 
         private async Task<Material> CreateEvergineMaterial(MaterialData data)
         {
+            var baseColor = await data.GetBaseColorTextureAndSampler();
+
             var effect = this.assetsService.Load<Effect>(DefaultResourcesIDs.StandardEffectID);
             var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.CullFront);
             StandardMaterial material = new StandardMaterial(effect)
@@ -288,11 +304,55 @@ namespace Evergine.Runtimes.OBJ
                 LightingEnabled = data.HasVertexNormal,
                 IBLEnabled = data.HasVertexNormal,
                 BaseColor = data.BaseColor,
+                BaseColorTexture = baseColor.Texture,
+                BaseColorSampler = baseColor.Sampler,
                 Alpha = data.AlphaCutoff,
                 LayerDescription = layer,
             };
 
             return material.Material;
+        }
+
+        public async Task<Texture> ReadTexture(string diffuseTexname)
+        {
+            Texture result = null;
+
+            var textureFilePath = Path.Combine(this.WorkingDirectory, diffuseTexname);
+            if (this.assetsDirectory.Exists(textureFilePath))
+            {
+                using (var fileStream = this.assetsDirectory.Open(textureFilePath))
+                {
+                    var codec = SKCodec.Create(fileStream);
+                    var bitmap = new SKBitmap(codec.Info);
+                    var imageInfo = new SKImageInfo(codec.Info.Width, codec.Info.Height, SKColorType.Rgba8888, SKAlphaType.Premul);
+                    var decodeResult = codec.GetPixels(imageInfo, bitmap.GetPixels());
+                    await EvergineForegroundTask.Run(() =>
+                    {
+                        TextureDescription desc = new TextureDescription()
+                        {
+                            Type = TextureType.Texture2D,
+                            Width = (uint)bitmap.Width,
+                            Height = (uint)bitmap.Height,
+                            Depth = 1,
+                            ArraySize = 1,
+                            Faces = 1,
+                            Usage = ResourceUsage.Default,
+                            CpuAccess = ResourceCpuAccess.None,
+                            Flags = TextureFlags.ShaderResource,
+                            Format = PixelFormat.R8G8B8A8_UNorm,
+                            MipLevels = 1,
+                            SampleCount = TextureSampleCount.None,
+                        };
+                        result = this.graphicsContext.Factory.CreateTexture(ref desc);
+
+                        this.graphicsContext.UpdateTextureData(result, bitmap.GetPixels(), (uint)bitmap.ByteCount, 0);
+                    });
+
+                    // Read
+                    fileStream.Flush();
+                }
+            }
+            return result;
         }
     }
 }
