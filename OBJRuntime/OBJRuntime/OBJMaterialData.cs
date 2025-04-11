@@ -33,7 +33,7 @@ namespace Evergine.Runtimes.OBJ
         public override bool HasVertexColor => false;
 
         /// <inheritdoc/>
-        public override bool HasVertexNormal => false;
+        public override bool HasVertexNormal => true;
 
         /// <inheritdoc/>
         public override bool HasVertexTexcoord => false;

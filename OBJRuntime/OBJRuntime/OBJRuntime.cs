@@ -184,9 +184,9 @@ namespace Evergine.Runtimes.OBJ
                     var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
                     var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
+                    // Create Vertex array
                     for (int i = 0; i < meshIndices.Count; i++)
                     {
-                        // Vertex A
                         int positionId = meshIndices[i].VertexIndex;
                         int normalId = meshIndices[i].NormalIndex;
                         int texcoordId = meshIndices[i].TexcoordIndex;
@@ -199,15 +199,43 @@ namespace Evergine.Runtimes.OBJ
                         Vector3.Min(ref vertices[i].Position, ref min, out min);
                     }
 
+                    // Compute normals
+                    if (attrib.Normals.Count == 0)
+                    {
+                        for (int i = 0; i < meshIndices.Count; i += 3)
+                        {
+                            Vector3 pos0 = vertices[i].Position;
+                            Vector3 pos1 = vertices[i + 1].Position;
+                            Vector3 pos2 = vertices[i + 2].Position;
+
+                            Vector3 edge1 = pos1 - pos0;
+                            Vector3 edge2 = pos2 - pos0;
+
+                            Vector3 faceNormal = Vector3.Cross(edge1, edge2);
+                            faceNormal = Vector3.Normalize(faceNormal);
+
+                            vertices[i].Normal = faceNormal;
+                            vertices[i + 1].Normal = faceNormal;
+                            vertices[i + 2].Normal = faceNormal;
+                        }
+                    }
+
+                    // Create vertex buffer
                     var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
                                                  BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
                                                  ResourceUsage.Default);
                     Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(vertices, ref pBufferDescription);
                     VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPositionNormalTexture.VertexFormat);
 
+                    // Get Material
+                    int materialIndex = 0;
+                    //var ids = shape.Mesh.MaterialIds;
+
+                    // Create Mesh
                     var Mesh = new Mesh([vertexBuffer], PrimitiveTopology.TriangleList, vertices.Length / 3, 0)
                     {
                         BoundingBox = new BoundingBox(min, max),
+                        MaterialIndex = materialIndex,
                     };
 
                     meshes.Add(Mesh);
