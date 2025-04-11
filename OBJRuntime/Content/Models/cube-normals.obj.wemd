@@ -1,0 +1,28 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: f69a2efe-92db-4835-9981-8907124c76ea
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 849635fa-6c11-4720-a0c2-eeb11addf2d2
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: abab0e4e-3092-4269-a1bd-8b0656ff4549
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: cubeMat
+        Item2: 3ce8b548-cf83-4d55-b591-5d6e5fdc024c
+    Nodes:
+      - RootNode
+      - cube-normals_root
+      - cube-normals_root.cube
+SwapWindingOrder: false

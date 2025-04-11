@@ -11,11 +11,13 @@ using Evergine.Framework.Runtimes;
 using Evergine.Framework.Services;
 using Evergine.Framework.Threading;
 using Evergine.Mathematics;
+using OBJRuntime;
 using OBJRuntime.DataTypes;
 using OBJRuntime.Readers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Buffer = Evergine.Common.Graphics.Buffer;
@@ -170,61 +172,47 @@ namespace Evergine.Runtimes.OBJ
 
         private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes)
         {
-            List<Mesh> meshes = null;
-
-
-            List<VertexBuffer> vertexBuffersList = new List<VertexBuffer>();
-
-            // Positions
-            if (attrib.Vertices.Count > 0)
-            {
-                var positions = attrib.Vertices.ToArray();
-
-                await EvergineForegroundTask.Run(() =>
-                {
-                    var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<Vector3>() * positions.Length),
-                                                 BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
-                                                 ResourceUsage.Default);
-                    Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(positions, ref pBufferDescription);
-                    VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPosition.VertexFormat);
-
-                    vertexBuffersList.Add(vertexBuffer);
-                });
-            }
-
-            VertexBuffer[] meshVertexBuffers = vertexBuffersList.ToArray();
-
-            meshes = new List<Mesh>(shapes.Count);
-            List<ushort> indices = new List<ushort>();
-            for (int s = 0; s < shapes.Count; s++)
-            {
-                var shape = shapes[s];
-                var meshIndices = shape.Mesh.Indices;
-                for (int i = 0; i < meshIndices.Count; i++)
-                {
-                    indices.Add((ushort)meshIndices[i].VertexIndex);
-                }
-            }
-
-            IndexBuffer indexBuffer = null;
+            List<Mesh> meshes = new List<Mesh>(shapes.Count);
 
             await EvergineForegroundTask.Run(() =>
             {
-                var indicesArray = indices.ToArray();
-                var ibufferDescription = new BufferDescription(
-                                                           sizeof(ushort) * (uint)indicesArray.Length,
-                                                           BufferFlags.IndexBuffer,
-                                                           ResourceUsage.Default);
-                var iBuffer = this.graphicsContext.Factory.CreateBuffer(indicesArray, ref ibufferDescription);
-                indexBuffer = new IndexBuffer(iBuffer);
+                for (int s = 0; s < shapes.Count; s++)
+                {
+                    var shape = shapes[s];
+                    var meshIndices = shape.Mesh.Indices;
+                    VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[meshIndices.Count];
+                    var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+                    var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+                    for (int i = 0; i < meshIndices.Count; i++)
+                    {
+                        // Vertex A
+                        int positionId = meshIndices[i].VertexIndex;
+                        int normalId = meshIndices[i].NormalIndex;
+                        int texcoordId = meshIndices[i].TexcoordIndex;
+
+                        vertices[i] = new VertexPositionNormalTexture(positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero,
+                                                                      normalId != -1 ? attrib.Vertices[normalId] : Vector3.Zero,
+                                                                      texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero);
+
+                        Vector3.Max(ref vertices[i].Position, ref max, out max);
+                        Vector3.Min(ref vertices[i].Position, ref min, out min);
+                    }
+
+                    var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
+                                                 BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
+                                                 ResourceUsage.Default);
+                    Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(vertices, ref pBufferDescription);
+                    VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPositionNormalTexture.VertexFormat);
+
+                    var Mesh = new Mesh([vertexBuffer], PrimitiveTopology.TriangleList, vertices.Length / 3, 0)
+                    {
+                        BoundingBox = new BoundingBox(min, max),
+                    };
+
+                    meshes.Add(Mesh);
+                }
             });
-
-            var Mesh = new Mesh(meshVertexBuffers, indexBuffer, PrimitiveTopology.TriangleList)
-            {
-                BoundingBox = null,
-            };
-
-            meshes.Add(Mesh);
 
             return meshes;
         }
@@ -232,7 +220,7 @@ namespace Evergine.Runtimes.OBJ
         private Material CreateEvergineMaterial(MaterialData data)
         {
             var effect = this.assetsService.Load<Effect>(DefaultResourcesIDs.StandardEffectID);
-            var layer = this.assetsService.Load<RenderLayerDescription>(DefaultResourcesIDs.OpaqueRenderLayerID);
+            var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.CullFront);
             StandardMaterial material = new StandardMaterial(effect)
             {
                 LightingEnabled = data.HasVertexNormal,

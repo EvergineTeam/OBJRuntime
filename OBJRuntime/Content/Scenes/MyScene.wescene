@@ -117,10 +117,10 @@ Items:
         ShadowDistance: 80.0
         ShadowOpacity: 1.0
         SplitDistance:
-          - 0.0
-          - 0.0
-          - 0.0
-          - 0.0
+          - 7.25
+          - 14.625
+          - 34.125
+          - 118.0
         Temperature: 6500.0
       - !Evergine.Framework.Graphics.SunComponent,Evergine.Framework
         Id: 6f2b70f3-a505-49a6-9454-130b04d48cd3
@@ -153,7 +153,7 @@ Items:
         Id: bb44cd62-4d92-418a-8a42-bbc2ed2b6f07
         AsignedTo: Default
         IsEnabled: true
-        Material: e98a34e7-4a77-48f6-be9c-3e4e3ac253a5
+        Material: 19fd02cf-943a-4694-a5ff-d67749edb1d4
         UseCopy: false
       - !Evergine.Components.Graphics3D.SphereMesh,Evergine.Components
         Id: 3ef37285-f016-4173-bbf0-278ec1624224
@@ -195,7 +195,7 @@ Managers:
     IsEnabled: true
   - !Evergine.Framework.Managers.EntityManager,Evergine.Framework
     Id: 54e6745a-92b2-4006-a947-cb3ea9b4e10f
-    IsEnabled: true    
+    IsEnabled: true
   - !Evergine.Framework.Managers.BehaviorManager,Evergine.Framework
     Id: 5ae9e102-b637-4820-8f10-68680d16ffaf
     IsEnabled: true
@@ -204,7 +204,7 @@ Managers:
     IBLReflectionProbe: 6f51bee0-e1b6-412c-bb2b-aefabee774e6
     IntensityMultiplier: 1.0
     IsEnabled: true
-    Strategy: Automatically
+    Strategy: OnDemand
   - !Evergine.Framework.Managers.RenderManager,Evergine.Framework
     Id: 74d7b50a-648a-4ed3-9529-2bc370878c12
     DebugLines: false
