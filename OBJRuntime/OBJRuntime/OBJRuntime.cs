@@ -17,6 +17,7 @@ using OBJRuntime.Readers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -34,6 +35,11 @@ namespace Evergine.Runtimes.OBJ
         private GraphicsContext graphicsContext;
         private AssetsService assetsService;
         private AssetsDirectory assetsDirectory;
+
+        private Dictionary<int, (string name, Material material)> materials = new Dictionary<int, (string, Material)>();
+        private Func<MaterialData, Task<Material>> materialAssigner = null;
+
+        public string WorkingDirectory { get; set; }
 
         private OBJRuntime()
         {
@@ -63,6 +69,8 @@ namespace Evergine.Runtimes.OBJ
             {
                 assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
             }
+
+            this.WorkingDirectory = Path.GetDirectoryName(filePath);
 
             using (var stream = assetsDirectory.Open(filePath))
             {
@@ -96,6 +104,8 @@ namespace Evergine.Runtimes.OBJ
                 throw new ArgumentException("Stream must be readable and seekable");
             }
 
+            this.materialAssigner = materialAssigner;
+
             if (this.graphicsContext == null || this.assetsService == null)
             {
                 this.graphicsContext = Application.Current.Container.Resolve<GraphicsContext>();
@@ -107,10 +117,10 @@ namespace Evergine.Runtimes.OBJ
             var shapes = new List<OBJShape>();
             var materials = new List<OBJMaterial>();
             var warning = string.Empty;
-            var error = string.Empty;
+            var error = string.Empty;            
             using (var srObj = new StreamReader(stream))
             {
-                bool success = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                bool success = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, this.assetsDirectory, this.WorkingDirectory, true, true);
                 if (!success)
                 {
                     throw new Exception($"OBJ Load failed. Error:{error}");
@@ -120,7 +130,7 @@ namespace Evergine.Runtimes.OBJ
             // Create meshes
             Vector3 min = new Vector3();
             Vector3 max = new Vector3();
-            List<Mesh> meshes = await CreateMeshes(attrib, shapes);
+            List<Mesh> meshes = await CreateMeshes(attrib, shapes, materials);
 
             var meshContainer = new MeshContainer()
             {
@@ -139,22 +149,17 @@ namespace Evergine.Runtimes.OBJ
             };
 
             // Collect materials
-            Material material = null;
-            MaterialData data = new OBJMaterialData();
-            if (materialAssigner == null)
+            var materialCollection = new List<(string, Guid)>();
+            foreach (var materialInfo in this.materials.Values)
             {
-                material = this.CreateEvergineMaterial(data);
-            }
-            else
-            {
-                material = await materialAssigner(data);
+                this.assetsService.RegisterInstance<Material>(materialInfo.material);
+                materialCollection.Add((materialInfo.name, materialInfo.material.Id));
             }
 
-            this.assetsService.RegisterInstance<Material>(material);
-            var materialCollection = new List<(string, Guid)>()
+            if (materialCollection.Count == 0)
             {
-                ("Default", material.Id),
-            };
+                materialCollection.Add(("default", DefaultResourcesIDs.DefaultMaterialID));
+            }
 
             // Create model
             var model = new Model()
@@ -170,11 +175,11 @@ namespace Evergine.Runtimes.OBJ
             return model;
         }
 
-        private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes)
+        private async Task<List<Mesh>> CreateMeshes(OBJAttrib attrib, List<OBJShape> shapes, List<OBJMaterial> materials)
         {
             List<Mesh> meshes = new List<Mesh>(shapes.Count);
 
-            await EvergineForegroundTask.Run(() =>
+            await EvergineForegroundTask.Run(async () =>
             {
                 for (int s = 0; s < shapes.Count; s++)
                 {
@@ -229,7 +234,12 @@ namespace Evergine.Runtimes.OBJ
 
                     // Get Material
                     int materialIndex = 0;
-                    //var ids = shape.Mesh.MaterialIds;
+                    var ids = shape.Mesh.MaterialIds;
+                    if (ids.Count > 0)
+                    {
+                        var materialId = ids[0];
+                        materialIndex = await this.ReadMaterial(materialId, materials);
+                    }
 
                     // Create Mesh
                     var Mesh = new Mesh([vertexBuffer], PrimitiveTopology.TriangleList, vertices.Length / 3, 0)
@@ -245,7 +255,31 @@ namespace Evergine.Runtimes.OBJ
             return meshes;
         }
 
-        private Material CreateEvergineMaterial(MaterialData data)
+        private async Task<int> ReadMaterial(int materialId, List<OBJMaterial> materials)
+        {
+            var objMaterial = materials[materialId];
+            MaterialData materialData = new OBJMaterialData(objMaterial, materialId, this);
+            if (!this.materials.ContainsKey(materialId))
+            {
+                Material material = null;
+                if (this.materialAssigner == null)
+                {
+                    material = await this.CreateEvergineMaterial(materialData);
+                }
+                else
+                {
+                    material = await this.materialAssigner(materialData);
+                }
+
+                this.materials.Add(materialId, (objMaterial.Name ?? $"material{materialId}", material));
+
+                return this.materials.Count - 1;
+            }
+
+            return this.materials.Keys.ToList().IndexOf(materialId);
+        }
+
+        private async Task<Material> CreateEvergineMaterial(MaterialData data)
         {
             var effect = this.assetsService.Load<Effect>(DefaultResourcesIDs.StandardEffectID);
             var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.CullFront);

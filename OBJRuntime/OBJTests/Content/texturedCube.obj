@@ -1,4 +1,4 @@
-mtllib cube.mtl
+mtllib texturedCube.mtl
 
 # Vertices
 v -1 -1  1

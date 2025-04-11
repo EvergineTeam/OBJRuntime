@@ -5,6 +5,9 @@ using System.IO;
 using System.Globalization;
 using OBJRuntime.DataTypes;
 using Evergine.Mathematics;
+using System.Runtime.CompilerServices;
+using Evergine.Framework;
+using Evergine.Common.IO;
 
 namespace OBJRuntime.Readers
 {
@@ -20,7 +23,8 @@ namespace OBJRuntime.Readers
             List<OBJMaterial> materials,
             ref string warning,
             ref string error,
-            OBJMaterialStreamReader readMatFn,
+            AssetsDirectory assetsDirectory,
+            string workingDirectory,
             bool triangulate,
             bool defaultVcolsFallback)
         {
@@ -63,19 +67,19 @@ namespace OBJRuntime.Readers
             {
                 lineNo++;
                 string line = inStream.ReadLine();
-                if (line == null) 
+                if (line == null)
                     break;
                 line = line.TrimEnd(); // remove trailing spaces
-                if (line.Length < 1) 
+                if (line.Length < 1)
                     continue;
 
                 // skip leading spaces
-                if (line.StartsWith("#")) 
+                if (line.StartsWith("#"))
                     continue; // comment
 
                 // parse tokens
                 var tokens = Helpers.Tokenize(line);
-                if (tokens.Count < 1) 
+                if (tokens.Count < 1)
                     continue;
 
                 var cmd = tokens[0];
@@ -99,9 +103,9 @@ namespace OBJRuntime.Readers
                         {
                             // interpret the 4th as 'w'
                             Helpers.TryParseFloat(tokens[4], out r);
-                            
+
                             // store w into vertexWeights
-                            v.Add(new Vector3(x,y,z));
+                            v.Add(new Vector3(x, y, z));
                             vertexWeights.Add(r);
                             foundAllColors = false;
                         }
@@ -112,9 +116,9 @@ namespace OBJRuntime.Readers
                             Helpers.TryParseFloat(tokens[5], out g);
                             Helpers.TryParseFloat(tokens[6], out b);
 
-                            v.Add(new Vector3(x,y,z));
+                            v.Add(new Vector3(x, y, z));
                             vertexWeights.Add(1.0f); // default w=1
-                            vc.Add(new Vector3(r,g,b));
+                            vc.Add(new Vector3(r, g, b));
 
                         }
                         else
@@ -135,7 +139,7 @@ namespace OBJRuntime.Readers
                         Helpers.TryParseFloat(tokens[1], out x);
                         Helpers.TryParseFloat(tokens[2], out y);
                         Helpers.TryParseFloat(tokens[3], out z);
-                        vn.Add(new Vector3(x,y,z));
+                        vn.Add(new Vector3(x, y, z));
                     }
                 }
                 else if (cmd == "vt") // texcoord
@@ -146,13 +150,13 @@ namespace OBJRuntime.Readers
                         float u = 0, vv = 0, w = 0;
                         Helpers.TryParseFloat(tokens[1], out u);
 
-                        if (tokens.Count > 2) 
+                        if (tokens.Count > 2)
                             Helpers.TryParseFloat(tokens[2], out vv);
 
-                        if (tokens.Count > 3) 
+                        if (tokens.Count > 3)
                             Helpers.TryParseFloat(tokens[3], out w);
 
-                        vt.Add(new Vector2(u,vv));
+                        vt.Add(new Vector2(u, vv));
                         // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
                     }
                 }
@@ -173,11 +177,11 @@ namespace OBJRuntime.Readers
                             {
                                 int j = 0;
                                 float w = 0.0f;
-                                
-                                if (!int.TryParse(tokens[idx], out j)) 
+
+                                if (!int.TryParse(tokens[idx], out j))
                                     break;
 
-                                if (!Helpers.TryParseFloat(tokens[idx + 1], out w)) 
+                                if (!Helpers.TryParseFloat(tokens[idx + 1], out w))
                                     break;
 
                                 OBJJointAndWeight jw = new OBJJointAndWeight();
@@ -262,27 +266,35 @@ namespace OBJRuntime.Readers
                 }
                 else if (cmd == "mtllib")
                 {
-                    if (readMatFn != null && tokens.Count > 1)
+                    if (tokens.Count > 1)
                     {
                         // We can have multiple filenames in the line: "mtllib file1 file2"
-                        // We'll parse them all.
+                        // We'll parse them all.                        
                         for (int i = 1; i < tokens.Count; i++)
                         {
                             string filename = tokens[i];
                             if (materialFilenames.Contains(filename))
                                 continue; // skip repeated
 
-                            if (!readMatFn.Read(filename, materials, materialMap, out string warnMtl, out string errMtl))
+                            string filePath = Path.Combine(workingDirectory, filename);
+                            if (assetsDirectory != null && assetsDirectory.Exists(filePath))
                             {
-                                // failed
-                                warning += warnMtl;
-                                error += errMtl;
+                                using (var streamMtl = assetsDirectory.Open(filePath))
+                                {
+                                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                                    if (!mtlReader.Read(filename, materials, materialMap, out string warnMtl, out string errMtl))
+                                    {
+                                        // failed
+                                        warning += warnMtl;
+                                        error += errMtl;
+                                    }
+                                    else
+                                    {
+                                        warning += warnMtl;
+                                    }
+                                    materialFilenames.Add(filename);
+                                }
                             }
-                            else
-                            {
-                                warning += warnMtl;
-                            }
-                            materialFilenames.Add(filename);
                         }
                     }
                 }
@@ -311,7 +323,7 @@ namespace OBJRuntime.Readers
                         currentGroupName = "";
                         for (int i = 1; i < tokens.Count; i++)
                         {
-                            if (i > 1) 
+                            if (i > 1)
                                 currentGroupName += " ";
 
                             currentGroupName += tokens[i];

@@ -2,26 +2,33 @@
 
 using Evergine.Common.Graphics;
 using Evergine.Framework.Runtimes;
+using OBJRuntime.DataTypes;
 using System.Threading.Tasks;
 
 namespace Evergine.Runtimes.OBJ
 {
     public class OBJMaterialData : MaterialData
     {
-        /// <inheritdoc/>
-        public override string Name => "default";
+        public OBJMaterial OBJMaterial;
+
+        private int materialId;
+
+        public OBJRuntime OBJ;
 
         /// <inheritdoc/>
-        public override Color BaseColor => Color.White;
+        public override string Name => this.OBJMaterial.Name ?? $"material{materialId}";
 
         /// <inheritdoc/>
-        public override float MetallicFactor => 0.0f;
+        public override Color BaseColor => Color.FromVector3(ref this.OBJMaterial.Diffuse);
 
         /// <inheritdoc/>
-        public override float RoughnessFactor => 1.0f;
+        public override float MetallicFactor => this.OBJMaterial.Metallic;
 
         /// <inheritdoc/>
-        public override LinearColor EmissiveColor => default;
+        public override float RoughnessFactor => this.OBJMaterial.Roughness;
+
+        /// <inheritdoc/>
+        public override LinearColor EmissiveColor => new LinearColor(this.OBJMaterial.Emission);
 
         /// <inheritdoc/>
         public override AlphaMode AlphaMode => AlphaMode.Opaque;
@@ -43,6 +50,13 @@ namespace Evergine.Runtimes.OBJ
 
         /// <inheritdoc/>
         public override bool HasDoubleSided => false;
+
+        public OBJMaterialData(OBJMaterial objMaterial, int materialId, OBJRuntime objRuntime)
+        {
+            this.OBJMaterial = objMaterial;
+            this.materialId = materialId;
+            this.OBJ = objRuntime;
+        }
 
         /// <inheritdoc/>
         public override Task<(Texture Texture, SamplerState Sampler)> GetBaseColorTextureAndSampler()

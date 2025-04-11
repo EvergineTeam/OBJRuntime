@@ -46,7 +46,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -74,7 +74,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -106,7 +106,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -139,16 +139,14 @@ namespace OBJTests
 
             // Act
             using (var streamObj = assetsDirectory.Open("Cube.obj"))
-            using (var streamMtl = assetsDirectory.Open("Cube.mtl"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
-                    Assert.Equal(5, materials.Count);                    
+                    Assert.Equal(5, materials.Count);
                     Assert.True(expectedColor1.Equals(materials[0].Diffuse));
                     Assert.True(expectedColor2.Equals(materials[1].Diffuse));
                     Assert.True(expectedColor3.Equals(materials[2].Diffuse));
@@ -175,7 +173,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -193,10 +191,10 @@ namespace OBJTests
                 new Vector3(-0.207717f, -0.953997f, 2.554110f),
                 new Vector3(-0.275607f, -0.965401f, 2.541530f),
                 new Vector3(-0.270155f, -0.963170f, 2.548000f) };
-            var expectedNormals = new Vector3[] 
-            { 
-                new Vector3(-0.281034f, -0.057252f, 0.957989f), 
-                new Vector3(-0.139126f, -0.135672f, 0.980937f), 
+            var expectedNormals = new Vector3[]
+            {
+                new Vector3(-0.281034f, -0.057252f, 0.957989f),
+                new Vector3(-0.139126f, -0.135672f, 0.980937f),
                 new Vector3(-0.163133f, -0.131576f, 0.977791f)};
 
             var attrib = new OBJAttrib();
@@ -210,7 +208,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -237,7 +235,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -264,7 +262,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -299,7 +297,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -333,7 +331,7 @@ namespace OBJTests
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
@@ -367,12 +365,10 @@ namespace OBJTests
 
             // Act
             using (var streamObj = assetsDirectory.Open("texturedCube.obj"))
-            using (var streamMtl = assetsDirectory.Open("texturedCube.mtl"))
             {
                 using (StreamReader srObj = new StreamReader(streamObj))
                 {
-                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
-                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, mtlReader, true, true);
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
 
                     // Assert
                     Assert.True(ok);
