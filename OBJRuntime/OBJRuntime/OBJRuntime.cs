@@ -219,25 +219,71 @@ namespace Evergine.Runtimes.OBJ
                     }
 
                     // Compute normals
+                    //if (attrib.Normals.Count == 0)
+                    //{
+                    //    for (int i = 0; i < meshIndices.Count; i += 3)
+                    //    {
+                    //        Vector3 pos0 = vertices[i].Position;
+                    //        Vector3 pos1 = vertices[i + 1].Position;
+                    //        Vector3 pos2 = vertices[i + 2].Position;
+
+                    //        Vector3 edge1 = pos1 - pos0;
+                    //        Vector3 edge2 = pos2 - pos0;
+
+                    //        Vector3 faceNormal = Vector3.Cross(edge1, edge2);
+                    //        faceNormal = Vector3.Normalize(faceNormal);
+
+                    //        vertices[i].Normal = faceNormal;
+                    //        vertices[i + 1].Normal = faceNormal;
+                    //        vertices[i + 2].Normal = faceNormal;
+                    //    }
+                    //}
+
+                    // Compute smooth normals if none were provided in the OBJ (attrib.Normals.Count == 0)
                     if (attrib.Normals.Count == 0)
                     {
+                        // Create an accumulator for normals for each unique vertex position.
+                        Vector3[] accumNormals = new Vector3[attrib.Vertices.Count];
+                        for (int i = 0; i < accumNormals.Length; i++)
+                        {
+                            accumNormals[i] = Vector3.Zero;
+                        }
+
+                        // Loop through each triangle (assumes meshIndices.Count is a multiple of 3).
                         for (int i = 0; i < meshIndices.Count; i += 3)
                         {
-                            Vector3 pos0 = vertices[i].Position;
-                            Vector3 pos1 = vertices[i + 1].Position;
-                            Vector3 pos2 = vertices[i + 2].Position;
+                            // Get the unique vertex indices for the triangle.
+                            int index0 = meshIndices[i].VertexIndex;
+                            int index1 = meshIndices[i + 1].VertexIndex;
+                            int index2 = meshIndices[i + 2].VertexIndex;
 
+                            // Retrieve the positions using the unique index.
+                            Vector3 pos0 = attrib.Vertices[index0];
+                            Vector3 pos1 = attrib.Vertices[index1];
+                            Vector3 pos2 = attrib.Vertices[index2];
+
+                            // Compute the face normal.
                             Vector3 edge1 = pos1 - pos0;
                             Vector3 edge2 = pos2 - pos0;
-
                             Vector3 faceNormal = Vector3.Cross(edge1, edge2);
                             faceNormal = Vector3.Normalize(faceNormal);
 
-                            vertices[i].Normal = faceNormal;
-                            vertices[i + 1].Normal = faceNormal;
-                            vertices[i + 2].Normal = faceNormal;
+                            // Accumulate the face normal for each vertex of the triangle.
+                            accumNormals[index0] += faceNormal;
+                            accumNormals[index1] += faceNormal;
+                            accumNormals[index2] += faceNormal;
+                        }
+
+                        // Now assign the smooth normal to each vertex.
+                        // Each vertex (of the final vertices array) uses the smoothed normal associated with its position index.
+                        for (int i = 0; i < meshIndices.Count; i++)
+                        {
+                            int posIndex = meshIndices[i].VertexIndex;
+                            // Normalize the accumulated normal before assigning.
+                            vertices[i].Normal = Vector3.Normalize(accumNormals[posIndex]);
                         }
                     }
+
 
                     // Create vertex buffer
                     var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
