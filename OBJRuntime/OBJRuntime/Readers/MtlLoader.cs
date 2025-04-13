@@ -2,19 +2,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Globalization;
-using OBJRuntime.DataTypes;
+using System.IO;
+using System.Text;
 using Evergine.Mathematics;
+using OBJRuntime.DataTypes;
 
 namespace OBJRuntime.Readers
 {
     /// <summary>
-    /// Helper class for loading .mtl text into a List&lt;Material&gt;.
+    /// Helper class for loading .mtl text into a List&lt;OBJMaterial&gt;.
     /// </summary>
     public static class MtlLoader
     {
-        // The main function to load .mtl data:
         public static void Load(
             StreamReader sr,
             List<OBJMaterial> materials,
@@ -22,387 +22,285 @@ namespace OBJRuntime.Readers
             ref string warning,
             ref string error)
         {
-            // If there's no "newmtl" at all, we still push a default material at the end.
+            // Use StringBuilders to accumulate warning/error messages.
+            var warnSB = new StringBuilder();
+            var errSB = new StringBuilder();
+
             OBJMaterial material = new OBJMaterial();
             bool firstMaterial = true;
-
             bool hasD = false;
             bool hasTr = false;
-            bool hasKd = false; // to set a default Kd if we see map_Kd w/o Kd
+            bool hasKd = false;
 
             int lineNo = 0;
-
+            string line;
+            // Process each line.
             while (!sr.EndOfStream)
             {
                 lineNo++;
-                string line = sr.ReadLine();
-                if (line == null)
-                    break;
+                line = sr.ReadLine()?.Trim();
+                if (string.IsNullOrEmpty(line) || line[0] == '#')
+                    continue;
 
-                line = line.Trim();
-                if (line.Length < 1)
-                    continue;  // skip blank lines
-
-                if (line.StartsWith("#"))
-                    continue; // skip comments
-
+                // Tokenize the line. (If Helpers.Tokenize internally uses Split with
+                // StringSplitOptions.RemoveEmptyEntries, that is already efficient.)
                 var tokens = Helpers.Tokenize(line);
-                if (tokens.Count == 0)
+                int tokenCount = tokens.Count;
+                if (tokenCount == 0)
                     continue;
 
                 string key = tokens[0];
-                if (key == "newmtl" && tokens.Count > 1)
+                switch (key)
                 {
-                    // push old material if it has a name
-                    if (!firstMaterial || !string.IsNullOrEmpty(material.Name))
-                    {
-                        // store
-                        if (!materialMap.ContainsKey(material.Name))
-                            materialMap.Add(material.Name, materials.Count);
-                        materials.Add(material);
-                    }
-                    // reset
-                    material = new OBJMaterial();
-                    hasD = false;
-                    hasTr = false;
-                    hasKd = false;
-                    firstMaterial = false;
-
-                    material.Name = line.Substring(6).Trim(); // or tokens[1..end]
-                }
-                else if ((key == "Ka" || key == "ka") && tokens.Count >= 4)
-                {
-                    Helpers.ParseVector3(tokens, 1, ref material.Ambient);
-                }
-                else if ((key == "Kd" || key == "kd") && tokens.Count >= 4)
-                {
-                    Helpers.ParseVector3(tokens, 1, ref material.Diffuse);
-                    hasKd = true;
-                }
-                else if ((key == "Ks" || key == "ks") && tokens.Count >= 4)
-                {
-                    Helpers.ParseVector3(tokens, 1, ref material.Specular);
-                }
-                else if (key == "Ke" && tokens.Count >= 4)
-                {
-                    Helpers.ParseVector3(tokens, 1, ref material.Emission);
-                }
-                else if ((key == "Tf" || key == "Kt") && tokens.Count >= 4)
-                {
-                    Helpers.ParseVector3(tokens, 1, ref material.Transmittance);
-                }
-                else if (key == "Ns" && tokens.Count >= 2)
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Shininess = val;
-                }
-                else if (key == "Ni" && tokens.Count >= 2)
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Ior = val;
-                }
-                else if (key == "illum" && tokens.Count >= 2)
-                {
-                    if (int.TryParse(tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int ival))
-                    {
-                        material.Illum = ival;
-                    }
-                }
-                else if (key == "d" && tokens.Count >= 2)
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Dissolve = val;
-                    if (hasTr)
-                    {
-                        warning += $"Both 'd' and 'Tr' found for material '{material.Name}'. Using 'd' (line {lineNo}).\n";
-                    }
-                    hasD = true;
-                }
-                else if (key == "Tr" && tokens.Count >= 2)
-                {
-                    if (hasD)
-                    {
-                        // ignore Tr
-                        warning += $"Both 'd' and 'Tr' found for material '{material.Name}'. Using 'd' (line {lineNo}).\n";
-                    }
-                    else
-                    {
-                        // invert
-                        if (Helpers.TryParseFloat(tokens[1], out float val))
-                            material.Dissolve = 1.0f - val;
-                    }
-                    hasTr = true;
-                }
-                else if (key == "map_Ka")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.AmbientTexname, material.AmbientTexopt, "Ka");
-                }
-                else if (key == "map_Kd")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.DiffuseTexname, material.DiffuseTexopt, "Kd");
-                    if (!hasKd)
-                    {
-                        // set a default
-                        material.Diffuse[0] = 0.6f;
-                        material.Diffuse[1] = 0.6f;
-                        material.Diffuse[2] = 0.6f;
-                    }
-                }
-                else if (key == "map_Ks")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularTexname, material.SpecularTexopt, "Ks");
-                }
-                else if (key == "map_Ns")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularHighlightTexname, material.SpecularHighlightTexopt, "Ns");
-                }
-                else if (key == "map_d")
-                {
-                    ParseTextureAndOption(line.Substring(5).Trim(), ref material.AlphaTexname, material.AlphaTexopt, "d");
-                }
-                else if (key == "map_bump" || key == "map_Bump")
-                {
-                    ParseTextureAndOption(line.Substring(key.Length).Trim(), ref material.BumpTexname, material.BumpTexopt, "bump");
-                }
-                else if (key == "bump")
-                {
-                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.BumpTexname, material.BumpTexopt, "bump");
-                }
-                else if (key == "map_disp" || key == "map_Disp" || key == "disp")
-                {
-                    int skipLen = key == "disp" ? 4 : 8;
-                    ParseTextureAndOption(line.Substring(skipLen).Trim(), ref material.DisplacementTexname, material.DisplacementTexopt, "disp");
-                }
-                else if (key == "refl")
-                {
-                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.ReflectionTexname, material.ReflectionTexopt, "refl");
-                }
-                else if (key == "map_Pr")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.RoughnessTexname, material.roughness_texopt, "Pr");
-                }
-                else if (key == "map_Pm")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.MetallicTexname, material.metallic_texopt, "Pm");
-                }
-                else if (key == "map_Ps")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.SheenTexname, material.sheen_texopt, "Ps");
-                }
-                else if (key == "map_Ke")
-                {
-                    ParseTextureAndOption(line.Substring(6).Trim(), ref material.EmissiveTexname, material.emissive_texopt, "Ke");
-                }
-                else if (key == "norm")
-                {
-                    ParseTextureAndOption(line.Substring(4).Trim(), ref material.NormalTexname, material.normal_texopt, "norm");
-                }
-                else if (key == "Pr")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Roughness = val;
-                }
-                else if (key == "Pm")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Metallic = val;
-                }
-                else if (key == "Ps")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Sheen = val;
-                }
-                else if (key == "Pc")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.ClearcoatThickness = val;
-                }
-                else if (key == "Pcr")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.ClearcoatRoughness = val;
-                }
-                else if (key == "aniso")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.Anisotropy = val;
-                }
-                else if (key == "anisor")
-                {
-                    if (Helpers.TryParseFloat(tokens[1], out float val))
-                        material.AnisotropyRotation = val;
-                }
-                else
-                {
-                    // unknown, store in map
-                    if (tokens.Count >= 2)
-                    {
-                        string paramV = line.Substring(key.Length).Trim();
-                        material.UnknownParameter[key] = paramV;
-                    }
+                    case "newmtl":
+                        // When starting a new material, flush the previous one.
+                        if (!firstMaterial || !string.IsNullOrEmpty(material.Name))
+                        {
+                            if (!materialMap.ContainsKey(material.Name))
+                                materialMap.Add(material.Name, materials.Count);
+                            materials.Add(material);
+                        }
+                        material = new OBJMaterial();
+                        hasD = hasTr = hasKd = false;
+                        firstMaterial = false;
+                        // newmtl names might contain spaces so use the entire substring.
+                        material.Name = line.Substring(6).Trim();
+                        break;
+                    case "Ka":
+                    case "ka":
+                        if (tokenCount >= 4)
+                            Helpers.ParseVector3(tokens, 1, ref material.Ambient);
+                        break;
+                    case "Kd":
+                    case "kd":
+                        if (tokenCount >= 4)
+                        {
+                            Helpers.ParseVector3(tokens, 1, ref material.Diffuse);
+                            hasKd = true;
+                        }
+                        break;
+                    case "Ks":
+                    case "ks":
+                        if (tokenCount >= 4)
+                            Helpers.ParseVector3(tokens, 1, ref material.Specular);
+                        break;
+                    case "Ke":
+                        if (tokenCount >= 4)
+                            Helpers.ParseVector3(tokens, 1, ref material.Emission);
+                        break;
+                    case "Tf":
+                    case "Kt":
+                        if (tokenCount >= 4)
+                            Helpers.ParseVector3(tokens, 1, ref material.Transmittance);
+                        break;
+                    case "Ns":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float ns))
+                            material.Shininess = ns;
+                        break;
+                    case "Ni":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float ni))
+                            material.Ior = ni;
+                        break;
+                    case "illum":
+                        if (tokenCount >= 2 && int.TryParse(tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int illum))
+                            material.Illum = illum;
+                        break;
+                    case "d":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float d))
+                        {
+                            material.Dissolve = d;
+                            if (hasTr)
+                                warnSB.Append($"Both 'd' and 'Tr' found for material '{material.Name}'. Using 'd' (line {lineNo}).\n");
+                            hasD = true;
+                        }
+                        break;
+                    case "Tr":
+                        if (tokenCount >= 2 && !hasD && Helpers.TryParseFloat(tokens[1], out float tr))
+                        {
+                            material.Dissolve = 1.0f - tr;
+                            hasTr = true;
+                        }
+                        else if (hasD)
+                        {
+                            warnSB.Append($"Both 'd' and 'Tr' found for material '{material.Name}'. Using 'd' (line {lineNo}).\n");
+                        }
+                        break;
+                    case "map_Ka":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.AmbientTexname, material.AmbientTexopt);
+                        break;
+                    case "map_Kd":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.DiffuseTexname, material.DiffuseTexopt);
+                        if (!hasKd)
+                        {
+                            material.Diffuse = new Vector3(0.6f, 0.6f, 0.6f);
+                        }
+                        break;
+                    case "map_Ks":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularTexname, material.SpecularTexopt);
+                        break;
+                    case "map_Ns":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.SpecularHighlightTexname, material.SpecularHighlightTexopt);
+                        break;
+                    case "map_d":
+                        ParseTextureAndOption(line.Substring(5).Trim(), ref material.AlphaTexname, material.AlphaTexopt);
+                        break;
+                    case "map_bump":
+                    case "map_Bump":
+                    case "bump":
+                        ParseTextureAndOption(line.Substring(key.Length).Trim(), ref material.BumpTexname, material.BumpTexopt);
+                        break;
+                    case "map_disp":
+                    case "map_Disp":
+                    case "disp":
+                        ParseTextureAndOption(line.Substring(4).Trim(), ref material.DisplacementTexname, material.DisplacementTexopt);
+                        break;
+                    case "refl":
+                        ParseTextureAndOption(line.Substring(4).Trim(), ref material.ReflectionTexname, material.ReflectionTexopt);
+                        break;
+                    case "map_Pr":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.RoughnessTexname, material.roughness_texopt);
+                        break;
+                    case "map_Pm":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.MetallicTexname, material.metallic_texopt);
+                        break;
+                    case "map_Ps":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.SheenTexname, material.sheen_texopt);
+                        break;
+                    case "map_Ke":
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.EmissiveTexname, material.emissive_texopt);
+                        break;
+                    case "norm":
+                        ParseTextureAndOption(line.Substring(4).Trim(), ref material.NormalTexname, material.normal_texopt);
+                        break;
+                    case "Pr":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float pr))
+                            material.Roughness = pr;
+                        break;
+                    case "Pm":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float pm))
+                            material.Metallic = pm;
+                        break;
+                    case "Ps":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float ps))
+                            material.Sheen = ps;
+                        break;
+                    case "Pc":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float pc))
+                            material.ClearcoatThickness = pc;
+                        break;
+                    case "Pcr":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float pcr))
+                            material.ClearcoatRoughness = pcr;
+                        break;
+                    case "aniso":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float aniso))
+                            material.Anisotropy = aniso;
+                        break;
+                    case "anisor":
+                        if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float anisor))
+                            material.AnisotropyRotation = anisor;
+                        break;
+                    default:
+                        if (tokenCount >= 2)
+                        {
+                            // For unknown parameters, capture the rest of the line (minus the key).
+                            string paramV = line.Substring(key.Length).Trim();
+                            material.UnknownParameter[key] = paramV;
+                        }
+                        break;
                 }
             }
 
-            // push last material
+            // Flush the last material.
             if (!materialMap.ContainsKey(material.Name))
-            {
                 materialMap.Add(material.Name, materials.Count);
-            }
-
             materials.Add(material);
+
+            // Copy the accumulated messages.
+            warning = warnSB.ToString();
+            error = errSB.ToString();
         }
 
-        private static void ParseTextureAndOption(string line, ref string texName, OBJTextureOption texOpt, string prefix)
+        private static void ParseTextureAndOption(string line, ref string texName, OBJTextureOption texOpt)
         {
-            // We parse the line for texture name and possible sub‐options like -o, -s, etc.
-            // This can be somewhat simplified, but let's keep a structure close to the original.
-            // For a more robust approach, you can do additional tokenization of the entire line.
-
-            // We do a naive split for demonstration, real code might do more refined parse.
+            // Tokenize using the Helpers.Tokenize routine.
             var tokens = Helpers.Tokenize(line);
-
-            // We keep a local pointer to the final texture name we actually set in 'texName'.
-            // Because in C# strings are passed by value, we might set it after we find the main token.
-            // We'll parse each piece in tokens:
+            int tokenCount = tokens.Count;
             bool foundTexName = false;
-            string foundName = "";
 
-            int idx = 0;
-            while (idx < tokens.Count)
+            for (int idx = 0; idx < tokenCount; idx++)
             {
-                var t = tokens[idx];
-                if (t.StartsWith("-blendu"))
+                string t = tokens[idx];
+                switch (t)
                 {
-                    // e.g. "-blendu on" or "off"
-                    idx++;
-                    if (idx < tokens.Count)
-                    {
-                        texOpt.Blendu = tokens[idx] == "on";
-                    }
-                }
-                else if (t.StartsWith("-blendv"))
-                {
-                    idx++;
-                    if (idx < tokens.Count)
-                    {
-                        texOpt.Blendv = tokens[idx] == "on";
-                    }
-                }
-                else if (t.StartsWith("-clamp"))
-                {
-                    idx++;
-                    if (idx < tokens.Count)
-                    {
-                        texOpt.Clamp = tokens[idx] == "on";
-                    }
-                }
-                else if (t.StartsWith("-boost"))
-                {
-                    idx++;
-                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float val)) texOpt.Sharpness = val;
-                }
-                else if (t.StartsWith("-bm"))
-                {
-                    idx++;
-                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float val)) texOpt.BumpMultiplier = val;
-                }
-                else if (t.StartsWith("-o"))
-                {
-                    // e.g. -o u [v [w]]
-                    // parse up to 3 floats
-                    int maxCoords = 3;
-                    int coordCount = 0;
-                    idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float oval))
-                    {
-                        texOpt.OriginOffset[coordCount] = oval;
-                        coordCount++; idx++;
-                    }
-                    // no stepping back of idx
-                    continue;
-                }
-                else if (t.StartsWith("-s"))
-                {
-                    // e.g. -s u [v [w]]
-                    int maxCoords = 3;
-                    int coordCount = 0;
-                    idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float sval))
-                    {
-                        texOpt.Scale[coordCount] = sval;
-                        coordCount++; idx++;
-                    }
-                    continue;
-                }
-                else if (t.StartsWith("-t"))
-                {
-                    // e.g. -t u [v [w]]
-                    int maxCoords = 3;
-                    int coordCount = 0;
-                    idx++;
-                    while (coordCount < maxCoords && idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float tval))
-                    {
-                        texOpt.Turbulence[coordCount] = tval;
-                        coordCount++; idx++;
-                    }
-                    continue;
-                }
-                else if (t.StartsWith("-texres"))
-                {
-                    idx++;
-                    if (idx < tokens.Count && int.TryParse(tokens[idx], out int texres))
-                    {
-                        texOpt.TextureResolution = texres;
-                    }
-                }
-                else if (t.StartsWith("-imfchan"))
-                {
-                    idx++;
-                    if (idx < tokens.Count && tokens[idx].Length >= 1)
-                    {
-                        texOpt.Imfchan = tokens[idx][0];
-                    }
-                }
-                else if (t.StartsWith("-mm"))
-                {
-                    // e.g. -mm baseValue gainValue
-                    // parse 2 floats
-                    idx++;
-                    if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float bval))
-                    {
-                        texOpt.Brightness = bval;
-                        idx++;
-                        if (idx < tokens.Count && Helpers.TryParseFloat(tokens[idx], out float cval))
+                    case "-blendu":
+                        if (++idx < tokenCount)
+                            texOpt.Blendu = tokens[idx] == "on";
+                        break;
+                    case "-blendv":
+                        if (++idx < tokenCount)
+                            texOpt.Blendv = tokens[idx] == "on";
+                        break;
+                    case "-clamp":
+                        if (++idx < tokenCount)
+                            texOpt.Clamp = tokens[idx] == "on";
+                        break;
+                    case "-boost":
+                        if (++idx < tokenCount && Helpers.TryParseFloat(tokens[idx], out float boost))
+                            texOpt.Sharpness = boost;
+                        break;
+                    case "-bm":
+                        if (++idx < tokenCount && Helpers.TryParseFloat(tokens[idx], out float bm))
+                            texOpt.BumpMultiplier = bm;
+                        break;
+                    case "-o":
+                        ParseTextureOptionCoords(tokens, ref idx, texOpt.OriginOffset);
+                        break;
+                    case "-s":
+                        ParseTextureOptionCoords(tokens, ref idx, texOpt.Scale);
+                        break;
+                    case "-t":
+                        ParseTextureOptionCoords(tokens, ref idx, texOpt.Turbulence);
+                        break;
+                    case "-texres":
+                        if (++idx < tokenCount && int.TryParse(tokens[idx], out int texres))
+                            texOpt.TextureResolution = texres;
+                        break;
+                    case "-imfchan":
+                        if (++idx < tokenCount && tokens[idx].Length >= 1)
+                            texOpt.Imfchan = tokens[idx][0];
+                        break;
+                    case "-mm":
+                        if (++idx < tokenCount && Helpers.TryParseFloat(tokens[idx], out float mmBase))
                         {
-                            texOpt.Contrast = cval;
-                            idx++;
+                            texOpt.Brightness = mmBase;
+                            if (++idx < tokenCount && Helpers.TryParseFloat(tokens[idx], out float mmGain))
+                                texOpt.Contrast = mmGain;
                         }
-                    }
-                    continue;
+                        break;
+                    case "-colorspace":
+                        if (++idx < tokenCount)
+                            texOpt.Colorspace = tokens[idx];
+                        break;
+                    default:
+                        if (!foundTexName)
+                        {
+                            texName = t;
+                            foundTexName = true;
+                        }
+                        break;
                 }
-                else if (t.StartsWith("-colorspace"))
-                {
-                    idx++;
-                    if (idx < tokens.Count)
-                    {
-                        texOpt.Colorspace = tokens[idx];
-                    }
-                }
-                else
-                {
-                    // We treat this as the texture filename
-                    foundName = t;
-                    foundTexName = true;
-                    idx++;
-                    // We'll assume the rest of the tokens might be extraneous or for advanced usage.
-                    // In practice, you might continue to parse for additional parameters.
-                }
-                idx++;
             }
+        }
 
-            if (foundTexName && !string.IsNullOrEmpty(foundName))
+        private static void ParseTextureOptionCoords(List<string> tokens, ref int idx, float[] coords)
+        {
+            int maxCoords = 3;
+            int coordCount = 0;
+            // Advance while there are valid float tokens and room for up to three coordinates.
+            while (coordCount < maxCoords && idx + 1 < tokens.Count && Helpers.TryParseFloat(tokens[++idx], out float val))
             {
-                texName = foundName;
+                coords[coordCount++] = val;
             }
         }
     }
