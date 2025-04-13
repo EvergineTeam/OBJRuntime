@@ -3,16 +3,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using System.Text;
 using OBJRuntime.DataTypes;
 using Evergine.Mathematics;
-using System.Runtime.CompilerServices;
 using Evergine.Framework;
 using Evergine.Common.IO;
 
 namespace OBJRuntime.Readers
 {
     /// <summary>
-    /// Main OBJ loading logic in a static class, adapted from your code snippet.
+    /// Main OBJ loading logic in a static class.
     /// </summary>
     public static class OBJLoader
     {
@@ -28,10 +28,7 @@ namespace OBJRuntime.Readers
             bool triangulate,
             bool defaultVcolsFallback)
         {
-            // We'll parse the entire .obj text from the provided stream.
-            // This is roughly a direct line-by-line translation from the original.
-            // We skip some advanced parts like TINYOBJLOADER_USE_MAPBOX_EARCUT for brevity.
-
+            // Clear the output lists.
             attrib.Vertices.Clear();
             attrib.VertexWeights.Clear();
             attrib.Normals.Clear();
@@ -41,364 +38,266 @@ namespace OBJRuntime.Readers
             attrib.SkinWeights.Clear();
             shapes.Clear();
 
+            // Temporary lists for geometry data.
             var v = new List<Vector3>();
-            var vertexWeights = new List<float>();  // for the optional w in 'v' lines
+            var vertexWeights = new List<float>();
             var vn = new List<Vector3>();
             var vt = new List<Vector2>();
-            var vc = new List<Vector3>();  // optional vertex colors
-            var vw = new List<OBJSkinWeight>(); // extension: vertex skin weights
+            var vc = new List<Vector3>();
+            var vw = new List<OBJSkinWeight>();
 
             int materialId = -1;
             uint currentSmoothingId = 0;
-
             bool foundAllColors = true;
 
-            // We'll accumulate face/lines/points in a "PrimGroup" then flush to shape when
-            // we see group or object changes. 
-            PrimGroup primGroup = new PrimGroup();
-            string currentGroupName = "";
+            var primGroup = new PrimGroup();
+            string currentGroupName = string.Empty;
 
-            // For storing materials that we've loaded from .mtl
             var materialMap = new Dictionary<string, int>();
             var materialFilenames = new HashSet<string>();
+
+            // Use StringBuilders for warnings and errors.
+            var warnSB = new StringBuilder();
+            var errSB = new StringBuilder();
 
             int lineNo = 0;
             while (!inStream.EndOfStream)
             {
                 lineNo++;
-                string line = inStream.ReadLine();
-                if (line == null)
-                    break;
-                line = line.TrimEnd(); // remove trailing spaces
-                if (line.Length < 1)
+                string line = inStream.ReadLine()?.TrimEnd();
+                if (string.IsNullOrEmpty(line) || line[0] == '#')
                     continue;
 
-                // skip leading spaces
-                if (line.StartsWith("#"))
-                    continue; // comment
-
-                // parse tokens
                 var tokens = Helpers.Tokenize(line);
-                if (tokens.Count < 1)
+                int tokenCount = tokens.Count;
+                if (tokenCount < 1)
                     continue;
 
                 var cmd = tokens[0];
-                if (cmd == "v")
+                switch (cmd)
                 {
-                    // vertex
-                    if (tokens.Count >= 4)
-                    {
-                        float x = 0, y = 0, z = 0;
-                        float r = 1, g = 1, b = 1; // either color or 'w'
-
-                        // parse x,y,z
-                        Helpers.TryParseFloat(tokens[1], out x);
-                        Helpers.TryParseFloat(tokens[2], out y);
-                        Helpers.TryParseFloat(tokens[3], out z);
-
-                        // if we have 4 tokens => might be w or color
-                        // if we have 7 tokens => x y z r g b
-                        int count = tokens.Count - 1; // ignoring the "v"
-                        if (count == 4)
+                    case "v":
+                        ParseVertex(tokens, tokenCount, v, vertexWeights, vc, ref foundAllColors);
+                        break;
+                    case "vn":
+                        ParseNormal(tokens, tokenCount, vn);
+                        break;
+                    case "vt":
+                        ParseTexcoord(tokens, tokenCount, vt);
+                        break;
+                    case "vw":
+                        ParseVertexWeight(tokens, tokenCount, vw);
+                        break;
+                    case "f":
+                        ParseFace(tokens, tokenCount, primGroup, currentSmoothingId);
+                        break;
+                    case "l":
+                        ParseLine(tokens, tokenCount, primGroup);
+                        break;
+                    case "p":
+                        ParsePoints(tokens, tokenCount, primGroup);
+                        break;
+                    case "usemtl":
+                        // Flush accumulated data.
+                        ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
+                        primGroup.Clear();
                         {
-                            // interpret the 4th as 'w'
-                            Helpers.TryParseFloat(tokens[4], out r);
-
-                            // store w into vertexWeights
-                            v.Add(new Vector3(x, y, z));
-                            vertexWeights.Add(r);
-                            foundAllColors = false;
-                        }
-                        else if (count == 6)
-                        {
-                            // x y z r g b ...
-                            Helpers.TryParseFloat(tokens[4], out r);
-                            Helpers.TryParseFloat(tokens[5], out g);
-                            Helpers.TryParseFloat(tokens[6], out b);
-
-                            v.Add(new Vector3(x, y, z));
-                            vertexWeights.Add(1.0f); // default w=1
-                            vc.Add(new Vector3(r, g, b));
-
-                        }
-                        else
-                        {
-                            // just x,y,z
-                            v.Add(new Vector3(x, y, z));
-                            vertexWeights.Add(1.0f);
-                            foundAllColors = false;
-                        }
-                    }
-                }
-                else if (cmd == "vn") // normal
-                {
-                    if (tokens.Count >= 4)
-                    {
-                        float x = 0, y = 0, z = 0;
-
-                        Helpers.TryParseFloat(tokens[1], out x);
-                        Helpers.TryParseFloat(tokens[2], out y);
-                        Helpers.TryParseFloat(tokens[3], out z);
-                        vn.Add(new Vector3(x, y, z));
-                    }
-                }
-                else if (cmd == "vt") // texcoord
-                {
-                    // vt u v [w]
-                    if (tokens.Count >= 2)
-                    {
-                        float u = 0, vv = 0, w = 0;
-                        Helpers.TryParseFloat(tokens[1], out u);
-
-                        if (tokens.Count > 2)
-                            Helpers.TryParseFloat(tokens[2], out vv);
-
-                        if (tokens.Count > 3)
-                            Helpers.TryParseFloat(tokens[3], out w);
-
-                        vt.Add(new Vector2(u, vv));
-                        // we won't store w in vt directly, but we can store it in TexcoordWs if needed.
-                    }
-                }
-                else if (cmd == "vw")
-                {
-                    // extension for vertex weights
-                    // e.g. "vw 0 0 0.25 1 0.25 2 0.5"
-                    // first token is "vw", second is vertex id:
-                    if (tokens.Count > 1)
-                    {
-                        OBJSkinWeight sw = new OBJSkinWeight();
-                        int vid = 0;
-                        if (int.TryParse(tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out vid))
-                        {
-                            sw.VertexId = vid;
-                            int idx = 2;
-                            while (idx + 1 < tokens.Count)
+                            string matName = tokenCount > 1 ? tokens[1] : string.Empty;
+                            if (!materialMap.TryGetValue(matName, out materialId))
                             {
-                                int j = 0;
-                                float w = 0.0f;
-
-                                if (!int.TryParse(tokens[idx], out j))
-                                    break;
-
-                                if (!Helpers.TryParseFloat(tokens[idx + 1], out w))
-                                    break;
-
-                                OBJJointAndWeight jw = new OBJJointAndWeight();
-                                jw.JointId = j;
-                                jw.Weight = w;
-                                sw.WeightValues.Add(jw);
-                                idx += 2;
-                            }
-                            vw.Add(sw);
-                        }
-                    }
-                }
-                else if (cmd == "f")
-                {
-                    // face
-                    if (tokens.Count < 2)
-                        continue;
-
-                    Face f = new Face() { SmoothingGroupId = currentSmoothingId };
-
-                    // parse
-                    for (int i = 1; i < tokens.Count; i++)
-                    {
-                        var vix = Helpers.ParseRawTriple(tokens[i]);
-                        f.VertexIndices.Add(vix);
-                    }
-
-                    primGroup.FaceGroup.Add(f);
-                }
-                else if (cmd == "l")
-                {
-                    // line
-                    if (tokens.Count < 2)
-                        continue;
-
-                    var lineGroup = new LineElm();
-                    for (int i = 1; i < tokens.Count; i++)
-                    {
-                        var vix = Helpers.ParseRawTriple(tokens[i]);
-                        lineGroup.VertexIndices.Add(vix);
-                    }
-
-                    primGroup.LineGroup.Add(lineGroup);
-                }
-                else if (cmd == "p")
-                {
-                    // points
-                    if (tokens.Count < 2)
-                        continue;
-
-                    var pointGroup = new PointsElm();
-                    for (int i = 1; i < tokens.Count; i++)
-                    {
-                        var vix = Helpers.ParseRawTriple(tokens[i]);
-                        pointGroup.VertexIndices.Add(vix);
-                    }
-
-                    primGroup.PointsGroup.Add(pointGroup);
-                }
-                else if (cmd == "usemtl")
-                {
-                    // flush the current primGroup into a shape
-                    ExportGroupsToShape(
-                        shapes,
-                        ref primGroup,
-                        currentGroupName,
-                        materialId,
-                        v,
-                        triangulate,
-                        ref warning);
-
-                    primGroup.Clear();
-
-                    // read the next material name
-                    string matName = tokens.Count > 1 ? tokens[1] : "";
-                    if (!materialMap.TryGetValue(matName, out materialId))
-                    {
-                        // not found
-                        materialId = -1;
-                        warning += $"material [{matName}] not found.\n";
-                    }
-                }
-                else if (cmd == "mtllib")
-                {
-                    if (tokens.Count > 1)
-                    {
-                        // We can have multiple filenames in the line: "mtllib file1 file2"
-                        // We'll parse them all.                        
-                        for (int i = 1; i < tokens.Count; i++)
-                        {
-                            string filename = tokens[i];
-                            if (materialFilenames.Contains(filename))
-                                continue; // skip repeated
-
-                            string filePath = Path.Combine(workingDirectory, filename);
-                            if (assetsDirectory != null && assetsDirectory.Exists(filePath))
-                            {
-                                using (var streamMtl = assetsDirectory.Open(filePath))
-                                {
-                                    var mtlReader = new OBJMaterialStreamReader(streamMtl);
-                                    if (!mtlReader.Read(filename, materials, materialMap, out string warnMtl, out string errMtl))
-                                    {
-                                        // failed
-                                        warning += warnMtl;
-                                        error += errMtl;
-                                    }
-                                    else
-                                    {
-                                        warning += warnMtl;
-                                    }
-                                    materialFilenames.Add(filename);
-                                }
+                                materialId = -1;
+                                warnSB.Append($"material [{matName}] not found.\n");
                             }
                         }
-                    }
+                        break;
+                    case "mtllib":
+                        ParseMaterialLib(tokens, tokenCount, assetsDirectory, workingDirectory, materials, materialMap, materialFilenames, warnSB, errSB);
+                        break;
+                    case "g":
+                        ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
+                        // Combine all tokens after "g" into a single group name.
+                        currentGroupName = tokenCount > 1 ? string.Join(" ", tokens.GetRange(1, tokenCount - 1)) : string.Empty;
+                        break;
+                    case "o":
+                        ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
+                        currentGroupName = tokenCount > 1 ? line.Substring(1).Trim() : string.Empty;
+                        break;
+                    case "s":
+                        currentSmoothingId = (tokenCount > 1 && tokens[1] != "off" && uint.TryParse(tokens[1], out var smoothingId))
+                            ? smoothingId : 0;
+                        break;
                 }
-                else if (cmd == "g")
-                {
-                    // flush current group -> shape
-                    ExportGroupsToShape(
-                        shapes,
-                        ref primGroup,
-                        currentGroupName,
-                        materialId,
-                        v,
-                        triangulate,
-                        ref warning);
-
-                    if (primGroup.HasData())
-                    {
-                        // create a new shape if there's leftover
-                        // but typically ExportGroupsToShape() empties it if it is valid
-                    }
-
-                    // parse the new group name
-                    if (tokens.Count > 1)
-                    {
-                        // we combine them if multiple
-                        currentGroupName = "";
-                        for (int i = 1; i < tokens.Count; i++)
-                        {
-                            if (i > 1)
-                                currentGroupName += " ";
-
-                            currentGroupName += tokens[i];
-                        }
-                    }
-                    else
-                    {
-                        currentGroupName = "";
-                    }
-                }
-                else if (cmd == "o")
-                {
-                    // flush
-                    ExportGroupsToShape(
-                        shapes,
-                        ref primGroup,
-                        currentGroupName,
-                        materialId,
-                        v,
-                        triangulate,
-                        ref warning);
-
-                    // new shape
-                    if (tokens.Count > 1)
-                    {
-                        currentGroupName = line.Substring(1).Trim();
-                    }
-                    else
-                    {
-                        currentGroupName = "";
-                    }
-                }
-                else if (cmd == "s")
-                {
-                    // smoothing group
-                    if (tokens.Count > 1)
-                    {
-                        if (tokens[1] == "off") currentSmoothingId = 0;
-                        else
-                        {
-                            if (!uint.TryParse(tokens[1], out currentSmoothingId))
-                            {
-                                currentSmoothingId = 0;
-                            }
-                        }
-                    }
-                }
-                // else unknown
             }
 
-            // flush last primGroup
-            ExportGroupsToShape(
-                shapes,
-                ref primGroup,
-                currentGroupName,
-                materialId,
-                v,
-                triangulate,
-                ref warning);
+            // Flush remaining data.
+            ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
 
-            // Store them in the final Attrib
             if (!foundAllColors && !defaultVcolsFallback)
-            {
                 vc.Clear();
-            }
 
+            // Populate final OBJAttrib.
             attrib.Vertices.AddRange(v);
             attrib.VertexWeights.AddRange(vertexWeights);
             attrib.Normals.AddRange(vn);
             attrib.Texcoords.AddRange(vt);
-            attrib.TexcoordWs.AddRange(new float[vt.Count]); // not used currently
+            attrib.TexcoordWs.AddRange(new float[vt.Count]); // Currently not used.
             attrib.Colors.AddRange(vc);
             attrib.SkinWeights.AddRange(vw);
 
+            // Copy messages from StringBuilders.
+            warning = warnSB.ToString();
+            error = errSB.ToString();
+
             return true;
+        }
+
+        private static void ParseVertex(List<string> tokens, int tokenCount, List<Vector3> v, List<float> vertexWeights, List<Vector3> vc, ref bool foundAllColors)
+        {
+            // Require at least x, y, and z.
+            if (tokenCount >= 4)
+            {
+                Helpers.TryParseFloat(tokens[1], out float x);
+                Helpers.TryParseFloat(tokens[2], out float y);
+                Helpers.TryParseFloat(tokens[3], out float z);
+
+                // When there is one extra token, treat it as the weight ("w").
+                if (tokenCount == 5)
+                {
+                    Helpers.TryParseFloat(tokens[4], out float w);
+                    v.Add(new Vector3(x, y, z));
+                    vertexWeights.Add(w);
+                    foundAllColors = false;
+                }
+                // When there are three extra tokens, treat them as vertex colors.
+                else if (tokenCount == 7)
+                {
+                    Helpers.TryParseFloat(tokens[4], out float r);
+                    Helpers.TryParseFloat(tokens[5], out float g);
+                    Helpers.TryParseFloat(tokens[6], out float b);
+                    v.Add(new Vector3(x, y, z));
+                    vertexWeights.Add(1.0f);
+                    vc.Add(new Vector3(r, g, b));
+                }
+                else
+                {
+                    // Standard vertex with no extra values.
+                    v.Add(new Vector3(x, y, z));
+                    vertexWeights.Add(1.0f);
+                    foundAllColors = false;
+                }
+            }
+        }
+
+        private static void ParseNormal(List<string> tokens, int tokenCount, List<Vector3> vn)
+        {
+            if (tokenCount >= 4)
+            {
+                Helpers.TryParseFloat(tokens[1], out float x);
+                Helpers.TryParseFloat(tokens[2], out float y);
+                Helpers.TryParseFloat(tokens[3], out float z);
+                vn.Add(new Vector3(x, y, z));
+            }
+        }
+
+        private static void ParseTexcoord(List<string> tokens, int tokenCount, List<Vector2> vt)
+        {
+            if (tokenCount >= 2)
+            {
+                Helpers.TryParseFloat(tokens[1], out float u);
+                float vVal = 0;
+                if (tokenCount > 2)
+                    Helpers.TryParseFloat(tokens[2], out vVal);
+                vt.Add(new Vector2(u, vVal));
+            }
+        }
+
+        private static void ParseVertexWeight(List<string> tokens, int tokenCount, List<OBJSkinWeight> vw)
+        {
+            if (tokenCount > 1 && int.TryParse(tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var vid))
+            {
+                var sw = new OBJSkinWeight { VertexId = vid };
+                for (int i = 2; i + 1 < tokenCount; i += 2)
+                {
+                    if (int.TryParse(tokens[i], out var j) &&
+                        Helpers.TryParseFloat(tokens[i + 1], out var w))
+                    {
+                        sw.WeightValues.Add(new OBJJointAndWeight { JointId = j, Weight = w });
+                    }
+                }
+                vw.Add(sw);
+            }
+        }
+
+        private static void ParseFace(List<string> tokens, int tokenCount, PrimGroup primGroup, uint currentSmoothingId)
+        {
+            if (tokenCount < 2)
+                return;
+
+            var face = new Face { SmoothingGroupId = currentSmoothingId };
+            for (int i = 1; i < tokenCount; i++)
+            {
+                face.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+            }
+            primGroup.FaceGroup.Add(face);
+        }
+
+        private static void ParseLine(List<string> tokens, int tokenCount, PrimGroup primGroup)
+        {
+            if (tokenCount < 2)
+                return;
+
+            var lineGroup = new LineElm();
+            for (int i = 1; i < tokenCount; i++)
+            {
+                lineGroup.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+            }
+            primGroup.LineGroup.Add(lineGroup);
+        }
+
+        private static void ParsePoints(List<string> tokens, int tokenCount, PrimGroup primGroup)
+        {
+            if (tokenCount < 2)
+                return;
+
+            var pointsGroup = new PointsElm();
+            for (int i = 1; i < tokenCount; i++)
+            {
+                pointsGroup.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+            }
+            primGroup.PointsGroup.Add(pointsGroup);
+        }
+
+        private static void ParseMaterialLib(List<string> tokens, int tokenCount, AssetsDirectory assetsDirectory, string workingDirectory, List<OBJMaterial> materials,
+            Dictionary<string, int> materialMap, HashSet<string> materialFilenames, StringBuilder warnSB, StringBuilder errSB)
+        {
+            if (tokenCount > 1)
+            {
+                for (int i = 1; i < tokenCount; i++)
+                {
+                    string filename = tokens[i];
+                    if (materialFilenames.Contains(filename))
+                        continue;
+
+                    string filePath = Path.Combine(workingDirectory, filename);
+                    if (assetsDirectory != null && assetsDirectory.Exists(filePath))
+                    {
+                        using (var streamMtl = assetsDirectory.Open(filePath))
+                        {
+                            var mtlReader = new OBJMaterialStreamReader(streamMtl);
+                            if (!mtlReader.Read(filename, materials, materialMap, out var warnMtl, out var errMtl))
+                            {
+                                warnSB.Append(warnMtl);
+                                errSB.Append(errMtl);
+                            }
+                            else
+                            {
+                                warnSB.Append(warnMtl);
+                            }
+                            materialFilenames.Add(filename);
+                        }
+                    }
+                }
+            }
         }
 
         private static void ExportGroupsToShape(
@@ -408,37 +307,29 @@ namespace OBJRuntime.Readers
             int materialId,
             List<Vector3> v,
             bool triangulate,
-            ref string warning)
+            StringBuilder warnSB)
         {
             if (!primGroup.HasData())
                 return;
 
-            OBJShape shape = new OBJShape();
-            shape.Name = groupName;
+            var shape = new OBJShape { Name = groupName };
 
-            // faceGroup => shape.Mesh
             foreach (var face in primGroup.FaceGroup)
             {
                 int nVerts = face.VertexIndices.Count;
                 if (nVerts < 3)
                 {
-                    warning += "Degenerate face found.\n";
+                    warnSB.Append("Degenerate face found.\n");
                     continue;
                 }
                 if (triangulate && nVerts > 3)
                 {
-                    // naive ear clipping or fan approach. We'll do a fan approach for brevity:
-                    // Face (v0, v1, v2, v3, ...) => (v0,v1,v2),(v0,v2,v3), ...
-                    // Not robust for complex polygons, but typical for quads etc.
-
                     var baseIndex = face.VertexIndices[0];
                     for (int i = 1; i < nVerts - 1; i++)
                     {
-                        OBJIndex i1 = face.VertexIndices[i];
-                        OBJIndex i2 = face.VertexIndices[i + 1];
                         shape.Mesh.Indices.Add(baseIndex);
-                        shape.Mesh.Indices.Add(i1);
-                        shape.Mesh.Indices.Add(i2);
+                        shape.Mesh.Indices.Add(face.VertexIndices[i]);
+                        shape.Mesh.Indices.Add(face.VertexIndices[i + 1]);
 
                         shape.Mesh.NumFaceVertices.Add(3);
                         shape.Mesh.MaterialIds.Add(materialId);
@@ -447,39 +338,29 @@ namespace OBJRuntime.Readers
                 }
                 else
                 {
-                    // store as is
-                    foreach (var idx in face.VertexIndices)
-                    {
-                        shape.Mesh.Indices.Add(idx);
-                    }
+                    shape.Mesh.Indices.AddRange(face.VertexIndices);
                     shape.Mesh.NumFaceVertices.Add((uint)nVerts);
                     shape.Mesh.MaterialIds.Add(materialId);
                     shape.Mesh.SmoothingGroupIds.Add(face.SmoothingGroupId);
                 }
             }
 
-            // lines
             foreach (var line in primGroup.LineGroup)
             {
-                foreach (var idx in line.VertexIndices)
-                {
-                    shape.Lines.Indices.Add(idx);
-                }
+                shape.Lines.Indices.AddRange(line.VertexIndices);
                 shape.Lines.NumLineVertices.Add(line.VertexIndices.Count);
             }
-            // points
+
             foreach (var pts in primGroup.PointsGroup)
             {
-                foreach (var idx in pts.VertexIndices)
-                {
-                    shape.Points.Indices.Add(idx);
-                }
+                shape.Points.Indices.AddRange(pts.VertexIndices);
             }
 
             shapes.Add(shape);
             primGroup.Clear();
         }
 
+        // Private helper classes.
         private class Face
         {
             public uint SmoothingGroupId = 0;
