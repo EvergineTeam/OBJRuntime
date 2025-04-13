@@ -193,13 +193,14 @@ namespace Evergine.Runtimes.OBJ
                 for (int s = 0; s < shapes.Count; s++)
                 {
                     var shape = shapes[s];
-                    var meshIndices = shape.Mesh.Indices;
-                    VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[meshIndices.Count];
+                    var meshIndices = shape.Mesh.Indices.ToArray();
+
+                    VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[meshIndices.Length];
                     var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
                     var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
                     // Create Vertex array
-                    for (int i = 0; i < meshIndices.Count; i++)
+                    for (int i = 0; i < meshIndices.Length; i++)
                     {
                         int positionId = meshIndices[i].VertexIndex;
                         int normalId = meshIndices[i].NormalIndex;
@@ -250,7 +251,7 @@ namespace Evergine.Runtimes.OBJ
                         }
 
                         // Loop through each triangle (assumes meshIndices.Count is a multiple of 3).
-                        for (int i = 0; i < meshIndices.Count; i += 3)
+                        for (int i = 0; i < meshIndices.Length; i += 3)
                         {
                             // Get the unique vertex indices for the triangle.
                             int index0 = meshIndices[i].VertexIndex;
@@ -276,7 +277,7 @@ namespace Evergine.Runtimes.OBJ
 
                         // Now assign the smooth normal to each vertex.
                         // Each vertex (of the final vertices array) uses the smoothed normal associated with its position index.
-                        for (int i = 0; i < meshIndices.Count; i++)
+                        for (int i = 0; i < meshIndices.Length; i++)
                         {
                             int posIndex = meshIndices[i].VertexIndex;
                             // Normalize the accumulated normal before assigning.
@@ -295,7 +296,7 @@ namespace Evergine.Runtimes.OBJ
                     // Get Material
                     int materialIndex = 0;
                     var ids = shape.Mesh.MaterialIds;
-                    if (ids.Count > 0)
+                    if (ids.Count > 0 && ids[0] != -1)
                     {
                         var materialId = ids[0];
                         materialIndex = await this.ReadMaterial(materialId, materials);
@@ -344,7 +345,7 @@ namespace Evergine.Runtimes.OBJ
             var baseColor = await data.GetBaseColorTextureAndSampler();
 
             var effect = this.assetsService.Load<Effect>(DefaultResourcesIDs.StandardEffectID);
-            var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.CullFront);
+            var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.Opaque);
             StandardMaterial material = new StandardMaterial(effect)
             {
                 LightingEnabled = data.HasVertexNormal,
