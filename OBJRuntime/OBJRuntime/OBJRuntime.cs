@@ -209,7 +209,7 @@ namespace Evergine.Runtimes.OBJ
                         var vertex = new VertexPositionNormalTexture();
 
                         vertex.Position = positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero;
-                        vertex.Normal = normalId != -1 ? attrib.Vertices[normalId] : Vector3.Zero;
+                        vertex.Normal = normalId != -1 ? attrib.Normals[normalId] : Vector3.Zero;
                         vertex.TexCoord = texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero;
                         vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
 
@@ -218,27 +218,6 @@ namespace Evergine.Runtimes.OBJ
                         Vector3.Max(ref vertices[i].Position, ref max, out max);
                         Vector3.Min(ref vertices[i].Position, ref min, out min);
                     }
-
-                    // Compute normals
-                    //if (attrib.Normals.Count == 0)
-                    //{
-                    //    for (int i = 0; i < meshIndices.Count; i += 3)
-                    //    {
-                    //        Vector3 pos0 = vertices[i].Position;
-                    //        Vector3 pos1 = vertices[i + 1].Position;
-                    //        Vector3 pos2 = vertices[i + 2].Position;
-
-                    //        Vector3 edge1 = pos1 - pos0;
-                    //        Vector3 edge2 = pos2 - pos0;
-
-                    //        Vector3 faceNormal = Vector3.Cross(edge1, edge2);
-                    //        faceNormal = Vector3.Normalize(faceNormal);
-
-                    //        vertices[i].Normal = faceNormal;
-                    //        vertices[i + 1].Normal = faceNormal;
-                    //        vertices[i + 2].Normal = faceNormal;
-                    //    }
-                    //}
 
                     // Compute smooth normals if none were provided in the OBJ (attrib.Normals.Count == 0)
                     if (attrib.Normals.Count == 0)
@@ -281,7 +260,7 @@ namespace Evergine.Runtimes.OBJ
                         {
                             int posIndex = meshIndices[i].VertexIndex;
                             // Normalize the accumulated normal before assigning.
-                            vertices[i].Normal = Vector3.Normalize(accumNormals[posIndex]);
+                            vertices[i].Normal = -Vector3.Normalize(accumNormals[posIndex]);
                         }
                     }
 
