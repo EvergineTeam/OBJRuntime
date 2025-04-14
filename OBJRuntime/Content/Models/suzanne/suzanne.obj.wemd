@@ -1,0 +1,28 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 34039299-4ac8-4cff-83b5-3f7b68566c0b
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: c69a35d8-5e0a-4cd3-b156-aba4da1404c4
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: b25902cb-f932-4ea2-adaa-e50dc793604d
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: defaultMat
+        Item2: d941c598-e88f-4645-9275-ef4c5641d766
+    Nodes:
+      - RootNode
+      - suzanne_root
+      - suzanne_root.default
+SwapWindingOrder: false

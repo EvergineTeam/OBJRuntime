@@ -1,0 +1,97 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 60b1d476-e1a9-4a44-8fba-d2fa99e6d1d6
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 3813c8d6-683c-456e-b9da-a396f65978ff
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 74271fd9-8c8d-4ef6-9f18-a85b94e42212
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: Group1Mat
+        Item2: 859f92c4-1b70-4513-b3b0-a7364464e765
+      - Item1: Group10Mat
+        Item2: e9f4ea7e-f24b-498e-a313-0f56c4501ccd
+      - Item1: Group11Mat
+        Item2: 1164f14a-afb4-4ac9-ab65-e6a4378c252d
+      - Item1: Group12Mat
+        Item2: 5077b1bf-feb2-4f57-a7f1-1748779da32d
+      - Item1: Group13Mat
+        Item2: 60aca947-4b40-4118-86ec-86ddf5312e0a
+      - Item1: Group14Mat
+        Item2: 3c577bf4-1417-4e0b-b37c-940a0d0a083f
+      - Item1: Group15Mat
+        Item2: 02ba7fb9-9bd4-4d19-81d2-26f11422cd24
+      - Item1: Group16Mat
+        Item2: d55b078c-22f7-42bb-8789-47f8a65655ad
+      - Item1: Group17Mat
+        Item2: 76a63254-6f86-4675-bce9-97ed9461ad07
+      - Item1: Group18Mat
+        Item2: 9e0f1cd5-478d-43ae-975c-1709e7df7a9a
+      - Item1: Group19Mat
+        Item2: a31d0219-d3e7-4665-9d6c-e4ec787a015c
+      - Item1: Group2Mat
+        Item2: 3ec18d5d-31b8-4344-bfb8-5f761fc9d20b
+      - Item1: Group20Mat
+        Item2: 1940cb8b-8137-4cc1-a7ae-c3c46012751a
+      - Item1: Group21Mat
+        Item2: 53d51a53-e450-4dd3-b78c-c99cd5f60d8c
+      - Item1: Group22Mat
+        Item2: ac076cd5-06d4-42fd-8c12-8baf29928901
+      - Item1: Group23Mat
+        Item2: 700b00f0-d087-44ed-8744-35a44151eec9
+      - Item1: Group24Mat
+        Item2: 02bf5ff8-a489-4e91-8823-b1501bb206a6
+      - Item1: Group3Mat
+        Item2: b1479110-9bb3-4bf8-8bab-300b206e89cb
+      - Item1: Group4Mat
+        Item2: e566428a-b6c2-4fc7-9864-d963901cf82b
+      - Item1: Group5Mat
+        Item2: ab7cc767-f548-4983-913e-3607fe2e9be7
+      - Item1: Group6Mat
+        Item2: 042d8d29-5185-404c-b50e-e9a22c14f275
+      - Item1: Group7Mat
+        Item2: 1007dc7e-2f4a-42e7-8d32-133485e5179c
+      - Item1: Group8Mat
+        Item2: dc0ebee2-53c1-444d-8168-879bf216d3a6
+      - Item1: Group9Mat
+        Item2: a4a3eb65-bde7-46ce-bfaa-45360d54f531
+    Nodes:
+      - RootNode
+      - orc_root
+      - orc_root.Group1
+      - orc_root.Group10
+      - orc_root.Group11
+      - orc_root.Group12
+      - orc_root.Group13
+      - orc_root.Group14
+      - orc_root.Group15
+      - orc_root.Group16
+      - orc_root.Group17
+      - orc_root.Group18
+      - orc_root.Group19
+      - orc_root.Group2
+      - orc_root.Group20
+      - orc_root.Group21
+      - orc_root.Group22
+      - orc_root.Group23
+      - orc_root.Group24
+      - orc_root.Group3
+      - orc_root.Group4
+      - orc_root.Group5
+      - orc_root.Group6
+      - orc_root.Group7
+      - orc_root.Group8
+      - orc_root.Group9
+SwapWindingOrder: false

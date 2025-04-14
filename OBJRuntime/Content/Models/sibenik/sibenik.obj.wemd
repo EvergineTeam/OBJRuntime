@@ -1,0 +1,56 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: ba9b96ee-247b-4b16-82e0-4ea49b9fbad9
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 70e161be-295b-4c12-806b-832b19d3d28a
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: d74c1e1d-21d4-4630-b8c6-2d7119c820f9
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: sprljci
+        Item2: 9b9c444b-06c2-42eb-a1e6-cec5aed64349
+      - Item1: staklo
+        Item2: c4abeb8d-ac39-45cd-b741-64eafb1f0b9c
+      - Item1: kamen_zid
+        Item2: 3869a5df-7b3b-461f-8db4-ec131ac71a65
+      - Item1: stupovi
+        Item2: 8d420397-dea4-4eb8-90ed-27019e9f3859
+      - Item1: pod
+        Item2: f1e97869-ecad-4a99-8e3f-53123ace02cb
+      - Item1: pod_tepih
+        Item2: 5d0cbf67-947e-4dd1-be4b-6fed4a2da265
+      - Item1: pod_rub
+        Item2: 06908afd-8876-4ae9-877a-34d1fa008d83
+      - Item1: kamen_zid_prozor
+        Item2: 73c2e5ea-dc01-49d5-9708-87acc72c65ee
+      - Item1: zid_vani
+        Item2: 5783493d-3904-4f72-9e12-5b40e8d55114
+      - Item1: kamen_zid_parapet
+        Item2: 54b7ce4c-06ec-48ab-bc3a-2525c1fbec32
+      - Item1: staklo_crveno
+        Item2: 45204da6-8683-42d0-a104-d3b42ad70f4a
+      - Item1: rozeta
+        Item2: 85333c21-5063-4e78-87db-6007b8bb88c9
+      - Item1: staklo_zeleno
+        Item2: e68bf661-9a5d-47b0-8b34-5eab50d7f6de
+      - Item1: staklo_plavo
+        Item2: b4f6e53b-71de-452d-bbd2-9959262bc4d1
+      - Item1: staklo_zuto
+        Item2: ce84d16c-bbd4-4067-a6da-cc44f1291fc5
+    Nodes:
+      - RootNode
+      - sibenik_root
+      - sibenik_root.Object__0
+SwapWindingOrder: false

@@ -17,10 +17,8 @@ namespace Evergine.Runtimes.OBJ
 
         protected override async void CreateScene()
         {
-            //var model = await OBJRuntime.Instance.Read("Models/cube.obj");
-            //var model = await OBJRuntime.Instance.Read("Models/cube-normals.obj");            
-            //var model = await OBJRuntime.Instance.Read("Models/bunny.obj");
-            var model = await OBJRuntime.Instance.Read("Models/orc.obj");
+            var model = await OBJRuntime.Instance.Read("Models/bunny/bunny.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/orc/orc.obj");
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);

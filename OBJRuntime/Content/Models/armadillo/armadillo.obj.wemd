@@ -1,0 +1,28 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: b63b3154-1a55-4c2c-85af-c0a599bb24d6
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: aa779a06-d35f-4017-8582-5afb0482b3a9
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: be0824d5-66fd-4c36-a29b-68ec1371ad93
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: defaultMat
+        Item2: 3761ed0a-1eeb-4922-bdb3-eb47fb47ebbc
+    Nodes:
+      - RootNode
+      - armadillo_root
+      - armadillo_root.default
+SwapWindingOrder: false

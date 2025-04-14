@@ -1,0 +1,145 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: bb562f2e-be67-4e23-aa30-475db230278f
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 4068f79f-f245-4afb-87a6-4e59a1d85287
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: d51fc6dd-8753-48de-b8e6-ebe8b1da3b80
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: Bed
+        Item2: dcbac50f-d6ef-4182-b693-f6ad6c8619c3
+      - Item1: Bookshelf
+        Item2: 0d4824af-1341-47ad-af60-f99b5764304c
+      - Item1: Chest
+        Item2: 5a66ae3b-5546-4750-bbb9-69200ee9f96a
+      - Item1: Coal_Ore
+        Item2: 0a9cf6bc-f085-4354-bb55-189569cda5dc
+      - Item1: Cobblestone
+        Item2: 0e8960f6-524c-472b-88eb-10fd56f15b5c
+      - Item1: Cobblestone_Stairs
+        Item2: 4febe510-ef00-4307-b6ab-0cfc443d0961
+      - Item1: Dandelion
+        Item2: 79e9350b-0ad8-449e-983c-62d2b0f813b0
+      - Item1: Dirt
+        Item2: 46006196-8a11-46c9-9859-4f7ba514ca28
+      - Item1: Double_Slab
+        Item2: b76719bc-7e3b-4a91-82f7-762895e01f7a
+      - Item1: Fence
+        Item2: e9123ee0-7b40-424f-abce-3d8903caee7d
+      - Item1: Glass_Pane
+        Item2: 4830da51-75b6-42a8-962c-08319df730cf
+      - Item1: Glowstone
+        Item2: 024c6dce-cf81-45e1-8fe0-d92b98f6e539
+      - Item1: Grass
+        Item2: 9990ace6-b041-44e1-af35-7b68f226f305
+      - Item1: Gravel
+        Item2: 03c983f8-32e5-4f84-8be5-1c53d972d17f
+      - Item1: Iron_Bars
+        Item2: 4e354249-cff6-4da7-857f-5c103d6e104a
+      - Item1: Iron_Block
+        Item2: e6e21333-1562-4918-b8c8-b32a35e3dfc5
+      - Item1: Iron_Door
+        Item2: b5d49e7b-37ba-48f3-a2b2-f90379ae3e37
+      - Item1: Iron_Ore
+        Item2: 183700cb-fbf9-4d73-b23e-fa9e987db25a
+      - Item1: Ladder
+        Item2: 82e662e3-903b-499a-bf96-e95f27d3bdaa
+      - Item1: Leaves
+        Item2: d53b9716-6e98-4c66-bd36-c8c6de5b4bcd
+      - Item1: Lever
+        Item2: 44579141-0228-4b83-bc6f-6b7c4ad3b863
+      - Item1: Log
+        Item2: 638769db-d288-4c58-8ac3-d10ab92c775b
+      - Item1: Red_Wool
+        Item2: 12f23114-13cc-424f-8dd1-639b204dfbab
+      - Item1: Redstone_Torch_(on)
+        Item2: be0e58a3-3a7f-45dd-8a58-e8bf75c40047
+      - Item1: Rose
+        Item2: c5a25088-a42b-459c-9d79-2a411a1a396b
+      - Item1: Sand
+        Item2: ebfd70d2-ae17-44ea-a1dd-248a34faf8cc
+      - Item1: Sandstone
+        Item2: 972194de-0dda-45a5-8cd8-9d09891c4910
+      - Item1: Stone
+        Item2: d13ff6c7-8404-477d-9d70-6c57d81c8a9b
+      - Item1: Stone_Brick
+        Item2: 4d3ba114-b214-4420-b432-ea5aadc8a870
+      - Item1: Stone_Brick_Stairs
+        Item2: e6d629d6-7044-4291-ac16-8bb8d73caeb9
+      - Item1: Stone_Button
+        Item2: b791b9f9-dc90-4ffc-9526-f0d655de59db
+      - Item1: Stone_Slab
+        Item2: e4c65f87-546c-480a-ae40-bccf299ad0aa
+      - Item1: Tall_Grass
+        Item2: ec1df15e-f5ae-47f9-b187-19dab0b7c355
+      - Item1: Torch
+        Item2: 40067045-3c2a-48d8-b522-5c72e9161262
+      - Item1: Wall_Sign
+        Item2: efc9a35a-5271-4b6e-8aa6-aa0a7a5d8c23
+      - Item1: White_Wool
+        Item2: ba1965f0-1f40-4ed2-9f74-f783b650b296
+      - Item1: Wooden_Door
+        Item2: 812bf1fe-8199-45d5-986e-2d0b8510a9ca
+      - Item1: Wooden_Plank
+        Item2: 8e200865-942f-474d-8362-279af97ec57d
+      - Item1: Wooden_Plate
+        Item2: 3aae6dd7-9619-4e17-bfa5-4b82810fd248
+      - Item1: Wooden_Stairs
+        Item2: 6ee5b3a5-ede2-4729-93b5-5ecd647885d9
+    Nodes:
+      - RootNode
+      - house_root
+      - house_root.Bed
+      - house_root.Bookshelf
+      - house_root.Chest
+      - house_root.Coal_Ore
+      - house_root.Cobblestone
+      - house_root.Cobblestone_Stairs
+      - house_root.Dandelion
+      - house_root.Dirt
+      - house_root.Double_Slab
+      - house_root.Fence
+      - house_root.Glass_Pane
+      - house_root.Glowstone
+      - house_root.Grass
+      - house_root.Gravel
+      - house_root.Iron_Bars
+      - house_root.Iron_Block
+      - house_root.Iron_Door
+      - house_root.Iron_Ore
+      - house_root.Ladder
+      - house_root.Leaves
+      - house_root.Lever
+      - house_root.Log
+      - house_root.Red_Wool
+      - house_root.Redstone_Torch_(on)
+      - house_root.Rose
+      - house_root.Sand
+      - house_root.Sandstone
+      - house_root.Stone
+      - house_root.Stone_Brick
+      - house_root.Stone_Brick_Stairs
+      - house_root.Stone_Button
+      - house_root.Stone_Slab
+      - house_root.Tall_Grass
+      - house_root.Torch
+      - house_root.Wall_Sign
+      - house_root.White_Wool
+      - house_root.Wooden_Door
+      - house_root.Wooden_Plank
+      - house_root.Wooden_Plate
+      - house_root.Wooden_Stairs
+SwapWindingOrder: false
