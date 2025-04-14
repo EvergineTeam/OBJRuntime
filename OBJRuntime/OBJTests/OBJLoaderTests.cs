@@ -381,5 +381,39 @@ namespace OBJTests
                 }
             }
         }
+
+        [Fact]
+        public void Test_OBJMaterial_Properties()
+        {
+            // Arrange
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-mat.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.NotNull(materials);
+                    var material = materials[0];
+                    Assert.Equal(new Vector3(0.1f, 0.2f, 0.3f), material.Ambient);
+                    Assert.Equal(new Vector3(0.4f, 0.5f, 0.6f), material.Diffuse);
+                    Assert.Equal(new Vector3(0.7f, 0.8f, 0.9f), material.Specular);
+                    Assert.Equal(new Vector3(0.1f, 0.1f, 0.1f), material.Transmittance);
+                    Assert.Equal(new Vector3(0.2f, 0.2f, 0.2f), material.Emission);
+                    Assert.Equal(50.0f, material.Shininess);
+                    Assert.Equal(1.5f, material.Ior);
+                    Assert.Equal(0.8f, material.Dissolve);
+                    Assert.Equal(2, material.Illum);
+                }
+            }
+        }
     }
 }
