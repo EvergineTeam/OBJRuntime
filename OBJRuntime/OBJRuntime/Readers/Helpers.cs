@@ -65,9 +65,9 @@ namespace OBJRuntime.Readers
                 int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
 
             // Convert from 1-based to 0-based. Negative means relative.
-            idx.VertexIndex = vIdx - 1;
-            idx.TexcoordIndex = vtIdx - 1;
-            idx.NormalIndex = vnIdx - 1;
+            idx.VertexIndex = vIdx;
+            idx.TexcoordIndex = vtIdx;
+            idx.NormalIndex = vnIdx;
 
             return idx;
         }

@@ -32,6 +32,8 @@ namespace Evergine.Runtimes.OBJ
         /// </summary>
         public readonly static OBJRuntime Instance = new OBJRuntime();
 
+        private const int UndefinedIndex = int.MaxValue;
+
         private GraphicsContext graphicsContext;
         private AssetsService assetsService;
         private AssetsDirectory assetsDirectory;
@@ -201,7 +203,7 @@ namespace Evergine.Runtimes.OBJ
 
                     // Create Vertex array
                     int[] order = new int[] { 0, 2, 1 };
-                    for (int i = 0; i < meshIndices.Length; i+=3)
+                    for (int i = 0; i < meshIndices.Length; i += 3)
                     {
                         for (int j = 0; j < 3; j++)
                         {
@@ -212,11 +214,15 @@ namespace Evergine.Runtimes.OBJ
                             int normalId = meshIndices[srcIndex].NormalIndex;
                             int texcoordId = meshIndices[srcIndex].TexcoordIndex;
 
+                            positionId = TranslateIndex(positionId, attrib.Vertices.Count);
+                            normalId = TranslateIndex(normalId, attrib.Normals.Count);
+                            texcoordId = TranslateIndex(texcoordId, attrib.Texcoords.Count);
+
                             var vertex = new VertexPositionNormalTexture();
 
-                            vertex.Position = positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero;
-                            vertex.Normal = normalId != -1 ? attrib.Normals[normalId] : Vector3.Zero;
-                            vertex.TexCoord = texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero;
+                            vertex.Position = positionId != UndefinedIndex ? attrib.Vertices[positionId] : Vector3.Zero;
+                            vertex.Normal = normalId != UndefinedIndex ? attrib.Normals[normalId] : Vector3.Zero;
+                            vertex.TexCoord = texcoordId != UndefinedIndex ? attrib.Texcoords[texcoordId] : Vector2.Zero;
                             vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
 
                             vertices[destIndex] = vertex;
@@ -244,6 +250,10 @@ namespace Evergine.Runtimes.OBJ
                             int idx1 = meshIndices[i + order[1]].VertexIndex;
                             int idx2 = meshIndices[i + order[2]].VertexIndex;
 
+                            idx0 = TranslateIndex(idx0, attrib.Vertices.Count);
+                            idx1 = TranslateIndex(idx1, attrib.Vertices.Count);
+                            idx2 = TranslateIndex(idx2, attrib.Vertices.Count);
+
                             // Retrieve the positions using the unique index.
                             Vector3 pos0 = attrib.Vertices[idx0];
                             Vector3 pos1 = attrib.Vertices[idx1];
@@ -263,11 +273,15 @@ namespace Evergine.Runtimes.OBJ
 
                         // Now assign the smooth normal to each vertex.
                         // Each vertex (of the final vertices array) uses the smoothed normal associated with its position index.
-                        for (int i = 0; i < meshIndices.Length; i+=3)
+                        for (int i = 0; i < meshIndices.Length; i += 3)
                         {
-                            vertices[i + 0].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[0]].VertexIndex]);
-                            vertices[i + 1].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[1]].VertexIndex]);
-                            vertices[i + 2].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[2]].VertexIndex]);
+                            int idx0 = TranslateIndex(meshIndices[i + order[0]].VertexIndex, attrib.Vertices.Count);
+                            int idx1 = TranslateIndex(meshIndices[i + order[1]].VertexIndex, attrib.Vertices.Count);
+                            int idx2 = TranslateIndex(meshIndices[i + order[2]].VertexIndex, attrib.Vertices.Count);
+
+                            vertices[i + 0].Normal = -Vector3.Normalize(accumNormals[idx0]);
+                            vertices[i + 1].Normal = -Vector3.Normalize(accumNormals[idx1]);
+                            vertices[i + 2].Normal = -Vector3.Normalize(accumNormals[idx2]);
                         }
                     }
 
@@ -301,6 +315,27 @@ namespace Evergine.Runtimes.OBJ
             });
 
             return meshes;
+        }
+
+
+        // Helper function to translate OBJ indices to 0-based indices.
+        // Positive indices (starting at 1) are converted by subtracting 1.
+        // Negative indices refer to elements relative to the end, e.g. -1 is the last element.
+        private int TranslateIndex(int index, int count)
+        {
+            if (count > 0)
+            {
+                if (index > 0)
+                {
+                    return index - 1;
+                }
+                else if (index < 0)
+                {
+                    return count + index;
+                }
+            }
+
+            return UndefinedIndex;
         }
 
         private async Task<int> ReadMaterial(int materialId, List<OBJMaterial> materials)
