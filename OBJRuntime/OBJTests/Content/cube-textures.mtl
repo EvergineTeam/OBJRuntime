@@ -1,0 +1,15 @@
+# cube-textures.mtl
+newmtl TestTextureMaterial
+map_Ka ambient_texture.png
+map_Kd diffuse_texture.png
+map_Ks specular_texture.png
+map_Ns specular_highlight_texture.png
+map_bump bump_texture.png
+disp displacement_texture.png
+map_d alpha_texture.png
+refl reflection_texture.png
+map_Pr roughness_texture.png
+map_Pm metallic_texture.png
+map_Ps sheen_texture.png
+map_Ke emissive_texture.png
+norm normal_texture.png

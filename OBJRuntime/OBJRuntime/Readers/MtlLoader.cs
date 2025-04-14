@@ -282,6 +282,22 @@ namespace OBJRuntime.Readers
                         if (++idx < tokenCount)
                             texOpt.Colorspace = tokens[idx];
                         break;
+                    case "-type":
+                        if (++idx < tokenCount)
+                        {
+                            texOpt.Type = tokens[idx] switch
+                            {
+                                "sphere" => OBJTextureType.Sphere,
+                                "cube_top" => OBJTextureType.CubeTop,
+                                "cube_bottom" => OBJTextureType.CubeBottom,
+                                "cube_front" => OBJTextureType.CubeFront,
+                                "cube_back" => OBJTextureType.CubeBack,
+                                "cube_left" => OBJTextureType.CubeLeft,
+                                "cube_right" => OBJTextureType.CubeRight,
+                                _ => OBJTextureType.None,
+                            };
+                        }
+                        break;
                     default:
                         if (!foundTexName)
                         {

@@ -447,5 +447,83 @@ namespace OBJTests
                 }
             }
         }
+
+        [Fact]
+        public void Test_OBJMaterial_Texture_Names()
+        {
+            // Arrange
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-textures.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.NotNull(materials);
+                    var material = materials[0];
+                    Assert.Equal("ambient_texture.png", material.AmbientTexname);
+                    Assert.Equal("diffuse_texture.png", material.DiffuseTexname);
+                    Assert.Equal("specular_texture.png", material.SpecularTexname);
+                    Assert.Equal("specular_highlight_texture.png", material.SpecularHighlightTexname);
+                    Assert.Equal("bump_texture.png", material.BumpTexname);
+                    Assert.Equal("displacement_texture.png", material.DisplacementTexname);
+                    Assert.Equal("alpha_texture.png", material.AlphaTexname);
+                    Assert.Equal("reflection_texture.png", material.ReflectionTexname);
+                    Assert.Equal("roughness_texture.png", material.RoughnessTexname);
+                    Assert.Equal("metallic_texture.png", material.MetallicTexname);
+                    Assert.Equal("sheen_texture.png", material.SheenTexname);
+                    Assert.Equal("emissive_texture.png", material.EmissiveTexname);
+                    Assert.Equal("normal_texture.png", material.NormalTexname);
+                }
+            }
+        }
+
+        [Fact]
+        public void Test_OBJMaterial_DiffuseTexopt_Properties()
+        {
+            // Arrange
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-texture-options.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.NotNull(materials);
+                    var material = materials[0];
+                    var texopt = material.DiffuseTexopt;
+                    Assert.Equal(OBJTextureType.Sphere, texopt.Type);
+                    Assert.Equal(2.0f, texopt.Sharpness);
+                    Assert.Equal(0.5f, texopt.Brightness);
+                    Assert.Equal(1.5f, texopt.Contrast);
+                    Assert.Equal(new float[] { 0.1f, 0.2f, 0.3f }, texopt.OriginOffset);
+                    Assert.Equal(new float[] { 1.1f, 1.2f, 1.3f }, texopt.Scale);
+                    Assert.Equal(new float[] { 0.4f, 0.5f, 0.6f }, texopt.Turbulence);
+                    Assert.Equal(512, texopt.TextureResolution);
+                    Assert.True(texopt.Clamp);
+                    Assert.Equal('r', texopt.Imfchan);
+                    Assert.False(texopt.Blendu);
+                    Assert.False(texopt.Blendv);
+                    Assert.Equal(0.8f, texopt.BumpMultiplier);
+                    Assert.Equal("sRGB", texopt.Colorspace);
+                }
+            }
+        }
     }
 }
