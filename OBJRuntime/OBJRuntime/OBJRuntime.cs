@@ -200,23 +200,30 @@ namespace Evergine.Runtimes.OBJ
                     var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
                     // Create Vertex array
-                    for (int i = 0; i < meshIndices.Length; i++)
+                    int[] order = new int[] { 0, 2, 1 };
+                    for (int i = 0; i < meshIndices.Length; i+=3)
                     {
-                        int positionId = meshIndices[i].VertexIndex;
-                        int normalId = meshIndices[i].NormalIndex;
-                        int texcoordId = meshIndices[i].TexcoordIndex;
+                        for (int j = 0; j < 3; j++)
+                        {
+                            int srcIndex = i + order[j];
+                            int destIndex = i + j;
 
-                        var vertex = new VertexPositionNormalTexture();
+                            int positionId = meshIndices[srcIndex].VertexIndex;
+                            int normalId = meshIndices[srcIndex].NormalIndex;
+                            int texcoordId = meshIndices[srcIndex].TexcoordIndex;
 
-                        vertex.Position = positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero;
-                        vertex.Normal = normalId != -1 ? attrib.Normals[normalId] : Vector3.Zero;
-                        vertex.TexCoord = texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero;
-                        vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
+                            var vertex = new VertexPositionNormalTexture();
 
-                        vertices[i] = vertex;
+                            vertex.Position = positionId != -1 ? attrib.Vertices[positionId] : Vector3.Zero;
+                            vertex.Normal = normalId != -1 ? attrib.Normals[normalId] : Vector3.Zero;
+                            vertex.TexCoord = texcoordId != -1 ? attrib.Texcoords[texcoordId] : Vector2.Zero;
+                            vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
 
-                        Vector3.Max(ref vertices[i].Position, ref max, out max);
-                        Vector3.Min(ref vertices[i].Position, ref min, out min);
+                            vertices[destIndex] = vertex;
+
+                            Vector3.Max(ref vertex.Position, ref max, out max);
+                            Vector3.Min(ref vertex.Position, ref min, out min);
+                        }
                     }
 
                     // Compute smooth normals if none were provided in the OBJ (attrib.Normals.Count == 0)
@@ -233,14 +240,14 @@ namespace Evergine.Runtimes.OBJ
                         for (int i = 0; i < meshIndices.Length; i += 3)
                         {
                             // Get the unique vertex indices for the triangle.
-                            int index0 = meshIndices[i].VertexIndex;
-                            int index1 = meshIndices[i + 1].VertexIndex;
-                            int index2 = meshIndices[i + 2].VertexIndex;
+                            int idx0 = meshIndices[i + order[0]].VertexIndex;
+                            int idx1 = meshIndices[i + order[1]].VertexIndex;
+                            int idx2 = meshIndices[i + order[2]].VertexIndex;
 
                             // Retrieve the positions using the unique index.
-                            Vector3 pos0 = attrib.Vertices[index0];
-                            Vector3 pos1 = attrib.Vertices[index1];
-                            Vector3 pos2 = attrib.Vertices[index2];
+                            Vector3 pos0 = attrib.Vertices[idx0];
+                            Vector3 pos1 = attrib.Vertices[idx1];
+                            Vector3 pos2 = attrib.Vertices[idx2];
 
                             // Compute the face normal.
                             Vector3 edge1 = pos1 - pos0;
@@ -249,18 +256,18 @@ namespace Evergine.Runtimes.OBJ
                             faceNormal = Vector3.Normalize(faceNormal);
 
                             // Accumulate the face normal for each vertex of the triangle.
-                            accumNormals[index0] += faceNormal;
-                            accumNormals[index1] += faceNormal;
-                            accumNormals[index2] += faceNormal;
+                            accumNormals[idx0] += faceNormal;
+                            accumNormals[idx1] += faceNormal;
+                            accumNormals[idx2] += faceNormal;
                         }
 
                         // Now assign the smooth normal to each vertex.
                         // Each vertex (of the final vertices array) uses the smoothed normal associated with its position index.
-                        for (int i = 0; i < meshIndices.Length; i++)
+                        for (int i = 0; i < meshIndices.Length; i+=3)
                         {
-                            int posIndex = meshIndices[i].VertexIndex;
-                            // Normalize the accumulated normal before assigning.
-                            vertices[i].Normal = -Vector3.Normalize(accumNormals[posIndex]);
+                            vertices[i + 0].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[0]].VertexIndex]);
+                            vertices[i + 1].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[1]].VertexIndex]);
+                            vertices[i + 2].Normal = -Vector3.Normalize(accumNormals[meshIndices[i + order[2]].VertexIndex]);
                         }
                     }
 

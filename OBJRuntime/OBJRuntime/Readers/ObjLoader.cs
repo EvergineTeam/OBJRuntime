@@ -328,8 +328,8 @@ namespace OBJRuntime.Readers
                     for (int i = 1; i < nVerts - 1; i++)
                     {
                         shape.Mesh.Indices.Add(baseIndex);
-                        shape.Mesh.Indices.Add(face.VertexIndices[i + 1]); // Flip the winding order
                         shape.Mesh.Indices.Add(face.VertexIndices[i]);
+                        shape.Mesh.Indices.Add(face.VertexIndices[i + 1]);
 
                         shape.Mesh.NumFaceVertices.Add(3);
                         shape.Mesh.MaterialIds.Add(materialId);
