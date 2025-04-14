@@ -293,6 +293,7 @@ namespace Evergine.Runtimes.OBJ
                     {
                         BoundingBox = new BoundingBox(min, max),
                         MaterialIndex = materialIndex,
+                        AllowBatching = false,
                     };
 
                     meshes.Add(Mesh);
