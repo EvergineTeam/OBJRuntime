@@ -415,5 +415,37 @@ namespace OBJTests
                 }
             }
         }
+
+        [Fact]
+        public void Test_OBJMaterial_PBR_Properties()
+        {
+            // Arrange
+            var attrib = new OBJAttrib();
+            var shapes = new List<OBJShape>();
+            var materials = new List<OBJMaterial>();
+            var warning = "";
+            var error = "";
+
+            // Act
+            using (var streamObj = assetsDirectory.Open("cube-pbr.obj"))
+            {
+                using (StreamReader srObj = new StreamReader(streamObj))
+                {
+                    bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, assetsDirectory, string.Empty, true, true);
+
+                    // Assert
+                    Assert.True(ok);
+                    Assert.NotNull(materials);
+                    var material = materials[0];
+                    Assert.Equal(0.5f, material.Roughness);
+                    Assert.Equal(0.6f, material.Metallic);
+                    Assert.Equal(0.7f, material.Sheen);
+                    Assert.Equal(0.8f, material.ClearcoatThickness);
+                    Assert.Equal(0.9f, material.ClearcoatRoughness);
+                    Assert.Equal(0.1f, material.Anisotropy);
+                    Assert.Equal(0.2f, material.AnisotropyRotation);
+                }
+            }
+        }
     }
 }
