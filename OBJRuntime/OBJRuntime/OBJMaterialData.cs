@@ -31,7 +31,7 @@ namespace Evergine.Runtimes.OBJ
         public override LinearColor EmissiveColor => new LinearColor(this.OBJMaterial.Emission);
 
         /// <inheritdoc/>
-        public override AlphaMode AlphaMode => AlphaMode.Opaque;
+        public override AlphaMode AlphaMode => string.IsNullOrEmpty(this.OBJMaterial.AlphaTexname) ? AlphaMode.Opaque : AlphaMode.Mask;
 
         /// <inheritdoc/>
         public override float AlphaCutoff => 0.5f;

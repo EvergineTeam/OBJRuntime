@@ -367,16 +367,35 @@ namespace Evergine.Runtimes.OBJ
             var baseColor = await data.GetBaseColorTextureAndSampler();
 
             var effect = this.assetsService.Load<Effect>(DefaultResourcesIDs.StandardEffectID);
-            var layer = this.assetsService.Load<RenderLayerDescription>(EvergineContent.RenderLayers.Opaque);
+
+            // Get Layer
+            RenderLayerDescription layer;
+            float alpha = data.BaseColor.A / 255.0f;
+            switch (data.AlphaMode)
+            {
+                default:
+                case AlphaMode.Mask:
+                case AlphaMode.Opaque:
+                    layer = this.assetsService.Load<RenderLayerDescription>(DefaultResourcesIDs.OpaqueRenderLayerID);
+                    break;
+                case AlphaMode.Blend:
+                    layer = this.assetsService.Load<RenderLayerDescription>(DefaultResourcesIDs.AlphaRenderLayerID);
+                    break;
+            }
+
             StandardMaterial material = new StandardMaterial(effect)
             {
                 LightingEnabled = data.HasVertexNormal,
                 IBLEnabled = data.HasVertexNormal,
-                BaseColor = data.BaseColor,
+                BaseColor = data.BaseColor,                
+                Alpha = alpha,
                 BaseColorTexture = baseColor.Texture,
                 BaseColorSampler = baseColor.Sampler,
-                Alpha = data.AlphaCutoff,
+                Roughness = data.RoughnessFactor,
+                Metallic = data.MetallicFactor, 
+                EmissiveColor = data.EmissiveColor.ToColor(),
                 LayerDescription = layer,
+                AlphaCutout = data.AlphaMode == AlphaMode.Mask ? 0.5f : 0,
             };
 
             return material.Material;
