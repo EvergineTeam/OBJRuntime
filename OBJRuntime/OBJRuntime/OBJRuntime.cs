@@ -39,11 +39,13 @@ namespace Evergine.Runtimes.OBJ
         private AssetsDirectory assetsDirectory;
 
         public SamplerState LinearWrapSampler = null;
+        public SamplerState LinearClampSampler = null;
 
         private Dictionary<int, (string name, Material material)> materials = new Dictionary<int, (string, Material)>();
         private Func<MaterialData, Task<Material>> materialAssigner = null;
 
         public string WorkingDirectory { get; set; }
+        public bool UseSmoothNormals { get; set; }
 
         private OBJRuntime()
         {
@@ -65,16 +67,16 @@ namespace Evergine.Runtimes.OBJ
 
         public override string Extentsion => ".obj";
 
-        public async Task<Model> Read(string filePath, Func<MaterialData, Task<Material>> materialAssigner = null)
+        public async Task<Model> Read(string filePath, Func<MaterialData, Task<Material>> materialAssigner = null, bool useSmoothNormals = false)
         {
             Model model = null;
-
             if (assetsDirectory == null)
             {
                 assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
             }
 
             this.WorkingDirectory = Path.GetDirectoryName(filePath);
+            this.UseSmoothNormals = useSmoothNormals;
 
             using (var stream = assetsDirectory.Open(filePath))
             {
@@ -183,6 +185,7 @@ namespace Evergine.Runtimes.OBJ
                 this.assetsService = Application.Current.Container.Resolve<AssetsService>();
 
                 this.LinearWrapSampler = this.assetsService?.Load<SamplerState>(DefaultResourcesIDs.LinearWrapSamplerID);
+                this.LinearClampSampler = this.assetsService?.Load<SamplerState>(DefaultResourcesIDs.LinearClampSamplerID);
             }
         }
 
@@ -235,56 +238,56 @@ namespace Evergine.Runtimes.OBJ
                     // Compute smooth normals if none were provided in the OBJ (attrib.Normals.Count == 0)
                     if (attrib.Normals.Count == 0)
                     {
-                        // Create an accumulator for normals for each unique vertex position.
-                        Vector3[] accumNormals = new Vector3[attrib.Vertices.Count];
-                        for (int i = 0; i < accumNormals.Length; i++)
-                        {
-                            accumNormals[i] = Vector3.Zero;
-                        }
-
-                        // Loop through each triangle (assumes meshIndices.Count is a multiple of 3).
                         for (int i = 0; i < meshIndices.Length; i += 3)
                         {
-                            // Get the unique vertex indices for the triangle.
-                            int idx0 = meshIndices[i + order[0]].VertexIndex;
-                            int idx1 = meshIndices[i + order[1]].VertexIndex;
-                            int idx2 = meshIndices[i + order[2]].VertexIndex;
+                            Vector3 pos0 = vertices[i + 0].Position;
+                            Vector3 pos1 = vertices[i + 2].Position;
+                            Vector3 pos2 = vertices[i + 1].Position;
 
-                            idx0 = TranslateIndex(idx0, attrib.Vertices.Count);
-                            idx1 = TranslateIndex(idx1, attrib.Vertices.Count);
-                            idx2 = TranslateIndex(idx2, attrib.Vertices.Count);
-
-                            // Retrieve the positions using the unique index.
-                            Vector3 pos0 = attrib.Vertices[idx0];
-                            Vector3 pos1 = attrib.Vertices[idx1];
-                            Vector3 pos2 = attrib.Vertices[idx2];
-
-                            // Compute the face normal.
                             Vector3 edge1 = pos1 - pos0;
                             Vector3 edge2 = pos2 - pos0;
+
                             Vector3 faceNormal = Vector3.Cross(edge1, edge2);
                             faceNormal = Vector3.Normalize(faceNormal);
 
-                            // Accumulate the face normal for each vertex of the triangle.
-                            accumNormals[idx0] += faceNormal;
-                            accumNormals[idx1] += faceNormal;
-                            accumNormals[idx2] += faceNormal;
-                        }
-
-                        // Now assign the smooth normal to each vertex.
-                        // Each vertex (of the final vertices array) uses the smoothed normal associated with its position index.
-                        for (int i = 0; i < meshIndices.Length; i += 3)
-                        {
-                            int idx0 = TranslateIndex(meshIndices[i + order[0]].VertexIndex, attrib.Vertices.Count);
-                            int idx1 = TranslateIndex(meshIndices[i + order[1]].VertexIndex, attrib.Vertices.Count);
-                            int idx2 = TranslateIndex(meshIndices[i + order[2]].VertexIndex, attrib.Vertices.Count);
-
-                            vertices[i + 0].Normal = -Vector3.Normalize(accumNormals[idx0]);
-                            vertices[i + 1].Normal = -Vector3.Normalize(accumNormals[idx1]);
-                            vertices[i + 2].Normal = -Vector3.Normalize(accumNormals[idx2]);
+                            vertices[i].Normal = faceNormal;
+                            vertices[i + 1].Normal = faceNormal;
+                            vertices[i + 2].Normal = faceNormal;
                         }
                     }
 
+                    if (this.UseSmoothNormals)
+                    {
+                        // Create a dictionary to accumulate normals per unique vertex position.
+                        // Pre-size the dictionary to minimize rehashing.
+                        var smoothDict = new Dictionary<Vector3, (Vector3 sum, int count)>(vertices.Length);
+
+                        // First pass: accumulate normals and counts.
+                        for (int i = 0; i < vertices.Length; i++)
+                        {
+                            Vector3 pos = vertices[i].Position;
+
+                            if (smoothDict.TryGetValue(pos, out var data))
+                            {
+                                data.sum += vertices[i].Normal;
+                                data.count++;
+                                smoothDict[pos] = data;
+                            }
+                            else
+                            {
+                                smoothDict.Add(pos, (vertices[i].Normal, 1));
+                            }
+                        }
+
+                        // Second pass: assign averaged normals to each vertex.
+                        for (int i = 0; i < vertices.Length; i++)
+                        {
+                            Vector3 pos = vertices[i].Position;
+                            var data = smoothDict[pos];
+
+                            vertices[i].Normal = Vector3.Normalize(data.sum / data.count);
+                        }
+                    }
 
                     // Create vertex buffer
                     var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
@@ -387,12 +390,12 @@ namespace Evergine.Runtimes.OBJ
             {
                 LightingEnabled = data.HasVertexNormal,
                 IBLEnabled = data.HasVertexNormal,
-                BaseColor = data.BaseColor,                
+                BaseColor = data.BaseColor,
                 Alpha = alpha,
                 BaseColorTexture = baseColor.Texture,
                 BaseColorSampler = baseColor.Sampler,
                 Roughness = data.RoughnessFactor,
-                Metallic = data.MetallicFactor, 
+                Metallic = data.MetallicFactor,
                 EmissiveColor = data.EmissiveColor.ToColor(),
                 LayerDescription = layer,
                 AlphaCutout = data.AlphaMode == AlphaMode.Mask ? 0.5f : 0,

@@ -17,15 +17,15 @@ namespace Evergine.Runtimes.OBJ
 
         protected override async void CreateScene()
         {
-            //var model = await OBJRuntime.Instance.Read("Models/bunny/bunny.obj");               // OK
-            //var model = await OBJRuntime.Instance.Read("Models/orc/orc.obj");                   // OK
-            //var model = await OBJRuntime.Instance.Read("Models/dragon/dragon.obj");             // Ok
-            //var model = await OBJRuntime.Instance.Read("Models/armadillo/armadillo.obj");       // Ok
-            //var model = await OBJRuntime.Instance.Read("Models/suzanne/suzanne.obj");           // Ok
-            //var model = await OBJRuntime.Instance.Read("Models/horse/horse.obj");               // OK
-            var model = await OBJRuntime.Instance.Read("Models/house/house.obj");               // OK
-            //var model = await OBJRuntime.Instance.Read("Models/sponza/sponza.obj");             // OK
-            //var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");   // try with flat normals
+            //var model = await OBJRuntime.Instance.Read("Models/bunny/bunny.obj");                         // OK
+            //var model = await OBJRuntime.Instance.Read("Models/orc/orc.obj", useSmoothNormals: true);     // OK
+            //var model = await OBJRuntime.Instance.Read("Models/dragon/dragon.obj");                       // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/armadillo/armadillo.obj");                 // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/suzanne/suzanne.obj");                     // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/horse/horse.obj");                         // OK
+            //var model = await OBJRuntime.Instance.Read("Models/house/house.obj");                         // OK
+            //var model = await OBJRuntime.Instance.Read("Models/sponza/sponza.obj");                       // OK
+            var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");                       // Ok
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);

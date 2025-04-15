@@ -56,11 +56,11 @@ namespace OBJRuntime.DataTypes
         public string EmissiveTexname = string.Empty;   // map_Ke
         public string NormalTexname = string.Empty;     // norm
 
-        public OBJTextureOption roughness_texopt;
-        public OBJTextureOption metallic_texopt;
-        public OBJTextureOption sheen_texopt;
-        public OBJTextureOption emissive_texopt;
-        public OBJTextureOption normal_texopt;
+        public OBJTextureOption roughness_texopt = new OBJTextureOption();
+        public OBJTextureOption metallic_texopt = new OBJTextureOption();
+        public OBJTextureOption sheen_texopt = new OBJTextureOption();
+        public OBJTextureOption emissive_texopt = new OBJTextureOption();
+        public OBJTextureOption normal_texopt = new OBJTextureOption();
 
         public int pad2;
 
