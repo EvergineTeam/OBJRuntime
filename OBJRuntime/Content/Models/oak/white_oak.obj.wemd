@@ -1,0 +1,34 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: f9abb4d9-f3f4-47ed-b832-dd488d3c47b5
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 31066d2b-6f2e-4164-8c0a-b7c49dda0099
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 8bd7c053-56c6-4318-9324-1d2c8edc3f79
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: Cap_02
+        Item2: 645e16c1-d95e-4502-9358-86c701ecb48b
+      - Item1: WhiteOakBark
+        Item2: 71061ee3-0ca2-4c2c-b1ea-46013ee7182a
+      - Item1: White_Oak_Leaves_Hero_1
+        Item2: 4ab74c13-bd6a-449b-9656-44f516d282b4
+      - Item1: White_Oak_Leaves_Hero_3
+        Item2: 22adc567-e0e2-4268-a0ae-db08cabffec8
+    Nodes:
+      - RootNode
+      - white_oak_root
+      - white_oak_root.White_Oak_Hero_14
+SwapWindingOrder: false

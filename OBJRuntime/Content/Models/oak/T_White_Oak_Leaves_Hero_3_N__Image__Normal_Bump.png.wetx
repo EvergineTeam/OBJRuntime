@@ -1,0 +1,40 @@
+!Evergine.Assets.Exporters.TextureMetaFile,Evergine.Assets
+Id: fb257dab-82dc-4500-b424-5ed3e4f36303
+DefaultProfile:
+  ExcludeAsset: false
+  ExportedItem: null
+  Name: default
+  PixelFormat: R8G8B8A8_UNorm
+  Platform: Undefined
+  ScaledHeight: 512
+  ScaledPercentage: 1.0
+  ScaledWidth: 512
+  ScalingType: Original
+ExportAsRaw: true
+GenerateMipMaps: true
+NinePatchType: None
+PremultipliedAlpha: true
+Profiles: {}
+SamplerID: 00000000-0000-0000-0000-000000000000
+Source:
+  Header:
+    Id: 9becc2c6-9ba2-4fe1-b31f-bfc994de4a4b
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  TextureInfo:
+    Id: f5ce5d18-24d2-4aef-8e4d-896acb2d0c01
+    Description:
+      ArraySize: 1
+      CpuAccess: None
+      Depth: 1
+      Faces: 1
+      Flags: ShaderResource
+      Format: R8G8B8A8_UNorm
+      Height: 512
+      MipLevels: 1
+      SampleCount: None
+      Type: Texture2D
+      Usage: Default
+      Width: 512
+    HasData: true
+    SamplerID: 9018edf8-ea96-4721-bf83-5561942432e0
