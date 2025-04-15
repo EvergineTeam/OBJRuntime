@@ -1,0 +1,46 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: faf3c123-491e-4bab-b22c-49bd75849c1f
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: e135537b-3ac3-4c88-af36-f2197accd1e8
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: f3969b76-3da9-4f6a-b228-60787a569a5f
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: BodyPaint1_SG
+        Item2: aa60bd65-6a01-4e90-8b19-6fc78baf30ea
+      - Item1: GlossBlack_SG
+        Item2: 44cf50b1-7582-4c66-a7e0-aa97a22031aa
+      - Item1: Silver1_SG
+        Item2: 78a84443-8c2b-4341-9649-06e728d40ea9
+      - Item1: CableGray1_SG
+        Item2: d469fb10-e20c-4f37-84f7-98056c783e8d
+      - Item1: Wire1_SG
+        Item2: 74b0bd82-0bb8-475a-9bfb-80e60de431dd
+      - Item1: Silver2_SG
+        Item2: c5478b64-7e8a-4f37-897f-f4cc4eb76b38
+      - Item1: TireGom1_SG
+        Item2: ee53eefb-9abf-40f7-ba57-e647f59c21ed
+      - Item1: GlossWhite_SG
+        Item2: 3745e833-bef0-4592-a694-f9f23398e4d7
+      - Item1: MatWhite1_SG
+        Item2: beef936b-fef8-43ca-aef9-01a19831013f
+      - Item1: MatBlack_SG
+        Item2: 3129550e-e9ea-4bf2-812b-e661e3c951ef
+    Nodes:
+      - RootNode
+      - roadBike_root
+      - roadBike_root.RoadBike_Combined_SubDiv
+SwapWindingOrder: false
