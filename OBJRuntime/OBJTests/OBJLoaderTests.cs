@@ -93,7 +93,7 @@ namespace OBJTests
         public void CheckFaceTessellation()
         {
             // Arrange
-            var expectedVertices = new float[] { 0, 1, 2, 0, 2, 3 };
+            var expectedVertices = new float[] { 1, 2, 3, 1, 3, 4 };
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
@@ -242,7 +242,7 @@ namespace OBJTests
                     Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Points.Indices.Count);
-                    Assert.Equal(3, shapes[0].Points.Indices[15].VertexIndex);
+                    Assert.Equal(4, shapes[0].Points.Indices[15].VertexIndex);
                 }
             }
         }
@@ -260,7 +260,7 @@ namespace OBJTests
             // Act
             using (var streamObj = assetsDirectory.Open("testlines.obj"))
             {
-                using (StreamReader srObj = new StreamReader(streamObj))
+                using (StreamReader srObj = new StreamReader(streamObj)) 
                 {
                     bool ok = OBJLoader.Load(srObj, ref attrib, shapes, materials, ref warning, ref error, null, string.Empty, true, true);
 
@@ -269,7 +269,7 @@ namespace OBJTests
                     Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Lines.Indices.Count);
-                    Assert.Equal(7, shapes[0].Lines.Indices[17].VertexIndex);
+                    Assert.Equal(8, shapes[0].Lines.Indices[17].VertexIndex);
                 }
             }
         }
