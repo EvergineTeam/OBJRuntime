@@ -1,0 +1,45 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 41fcf897-87ad-4079-b010-2b1aae77459e
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 6c311f56-eb4d-4378-ae5e-92cee5123f71
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 085c0360-4c5d-49f5-891c-201b082eb84c
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: backWall
+        Item2: db43788c-9b70-460d-b583-3ff477bc62e7
+      - Item1: ceiling
+        Item2: 9f06d839-02a9-4ddf-a5ef-5ee388d82ed7
+      - Item1: floor
+        Item2: 85d83ce7-6205-45ea-958b-3efb5e7e778d
+      - Item1: leftWall
+        Item2: 00d29ea7-f728-48fe-81f3-4e78c8b353e8
+      - Item1: shortBox
+        Item2: 1ec32a36-ed63-4b75-a3b9-142809fb01af
+      - Item1: rightWall
+        Item2: c995258b-c7b3-4338-a7a7-078a4efa0a6e
+      - Item1: tallBox
+        Item2: b632bc82-cbf3-4311-878b-814b6c7f4452
+    Nodes:
+      - RootNode
+      - CornellBox-Original_root
+      - CornellBox-Original_root.backWall
+      - CornellBox-Original_root.ceiling
+      - CornellBox-Original_root.floor
+      - CornellBox-Original_root.leftWall
+      - CornellBox-Original_root.rightWall
+      - CornellBox-Original_root.shortBox
+SwapWindingOrder: false

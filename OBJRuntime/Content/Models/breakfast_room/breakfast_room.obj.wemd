@@ -1,0 +1,28 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 5755622d-57ed-41d2-8cdf-0171a2285756
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 4041ba6e-be0d-4bfa-b6d6-9c10ba07e1f3
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 42764a4d-dd6d-4c98-87ed-4e37d9d5f4e8
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: defaultMat
+        Item2: d2a915c8-a127-499f-a651-4875887873ff
+    Nodes:
+      - RootNode
+      - breakfast_room_root
+      - breakfast_room_root.default
+SwapWindingOrder: false

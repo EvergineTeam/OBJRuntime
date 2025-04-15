@@ -1,0 +1,160 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 3d8b97b3-7d19-49e7-9f71-090d7d7ee6c4
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: a8f8aec0-1c04-47d8-98fa-dff8bd9cd6e8
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 6941ff82-7e09-4252-8676-af774b387303
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: Bed
+        Item2: 06c7452f-50a4-41bc-8682-c6960d4779b9
+      - Item1: Block_of_Diamond
+        Item2: 86e0b44a-b383-4433-a432-542bd934f80d
+      - Item1: Brown_Mushroom
+        Item2: 00f85040-669b-4924-b886-2b0d7f5314f3
+      - Item1: Chest
+        Item2: 9c6f3f6f-3d52-4e0e-843c-72ef5c2dd190
+      - Item1: Coal_Ore
+        Item2: 8f7888d8-99dd-4355-8c8a-fdca25198416
+      - Item1: Cobblestone
+        Item2: 58fcb59f-e7d5-48d8-85fe-c6dfc51d213f
+      - Item1: Cobblestone_Stairs
+        Item2: 0a518a5a-3de5-4fef-ad9b-cbd086543184
+      - Item1: Crafting_Table
+        Item2: 95a5b00c-9f19-4343-a6bd-4262a6bc669a
+      - Item1: Dandelion
+        Item2: 0642ff18-41a1-4fdd-9320-645554688415
+      - Item1: Detector_Rail
+        Item2: 89bc738e-feb7-41d4-968b-bae28da5e220
+      - Item1: Dirt
+        Item2: 9b877cff-06b7-45ca-9653-09132236f4df
+      - Item1: Double_Stone_Slab
+        Item2: 95526381-1a24-4787-9fa8-926377f429fa
+      - Item1: Fence
+        Item2: ec8fade7-a4ee-405d-b432-c419c44cd5a1
+      - Item1: Furnace
+        Item2: b691bf19-d80b-4627-aabf-77da9d0c8311
+      - Item1: Grass_Block
+        Item2: ab6608c5-837d-467c-b06f-dce2577c072c
+      - Item1: Gravel
+        Item2: ce26573a-ef1e-4b96-943b-2b0f1bce1ce4
+      - Item1: Iron_Door
+        Item2: 3be1b4e9-d5f7-43f0-b807-783646b0cf9b
+      - Item1: Iron_Ore
+        Item2: 9b6c2040-aecd-4614-ad3e-3bf84feb3403
+      - Item1: Ladder
+        Item2: b8601597-459a-40dd-a303-55f4060dee2f
+      - Item1: Lever
+        Item2: 35b44b6c-bb87-4258-abfe-ac5607b926c8
+      - Item1: Nether_Portal
+        Item2: 7f27939f-0220-43f0-8590-d5c5053b8868
+      - Item1: Oak_Leaves
+        Item2: ce70e80f-81f7-442b-8aa1-3818f210a5b3
+      - Item1: Oak_Log
+        Item2: d0aa78c5-e6c1-46c0-93b7-3d0e861ecaca
+      - Item1: Oak_Planks
+        Item2: b42761a6-2046-4fe0-a15c-dc59d6192ec3
+      - Item1: Oak_Stairs
+        Item2: 9850470f-b9a5-49bb-b16c-a3ef81dec654
+      - Item1: Obsidian
+        Item2: 51af8dff-a175-4892-a984-70994f8050bc
+      - Item1: Poppy
+        Item2: 381c9c1a-3e99-4315-a5f2-7a8f7a6db654
+      - Item1: Powered_Rail
+        Item2: 9122eb50-b3ee-4706-9cb8-b296b9bf75a6
+      - Item1: Rail
+        Item2: e7e9da87-d09b-4e04-8f64-fdefbe162e7c
+      - Item1: Redstone_Repeater_(active)
+        Item2: b62e1221-cbee-430c-b7a7-5dadd2ebf693
+      - Item1: Redstone_Repeater_(inactive)
+        Item2: 439d627e-ee3b-4bad-9b76-05a5fb6dfbdc
+      - Item1: Redstone_Torch_(active)
+        Item2: 63ede9be-2b8c-49c0-8f21-546b21428f31
+      - Item1: Redstone_Torch_(inactive)
+        Item2: f470616b-d37c-421a-9d6d-06ba450c9e69
+      - Item1: Redstone_Wire
+        Item2: 430e7059-d4d3-4079-8e15-09810569ce0e
+      - Item1: Sand
+        Item2: 564c603e-6235-4b1e-8299-acfc0d736afe
+      - Item1: Standing_Sign
+        Item2: f7558a40-a2f5-4625-b584-23fc9cc1a332
+      - Item1: Stationary_Lava
+        Item2: 0add7079-1484-4910-8749-dff0095c7829
+      - Item1: Stationary_Water
+        Item2: df345a29-7370-4259-a713-d93ffce0803c
+      - Item1: Sticky_Piston
+        Item2: 7ef3ea86-c79b-4c67-a9f3-86db324de445
+      - Item1: Stone
+        Item2: a2bda0e6-fb54-46e8-ba55-deedd34727be
+      - Item1: Stone_Button
+        Item2: 3f2caf77-8625-4ff7-91c7-3642c6deddd7
+      - Item1: Stone_Slab
+        Item2: 0e88baab-86d8-4d9f-9f19-a1ce37bd4456
+      - Item1: Torch
+        Item2: 5b2f6fda-2f3e-4dc8-9eae-b879241f1ece
+      - Item1: Wall_Sign
+        Item2: 1f89a6ff-2271-457f-af8d-125af3f8d47b
+      - Item1: Wool
+        Item2: a068caee-be58-420c-a12b-261a55732789
+    Nodes:
+      - RootNode
+      - lost_empire_root
+      - lost_empire_root.Bed
+      - lost_empire_root.Block_of_Diamond
+      - lost_empire_root.Brown_Mushroom
+      - lost_empire_root.Chest
+      - lost_empire_root.Coal_Ore
+      - lost_empire_root.Cobblestone
+      - lost_empire_root.Cobblestone_Stairs
+      - lost_empire_root.Crafting_Table
+      - lost_empire_root.Dandelion
+      - lost_empire_root.Detector_Rail
+      - lost_empire_root.Dirt
+      - lost_empire_root.Double_Stone_Slab
+      - lost_empire_root.Fence
+      - lost_empire_root.Furnace
+      - lost_empire_root.Grass_Block
+      - lost_empire_root.Gravel
+      - lost_empire_root.Iron_Door
+      - lost_empire_root.Iron_Ore
+      - lost_empire_root.Ladder
+      - lost_empire_root.Lever
+      - lost_empire_root.Nether_Portal
+      - lost_empire_root.Oak_Leaves
+      - lost_empire_root.Oak_Log
+      - lost_empire_root.Oak_Planks
+      - lost_empire_root.Oak_Stairs
+      - lost_empire_root.Obsidian
+      - lost_empire_root.Poppy
+      - lost_empire_root.Powered_Rail
+      - lost_empire_root.Rail
+      - lost_empire_root.Redstone_Repeater_(active)
+      - lost_empire_root.Redstone_Repeater_(inactive)
+      - lost_empire_root.Redstone_Torch_(active)
+      - lost_empire_root.Redstone_Torch_(inactive)
+      - lost_empire_root.Redstone_Wire
+      - lost_empire_root.Sand
+      - lost_empire_root.Standing_Sign
+      - lost_empire_root.Stationary_Lava
+      - lost_empire_root.Stationary_Water
+      - lost_empire_root.Sticky_Piston
+      - lost_empire_root.Stone
+      - lost_empire_root.Stone_Button
+      - lost_empire_root.Stone_Slab
+      - lost_empire_root.Torch
+      - lost_empire_root.Wall_Sign
+      - lost_empire_root.Wool
+SwapWindingOrder: false

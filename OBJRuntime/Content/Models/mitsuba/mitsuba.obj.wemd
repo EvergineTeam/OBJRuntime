@@ -1,0 +1,34 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: cae4103d-a80f-42d3-ad26-017d45fe2023
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 5233f5bc-354e-4054-805d-53957a5416a3
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 90fbc72a-f320-4809-9d38-666c223fcbc2
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: backdrop
+        Item2: 6c77f5b4-0147-4a24-9d33-d905ffff9014
+      - Item1: inside
+        Item2: b8778153-cc88-4a0e-a1b1-1e1f8a101159
+      - Item1: case
+        Item2: 69d72330-a1d9-4538-90fa-48ef76249765
+    Nodes:
+      - RootNode
+      - mitsuba_root
+      - mitsuba_root.1
+      - mitsuba_root.2
+      - mitsuba_root.3
+SwapWindingOrder: false

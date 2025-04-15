@@ -1,0 +1,122 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 541b31b0-c148-47a1-b6bf-e76db62ec803
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 6216f293-ca4b-4981-a489-95da68a1087c
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 21c76fb7-5e91-417a-9787-82daba03ea01
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: Material
+        Item2: 5c9d21df-a6f4-409c-b9af-78e786ae7273
+      - Item1: Brake
+        Item2: 171b024e-2813-4c74-93f0-c1a5910aec2d
+      - Item1: CarShellNew
+        Item2: a3a59390-afdb-4dd0-9b5c-be3a9e1b2fe7
+      - Item1: interiorRoof
+        Item2: 84b0ad9c-0e99-474a-862d-5f444f51ee8e
+      - Item1: MatteBlack
+        Item2: c90c3c00-f0d7-4c44-b958-cd4c4356ffd1
+      - Item1: Interior
+        Item2: 92bb0432-5222-409a-8a35-e64bdc1274d3
+      - Item1: Chrome
+        Item2: 3c65ac9b-440f-4951-a9a5-dad3e6568c2f
+      - Item1: BlackPlastic
+        Item2: 86345009-e9cc-4437-8515-42b6ea953763
+      - Item1: HeadLightAngelEye
+        Item2: 9a642d5b-ec30-4e19-a21f-1542bb8727b1
+      - Item1: HeadlightGlass
+        Item2: 94af545a-c584-4614-88a4-9a84ca968d07
+      - Item1: HeadlightChrome
+        Item2: 9613d457-8fb7-4ca2-a685-02262baf52db
+      - Item1: HeadlightMatte
+        Item2: 9743dc4a-6b1d-4ac2-9eff-db5429dd976c
+      - Item1: ChromeMatte
+        Item2: 8e169754-d9ea-4a0e-94ec-916bc1afdc57
+      - Item1: Plate
+        Item2: 96bc5c73-9062-4014-9b33-1f0ce995a9f1
+      - Item1: BMWWhite
+        Item2: 9d440614-a616-4284-9b17-d4ea6562bda3
+      - Item1: BMWSilver
+        Item2: 9c7ff060-d9a7-472c-a795-c34921c2e0ee
+      - Item1: BMWBlack
+        Item2: dce7f59f-9fa1-49a5-83bf-762435e2f8ba
+      - Item1: BMWBlue
+        Item2: 1ece8a36-440a-490d-af2b-4866be1aa540
+      - Item1: Mirror
+        Item2: aac83227-33d9-45cb-9f1b-92232bff490b
+      - Item1: Tailight
+        Item2: e18b034a-bf49-4fa1-8383-e4fdecad2c65
+      - Item1: TireRubber
+        Item2: 899bf47a-6471-4e2b-a1d9-e2673dfb8f79
+      - Item1: Glass
+        Item2: 6829ba3b-9769-4458-a3b2-b35ee080fec0
+    Nodes:
+      - RootNode
+      - bmw_root
+      - bmw_root.Brake3_Cube_Dupli_
+      - bmw_root.Brake3_Cube_Dupli_001
+      - bmw_root.Brake3_Cube_Dupli_002
+      - bmw_root.Brake3_Cube_Dupli_003
+      - bmw_root.Brake4_brakeAssembly_Dupli_002
+      - bmw_root.Brake4_brakeAssembly_Dupli_003
+      - bmw_root.Brake4_brakeAssembly_Dupli_004
+      - bmw_root.Brake4_brakeAssembly_Dupli_1
+      - bmw_root.carShell
+      - bmw_root.carShell001
+      - bmw_root.carShell_001
+      - bmw_root.CenterConsole
+      - bmw_root.exhaust
+      - bmw_root.Inside_Window_Trim
+      - bmw_root.Interior
+      - bmw_root.kidneyBars
+      - bmw_root.kidneyChrome
+      - bmw_root.lightsAngelEyes
+      - bmw_root.lightsBulb
+      - bmw_root.lightsGlass
+      - bmw_root.lightsInterior
+      - bmw_root.lightsInterior2
+      - bmw_root.lightsLid
+      - bmw_root.lightsOutline
+      - bmw_root.lightsReflector
+      - bmw_root.lightsSeparator
+      - bmw_root.LowerIntake
+      - bmw_root.MStreak
+      - bmw_root.plate
+      - bmw_root.Platform
+      - bmw_root.rearDiffuser
+      - bmw_root.RoundelBack
+      - bmw_root.RoundelFront
+      - bmw_root.SideMirror
+      - bmw_root.taillight
+      - bmw_root.Tire1_TireRim_Dupli_004
+      - bmw_root.Tire1_TireRim_Dupli_005
+      - bmw_root.Tire1_TireRim_Dupli_006
+      - bmw_root.Tire1_TireRim_Dupli_3
+      - bmw_root.Tire3_TireBolts_Dupli_
+      - bmw_root.Tire3_TireBolts_Dupli_001
+      - bmw_root.Tire3_TireBolts_Dupli_002
+      - bmw_root.Tire3_TireBolts_Dupli_003
+      - bmw_root.Tire3_TireRoundel_Dupli_003
+      - bmw_root.Tire3_TireRoundel_Dupli_004
+      - bmw_root.Tire3_TireRoundel_Dupli_005
+      - bmw_root.Tire3_TireRoundel_Dupli_2
+      - bmw_root.Tire3_TireRubber_Dupli_002
+      - bmw_root.Tire3_TireRubber_Dupli_003
+      - bmw_root.Tire3_TireRubber_Dupli_004
+      - bmw_root.Tire3_TireRubber_Dupli_1
+      - bmw_root.trimming
+      - bmw_root.Window
+SwapWindingOrder: false

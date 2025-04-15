@@ -25,7 +25,15 @@ namespace Evergine.Runtimes.OBJ
             //var model = await OBJRuntime.Instance.Read("Models/horse/horse.obj");                         // OK
             //var model = await OBJRuntime.Instance.Read("Models/house/house.obj");                         // OK
             //var model = await OBJRuntime.Instance.Read("Models/sponza/sponza.obj");                       // OK
-            var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");                       // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");                       // Ok
+            var model = await OBJRuntime.Instance.Read("Models/empire/lost_empire.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/sportsCar/sportsCar.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/conference/conference.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/CornellBox/CornellBox-Original.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/roadBike/roadBike.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);

@@ -1,0 +1,92 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 6a4e9e23-a5d2-4653-befe-80a4ea9f5e29
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 014ccb74-074f-438f-9482-4359022c755f
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 733f7b4e-9161-4413-8268-fe0f783478c4
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: mesh0_SG
+        Item2: 0e216708-5ef5-4304-8e9b-2414b7fec93c
+      - Item1: mesh1_SG
+        Item2: 120ca441-3ff3-47ac-afad-6167934acceb
+      - Item1: mesh2_SG
+        Item2: 99831213-74e3-41b7-88c4-f91aade2710e
+      - Item1: mesh4_SG
+        Item2: 96489b5a-4c9d-4d51-9ce5-0fa9b9841238
+      - Item1: mesh5_SG
+        Item2: ae1e2a2a-a467-4c81-b496-8c9b2cc2ded4
+      - Item1: mesh6_SG
+        Item2: b43821b1-6dd8-40a3-bb43-e0f844a385b7
+      - Item1: mesh7_SG
+        Item2: d5a41db5-fe32-47af-bc33-fe7f68526713
+      - Item1: mesh8_SG
+        Item2: cb27020f-06ff-4989-98c1-a4d3ab6150c7
+      - Item1: mesh9_SG
+        Item2: 55cbae72-5e49-4bd1-ad38-df1f2da7dc57
+      - Item1: mesh10_SG
+        Item2: 05f0fad0-150b-44b9-bac6-28daa6874c7c
+      - Item1: mesh11_SG
+        Item2: 6ee8672a-2a55-4f80-9764-7f3960a02805
+      - Item1: mesh12_SG
+        Item2: 26376c1c-c175-4d9c-bb56-b9f2234bac4c
+      - Item1: mesh13_SG
+        Item2: 5882c774-acb4-4fe5-9a21-09087b146fb1
+      - Item1: mesh15_SG
+        Item2: cdb58343-6d8d-4402-a228-49280d16166d
+      - Item1: mesh16_SG
+        Item2: a41bddc6-8654-4c3e-97f1-f0fe7c691901
+      - Item1: mesh17_SG
+        Item2: 595e04d6-1b2a-4265-9e14-b0b679f428f3
+      - Item1: mesh18_SG
+        Item2: cea94485-b307-4b75-9e6c-266e1eb246e8
+      - Item1: mesh19_SG
+        Item2: 306965cb-9b5d-4a6d-b992-a01dfc6a24ee
+      - Item1: mesh20_SG
+        Item2: c1f032a4-7716-4a3c-a91d-30e89c8c0e64
+      - Item1: mesh21_SG
+        Item2: 71cbf8b6-eee3-4403-9d7c-e49f4d44e753
+      - Item1: mesh22_SG
+        Item2: 4a4d7af6-9fba-4e39-9aba-33f84f5b9292
+      - Item1: mesh23_SG
+        Item2: ab0b551c-8abd-4c42-a25a-0ab4c881b224
+      - Item1: mesh24_SG
+        Item2: fb9a6e04-75ca-4fc2-8f4f-b55ddf9ab37f
+      - Item1: mesh25_SG
+        Item2: 392467f1-db03-40d6-931e-9044a81ff480
+      - Item1: mesh28_SG
+        Item2: 0a8ad64a-3984-4096-8dc5-89b6682a2d15
+      - Item1: mesh29_SG
+        Item2: 01e3b4f0-b8fd-4e64-8a23-7d64ca8d7229
+      - Item1: mesh30_SG
+        Item2: 3a4f4d91-5277-4521-a997-b5ca55dd64c3
+      - Item1: mesh31_SG
+        Item2: 1812ea94-1535-400f-ae53-3bc293d4ac53
+      - Item1: mesh32_SG
+        Item2: b1cf6317-d052-474a-a3b9-a6a4002c2cf1
+      - Item1: mesh35_SG
+        Item2: 31886cb8-290c-4f33-b1d4-2a830f226ef1
+      - Item1: mesh26_SG
+        Item2: ed24ff68-8436-4171-969a-2dc64ecf848e
+      - Item1: Material__0
+        Item2: 91548a24-e9fb-43ad-8f0e-4138ae803705
+      - Item1: mesh27_SG
+        Item2: 8a7fbe84-47bb-4918-abe4-a6e67eb12b35
+    Nodes:
+      - RootNode
+      - conference_root
+      - conference_root.default
+SwapWindingOrder: false
