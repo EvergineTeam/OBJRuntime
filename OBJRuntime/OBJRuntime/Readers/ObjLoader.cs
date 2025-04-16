@@ -386,8 +386,8 @@ namespace OBJRuntime.Readers
                 int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
 
             vIdx = TranslateIndex(vIdx, vOffset);
-            vtIdx = TranslateIndex(vtIdx, vOffset);
-            vnIdx = TranslateIndex(vnIdx, vOffset);
+            vtIdx = TranslateIndex(vtIdx, vtoffset);
+            vnIdx = TranslateIndex(vnIdx, vnoffset);
 
             idx.VertexIndex = vIdx;
             idx.TexcoordIndex = vtIdx;
