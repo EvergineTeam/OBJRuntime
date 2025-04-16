@@ -93,7 +93,7 @@ namespace OBJTests
         public void CheckFaceTessellation()
         {
             // Arrange
-            var expectedVertices = new float[] { 1, 3, 2, 1, 4, 3 };
+            var expectedVertices = new float[] { 0, 2, 1, 0, 3, 2 };
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();
@@ -242,7 +242,7 @@ namespace OBJTests
                     Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Points.Indices.Count);
-                    Assert.Equal(4, shapes[0].Points.Indices[15].VertexIndex);
+                    Assert.Equal(3, shapes[0].Points.Indices[15].VertexIndex);
                 }
             }
         }
@@ -269,7 +269,7 @@ namespace OBJTests
                     Assert.Equal(8, attrib.Vertices.Count);
                     Assert.Single(shapes);
                     Assert.Equal(24, shapes[0].Lines.Indices.Count);
-                    Assert.Equal(8, shapes[0].Lines.Indices[17].VertexIndex);
+                    Assert.Equal(7, shapes[0].Lines.Indices[17].VertexIndex);
                 }
             }
         }

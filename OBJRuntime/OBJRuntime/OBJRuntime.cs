@@ -32,8 +32,6 @@ namespace Evergine.Runtimes.OBJ
         /// </summary>
         public readonly static OBJRuntime Instance = new OBJRuntime();
 
-        private const int UndefinedIndex = int.MaxValue;
-
         private GraphicsContext graphicsContext;
         private AssetsService assetsService;
         private AssetsDirectory assetsDirectory;
@@ -215,15 +213,11 @@ namespace Evergine.Runtimes.OBJ
                             int normalId = meshIndices[index].NormalIndex;
                             int texcoordId = meshIndices[index].TexcoordIndex;
 
-                            positionId = TranslateIndex(positionId, attrib.Vertices.Count);
-                            normalId = TranslateIndex(normalId, attrib.Normals.Count);
-                            texcoordId = TranslateIndex(texcoordId, attrib.Texcoords.Count);
-
                             var vertex = new VertexPositionNormalTexture();
 
-                            vertex.Position = positionId != UndefinedIndex ? attrib.Vertices[positionId] : Vector3.Zero;
-                            vertex.Normal = normalId != UndefinedIndex ? attrib.Normals[normalId] : Vector3.Zero;
-                            vertex.TexCoord = texcoordId != UndefinedIndex ? attrib.Texcoords[texcoordId] : Vector2.Zero;
+                            vertex.Position = positionId != OBJLoader.UndefinedIndex ? attrib.Vertices[positionId] : Vector3.Zero;
+                            vertex.Normal = normalId != OBJLoader.UndefinedIndex ? attrib.Normals[normalId] : Vector3.Zero;
+                            vertex.TexCoord = texcoordId != OBJLoader.UndefinedIndex ? attrib.Texcoords[texcoordId] : Vector2.Zero;
                             vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
 
                             vertices[index] = vertex;
@@ -316,27 +310,6 @@ namespace Evergine.Runtimes.OBJ
             });
 
             return meshes;
-        }
-
-
-        // Helper function to translate OBJ indices to 0-based indices.
-        // Positive indices (starting at 1) are converted by subtracting 1.
-        // Negative indices refer to elements relative to the end, e.g. -1 is the last element.
-        private int TranslateIndex(int index, int count)
-        {
-            if (count > 0)
-            {
-                if (index > 0)
-                {
-                    return index - 1;
-                }
-                else if (index < 0)
-                {
-                    return count + index;
-                }
-            }
-
-            return UndefinedIndex;
         }
 
         private async Task<int> ReadMaterial(int materialId, List<OBJMaterial> materials)

@@ -45,31 +45,5 @@ namespace OBJRuntime.Readers
                 }
             }
         }
-
-        // Raw triple parse: i, i/j, i/j/k, i//k
-        public static OBJIndex ParseRawTriple(string token)
-        {
-            OBJIndex idx = new OBJIndex() { VertexIndex = 0, TexcoordIndex = 0, NormalIndex = 0 };
-            // We just do naive splitting by '/'
-            // If there's no '/', it's just the v index
-            string[] parts = token.Split('/');
-            int vIdx = 0, vtIdx = 0, vnIdx = 0;
-
-            if (!string.IsNullOrEmpty(parts[0]))
-                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out vIdx);
-
-            if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1]))
-                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out vtIdx);
-
-            if (parts.Length > 2 && !string.IsNullOrEmpty(parts[2]))
-                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
-
-            // Convert from 1-based to 0-based. Negative means relative.
-            idx.VertexIndex = vIdx;
-            idx.TexcoordIndex = vtIdx;
-            idx.NormalIndex = vnIdx;
-
-            return idx;
-        }
     }
 }

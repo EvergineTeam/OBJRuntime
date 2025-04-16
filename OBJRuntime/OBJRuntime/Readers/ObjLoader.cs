@@ -16,6 +16,8 @@ namespace OBJRuntime.Readers
     /// </summary>
     public static class OBJLoader
     {
+        public const int UndefinedIndex = int.MaxValue;
+
         public static bool Load(
             StreamReader inStream,
             ref OBJAttrib attrib,
@@ -89,13 +91,13 @@ namespace OBJRuntime.Readers
                         ParseVertexWeight(tokens, tokenCount, vw);
                         break;
                     case "f":
-                        ParseFace(tokens, tokenCount, primGroup, currentSmoothingId);
+                        ParseFace(tokens, tokenCount, primGroup, currentSmoothingId, v.Count, vt.Count, vn.Count);
                         break;
                     case "l":
-                        ParseLine(tokens, tokenCount, primGroup);
+                        ParseLine(tokens, tokenCount, primGroup, v.Count, vt.Count, vn.Count);
                         break;
                     case "p":
-                        ParsePoints(tokens, tokenCount, primGroup);
+                        ParsePoints(tokens, tokenCount, primGroup, v.Count, vt.Count, vn.Count);
                         break;
                     case "usemtl":
                         // Flush accumulated data.
@@ -228,7 +230,7 @@ namespace OBJRuntime.Readers
             }
         }
 
-        private static void ParseFace(List<string> tokens, int tokenCount, PrimGroup primGroup, uint currentSmoothingId)
+        private static void ParseFace(List<string> tokens, int tokenCount, PrimGroup primGroup, uint currentSmoothingId, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
                 return;
@@ -236,12 +238,12 @@ namespace OBJRuntime.Readers
             var face = new Face { SmoothingGroupId = currentSmoothingId };
             for (int i = 1; i < tokenCount; i++)
             {
-                face.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+                face.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
             primGroup.FaceGroup.Add(face);
         }
 
-        private static void ParseLine(List<string> tokens, int tokenCount, PrimGroup primGroup)
+        private static void ParseLine(List<string> tokens, int tokenCount, PrimGroup primGroup, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
                 return;
@@ -249,12 +251,12 @@ namespace OBJRuntime.Readers
             var lineGroup = new LineElm();
             for (int i = 1; i < tokenCount; i++)
             {
-                lineGroup.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+                lineGroup.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
             primGroup.LineGroup.Add(lineGroup);
         }
 
-        private static void ParsePoints(List<string> tokens, int tokenCount, PrimGroup primGroup)
+        private static void ParsePoints(List<string> tokens, int tokenCount, PrimGroup primGroup, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
                 return;
@@ -262,7 +264,7 @@ namespace OBJRuntime.Readers
             var pointsGroup = new PointsElm();
             for (int i = 1; i < tokenCount; i++)
             {
-                pointsGroup.VertexIndices.Add(Helpers.ParseRawTriple(tokens[i]));
+                pointsGroup.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
             primGroup.PointsGroup.Add(pointsGroup);
         }
@@ -324,11 +326,10 @@ namespace OBJRuntime.Readers
                 }
                 if (triangulate && nVerts > 3)
                 {
-                    var baseIndex = face.VertexIndices[0];
                     for (int i = 1; i < nVerts - 1; i++)
                     {
                         // Flip the winding order
-                        shape.Mesh.Indices.Add(baseIndex);
+                        shape.Mesh.Indices.Add(face.VertexIndices[0]);
                         shape.Mesh.Indices.Add(face.VertexIndices[i + 1]);
                         shape.Mesh.Indices.Add(face.VertexIndices[i]);
 
@@ -363,6 +364,56 @@ namespace OBJRuntime.Readers
 
             shapes.Add(shape);
             primGroup.Clear();
+        }
+
+
+        // Raw triple parse: i, i/j, i/j/k, i//k
+        public static OBJIndex ParseRawTriple(string token, int vOffset, int vtoffset, int vnoffset)
+        {
+            OBJIndex idx = new OBJIndex() { VertexIndex = 0, TexcoordIndex = 0, NormalIndex = 0 };
+            // We just do naive splitting by '/'
+            // If there's no '/', it's just the v index
+            string[] parts = token.Split('/');
+            int vIdx = 0, vtIdx = 0, vnIdx = 0;
+
+            if (!string.IsNullOrEmpty(parts[0]))
+                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out vIdx);
+
+            if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1]))
+                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out vtIdx);
+
+            if (parts.Length > 2 && !string.IsNullOrEmpty(parts[2]))
+                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
+
+            vIdx = TranslateIndex(vIdx, vOffset);
+            vtIdx = TranslateIndex(vtIdx, vOffset);
+            vnIdx = TranslateIndex(vnIdx, vOffset);
+
+            idx.VertexIndex = vIdx;
+            idx.TexcoordIndex = vtIdx;
+            idx.NormalIndex = vnIdx;
+
+            return idx;
+        }
+
+        // Helper function to translate OBJ indices to 0-based indices.
+        // Positive indices (starting at 1) are converted by subtracting 1.
+        // Negative indices refer to elements relative to the end, e.g. -1 is the last element.
+        private static int TranslateIndex(int index, int count)
+        {
+            if (count > 0)
+            {
+                if (index > 0)
+                {
+                    return index - 1;
+                }
+                else if (index < 0)
+                {
+                    return count + index;
+                }
+            }
+
+            return UndefinedIndex;
         }
 
         // Private helper classes.

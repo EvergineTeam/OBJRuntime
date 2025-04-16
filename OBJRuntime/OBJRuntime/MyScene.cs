@@ -25,18 +25,18 @@ namespace Evergine.Runtimes.OBJ
             //var model = await OBJRuntime.Instance.Read("Models/armadillo/armadillo.obj");                 // Ok
             //var model = await OBJRuntime.Instance.Read("Models/suzanne/suzanne.obj");                     // Ok
             //var model = await OBJRuntime.Instance.Read("Models/horse/horse.obj");                         // OK
-            //var model = await OBJRuntime.Instance.Read("Models/house/house.obj");                         // OK
+            var model = await OBJRuntime.Instance.Read("Models/house/house.obj");                         // fail
             //var model = await OBJRuntime.Instance.Read("Models/sponza/sponza.obj");                       // OK
             //var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");                     // Ok
-            //var model = await OBJRuntime.Instance.Read("Models/empire/lost_empire.obj"); // GPU Error
+            //var model = await OBJRuntime.Instance.Read("Models/empire/lost_empire.obj");                  // Ok 
             //var model = await OBJRuntime.Instance.Read("Models/sportsCar/sportsCar.obj");                 // OK
             //var model = await OBJRuntime.Instance.Read("Models/conference/conference.obj");               // OK
-            //var model = await OBJRuntime.Instance.Read("Models/CornellBox/CornellBox-Original.obj"); //Geometry
-            //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj"); //Geometry and normals
+            //var model = await OBJRuntime.Instance.Read("Models/CornellBox/CornellBox-Original.obj");      // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj");                     // fail
             //var model = await OBJRuntime.Instance.Read("Models/roadBike/roadBike.obj");                   // OK
-            //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj"); // Geometry
-            var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj"); //Textures
-            //var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj"); // Transparent
+            //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj");                             // fail
+            //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");       // Textures
+            //var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj");                       // Transparent
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);
