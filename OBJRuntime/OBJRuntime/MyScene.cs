@@ -19,6 +19,7 @@ namespace Evergine.Runtimes.OBJ
 
         protected override async void CreateScene()
         {
+            // https://casual-effects.com/data/
             //var model = await OBJRuntime.Instance.Read("Models/bunny/bunny.obj");                         // OK
             //var model = await OBJRuntime.Instance.Read("Models/orc/orc.obj", useSmoothNormals: true);     // OK
             //var model = await OBJRuntime.Instance.Read("Models/dragon/dragon.obj");                       // Ok
@@ -36,7 +37,14 @@ namespace Evergine.Runtimes.OBJ
             //var model = await OBJRuntime.Instance.Read("Models/roadBike/roadBike.obj");                   // OK
             //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj");                             // Ok -> materials
             //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");       // Ok -> Textures
-            var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj");                       // Ok -> Transparent
+            //var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj");                       // Ok -> Transparent
+            //var model = await OBJRuntime.Instance.Read("Models/buddha/buddha.obj");                       // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/erato/erato.obj");                         // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/pine/scrubPine.obj");                      // Ok -> transparent
+            //var model = await OBJRuntime.Instance.Read("Models/fireplace_room/fireplace_room.obj");       // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/teapot/teapot.obj");                       // Ok
+            //var model = await OBJRuntime.Instance.Read("Models/head/head.obj");                           // Ok
+            var model = await OBJRuntime.Instance.Read("Models/holodeck/holodeck.obj");                     // Ok
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);

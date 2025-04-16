@@ -1,0 +1,43 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: c0566e25-aa2f-4b56-8a60-e4d512c085cb
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 4f4f98f6-ba92-4848-8242-b16316f35cee
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 623180d7-6651-4fca-bd7d-35242d12a1e1
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: doorframe
+        Item2: 0ee91dc9-49ff-43c5-bb4f-456b0777e8e2
+      - Item1: door
+        Item2: acedf0e5-ba13-4751-a27e-57a8901250f8
+      - Item1: doorinset
+        Item2: 47e2a496-78ab-4af4-87d2-5422f46ec932
+      - Item1: holdeck_material
+        Item2: c33956a0-57e4-455f-a985-1ae5aeef7b30
+      - Item1: light
+        Item2: 7ef10e64-1fd7-440b-9bf2-b5c141c2e7de
+      - Item1: holodeckwirefrane
+        Item2: c01bb112-8e1a-4912-b0cc-46492b7a8ab1
+      - Item1: screens
+        Item2: d9f189de-9f01-4ca9-bb70-8d37947e56b2
+    Nodes:
+      - RootNode
+      - holodeck_root
+      - holodeck_root.holodeck_door
+      - holodeck_root.holodeckdoorrecess
+      - holodeck_root.holodeckroom
+      - holodeck_root.screens
+SwapWindingOrder: false

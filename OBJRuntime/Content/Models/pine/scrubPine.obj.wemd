@@ -1,0 +1,31 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: be2c9829-c532-4967-bd6c-de52b70d0625
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: 85c525b9-5889-4922-bf1f-c82fd96072f2
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 488d5358-6ef6-4b1e-88da-11d504f8dbe1
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: SoftPine2
+        Item2: dfb5326c-6241-42dd-ac3f-9b8f02e5a920
+      - Item1: SoftPineBark
+        Item2: b2d850a9-aa45-4ec1-9c3a-af5f3e4187ed
+    Nodes:
+      - RootNode
+      - scrubPine_root
+      - scrubPine_root.SoftNeedlePine256
+      - scrubPine_root.SoftNeedlePine512
+SwapWindingOrder: false

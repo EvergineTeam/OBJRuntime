@@ -1,0 +1,74 @@
+!Evergine.Assets.Exporters.ModelMetaFile,Evergine.Assets
+Id: 598b79ff-f62e-4f93-b369-df69cb316ecd
+Clips: []
+DefaultProfile:
+  ExcludeAsset: false
+  Name: null
+  Platform: Undefined
+ExportAnimations: true
+ExportAsRaw: true
+GenerateTangentSpace: true
+Profiles: {}
+Source:
+  Header:
+    Id: a3a43974-54be-42d8-9e29-a75c58a0a4e5
+    IsCompressed: true
+  LastModified: 0001-01-01T00:00:00.0000000
+  ModelInfo:
+    Id: 78fd0da0-0d4f-4f8c-8bc5-845f10f923b5
+    AnimationTracks: []
+    EmbeddedResources: null
+    Materials:
+      - Item1: grey_and_white_room:lambert2SG_light
+        Item2: 6d3d4240-ac5a-4a12-8bfa-2db454a5c808
+      - Item1: lambert3SG
+        Item2: bba58396-ee62-4b4b-b3d1-27a13af21890
+      - Item1: grey_and_white_room:TableWood
+        Item2: 896985df-0b32-4c3e-a698-d125f7f9451d
+      - Item1: grey_and_white_room:Glass
+        Item2: 322430bd-58a9-4055-a3dc-50f2cddcf882
+      - Item1: grey_and_white_room:BottleCap
+        Item2: ee9e1dda-7ad9-4048-a284-e880cd858232
+      - Item1: grey_and_white_room:PaintingBack
+        Item2: 3ae81eb9-d88e-4048-a5e4-0fa2b1a9dfb6
+      - Item1: grey_and_white_room:MattePaint
+        Item2: 458ac094-6aae-4166-9e7a-79b089d0482e
+      - Item1: grey_and_white_room:Painting
+        Item2: c209f5b1-5097-4532-ae07-acf735129b7b
+      - Item1: grey_and_white_room:Leaves
+        Item2: 96fe499f-c2ea-4f8a-bfb6-fa680396d404
+      - Item1: grey_and_white_room:Branches
+        Item2: 00ef02e5-3957-4504-a273-1b3faf818051
+      - Item1: grey_and_white_room:Dirt
+        Item2: 696d74c0-6891-4bf2-968a-d7aa09abe724
+      - Item1: grey_and_white_room:PlantPot
+        Item2: a6b76ab6-a256-43c7-ae9b-21dc9d517fd6
+      - Item1: grey_and_white_room:SofaLegs
+        Item2: c5598266-1ef5-4cf7-b6b4-a8641768aba7
+      - Item1: grey_and_white_room:Sofa
+        Item2: 686d9e1b-0e7b-4800-9819-14e75e8e7a5b
+      - Item1: grey_and_white_room:Paneling
+        Item2: 97068573-9bf8-499d-9972-c430773635e4
+      - Item1: grey_and_white_room:Walls
+        Item2: a52912e8-4bc6-4b9a-85d0-35a0458af9db
+      - Item1: grey_and_white_room:Floor
+        Item2: 1b3593af-2bbc-49b9-ad8b-0d20671ed013
+      - Item1: grey_and_white_room:Mirror
+        Item2: 4516b9c4-a55c-4312-b3e1-6898b001546b
+      - Item1: grey_and_white_room:FireplaceGlass
+        Item2: 13357d7d-11b6-4586-ba6f-d2ea9506c79b
+      - Item1: grey_and_white_room:BrushedStainlessSteel
+        Item2: a8344d77-be48-466b-9c53-30764a4200a0
+      - Item1: grey_and_white_room:Transluscent
+        Item2: 32047183-edf8-43d1-be83-23e81ba9da9d
+      - Item1: grey_and_white_room:initialShadingGroup
+        Item2: 785af887-7045-4c33-a5fa-e3d195ff4437
+    Nodes:
+      - RootNode
+      - fireplace_room_root
+      - fireplace_room_root.grey_and_white_room_group1_grey_and_white_room_pasted__group_grey_and_white_room_pasted__pasted__pPlane1_grey_and_white_room_polySurface1
+      - fireplace_room_root.grey_and_white_room_group2_grey_and_white_room_pasted__group1_grey_and_white_room_pasted__pasted__group_grey_and_white_room_pasted__pasted__pasted__pPlane1_grey_and_white_room_polySurface1
+      - fireplace_room_root.grey_and_white_room_group_grey_and_white_room_pasted__pPlane1_grey_and_white_room_polySurface1
+      - fireplace_room_root.grey_and_white_room_Mesh_grey_and_white_room_polySurface1
+      - fireplace_room_root.grey_and_white_room_pPlane1_grey_and_white_room_polySurface1
+SwapWindingOrder: false
