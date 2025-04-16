@@ -93,7 +93,7 @@ namespace OBJTests
         public void CheckFaceTessellation()
         {
             // Arrange
-            var expectedVertices = new float[] { 1, 2, 3, 1, 3, 4 };
+            var expectedVertices = new float[] { 1, 3, 2, 1, 4, 3 };
 
             var attrib = new OBJAttrib();
             var shapes = new List<OBJShape>();

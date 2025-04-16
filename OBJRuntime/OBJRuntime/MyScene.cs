@@ -1,7 +1,9 @@
 // Copyright © Plain Concepts S.L.U. All rights reserved. Use is subject to license terms.
 
 using Evergine.Framework;
+using Evergine.Framework.Graphics;
 using Evergine.Framework.Services;
+using Evergine.Mathematics;
 
 namespace Evergine.Runtimes.OBJ
 {
@@ -26,18 +28,19 @@ namespace Evergine.Runtimes.OBJ
             //var model = await OBJRuntime.Instance.Read("Models/house/house.obj");                         // OK
             //var model = await OBJRuntime.Instance.Read("Models/sponza/sponza.obj");                       // OK
             //var model = await OBJRuntime.Instance.Read("Models/sibenik/sibenik.obj");                     // Ok
-            var model = await OBJRuntime.Instance.Read("Models/empire/lost_empire.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/empire/lost_empire.obj"); // GPU Error
             //var model = await OBJRuntime.Instance.Read("Models/sportsCar/sportsCar.obj");                 // OK
             //var model = await OBJRuntime.Instance.Read("Models/conference/conference.obj");               // OK
-            //var model = await OBJRuntime.Instance.Read("Models/CornellBox/CornellBox-Original.obj");
-            //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/CornellBox/CornellBox-Original.obj"); //Geometry
+            //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj"); //Geometry and normals
             //var model = await OBJRuntime.Instance.Read("Models/roadBike/roadBike.obj");                   // OK
-            //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj");
-            //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");
-            //var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj");
+            //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj"); // Geometry
+            var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj"); //Textures
+            //var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj"); // Transparent
 
             var assetsService = Application.Current.Container.Resolve<AssetsService>();
             var entity = model.InstantiateModelHierarchy(assetsService);
+            //entity.FindComponent<Transform3D>().Scale = new Vector3(0.01f, 0.01f, 0.01f);
             this.Managers.EntityManager.Add(entity);                       
         }
     }

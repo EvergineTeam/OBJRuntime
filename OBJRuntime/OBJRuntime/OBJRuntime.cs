@@ -205,17 +205,15 @@ namespace Evergine.Runtimes.OBJ
                     var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
                     // Create Vertex array
-                    int[] order = new int[] { 0, 2, 1 };
                     for (int i = 0; i < meshIndices.Length; i += 3)
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            int srcIndex = i + order[j];
-                            int destIndex = i + j;
+                            int index = i + j;
 
-                            int positionId = meshIndices[srcIndex].VertexIndex;
-                            int normalId = meshIndices[srcIndex].NormalIndex;
-                            int texcoordId = meshIndices[srcIndex].TexcoordIndex;
+                            int positionId = meshIndices[index].VertexIndex;
+                            int normalId = meshIndices[index].NormalIndex;
+                            int texcoordId = meshIndices[index].TexcoordIndex;
 
                             positionId = TranslateIndex(positionId, attrib.Vertices.Count);
                             normalId = TranslateIndex(normalId, attrib.Normals.Count);
@@ -228,7 +226,7 @@ namespace Evergine.Runtimes.OBJ
                             vertex.TexCoord = texcoordId != UndefinedIndex ? attrib.Texcoords[texcoordId] : Vector2.Zero;
                             vertex.TexCoord.Y = 1 - vertex.TexCoord.Y;
 
-                            vertices[destIndex] = vertex;
+                            vertices[index] = vertex;
 
                             Vector3.Max(ref vertex.Position, ref max, out max);
                             Vector3.Min(ref vertex.Position, ref min, out min);

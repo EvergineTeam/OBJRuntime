@@ -327,9 +327,10 @@ namespace OBJRuntime.Readers
                     var baseIndex = face.VertexIndices[0];
                     for (int i = 1; i < nVerts - 1; i++)
                     {
+                        // Flip the winding order
                         shape.Mesh.Indices.Add(baseIndex);
-                        shape.Mesh.Indices.Add(face.VertexIndices[i]);
                         shape.Mesh.Indices.Add(face.VertexIndices[i + 1]);
+                        shape.Mesh.Indices.Add(face.VertexIndices[i]);
 
                         shape.Mesh.NumFaceVertices.Add(3);
                         shape.Mesh.MaterialIds.Add(materialId);
@@ -338,7 +339,11 @@ namespace OBJRuntime.Readers
                 }
                 else
                 {
-                    shape.Mesh.Indices.AddRange(face.VertexIndices);
+                    // Flip the winding order
+                    shape.Mesh.Indices.Add(face.VertexIndices[0]);
+                    shape.Mesh.Indices.Add(face.VertexIndices[2]);
+                    shape.Mesh.Indices.Add(face.VertexIndices[1]);
+
                     shape.Mesh.NumFaceVertices.Add((uint)nVerts);
                     shape.Mesh.MaterialIds.Add(materialId);
                     shape.Mesh.SmoothingGroupIds.Add(face.SmoothingGroupId);
