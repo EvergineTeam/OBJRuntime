@@ -23,15 +23,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Evergine.Common" Version="2025.3.18.7" />
-		<PackageReference Include="Evergine.Components" Version="2025.3.18.7" />
-		<PackageReference Include="Evergine.Framework" Version="2025.3.18.7" />
 		<PackageReference Include="Evergine.Mathematics" Version="2025.3.18.7" />
-		<PackageReference Include="Evergine.Bullet" Version="2025.3.18.7" />
-		<PackageReference Include="Evergine.Targets" Version="2025.3.18.7" />
-		<PackageReference Include="Evergine.CodeScenes" Version="2025.3.18.7" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\OBJRuntime\OBJRuntime.csproj" />
+	  <ProjectReference Include="..\Evergine.Runtimes.OBJ\Evergine.Runtimes.OBJ.csproj" />
 	</ItemGroup>
 </Project>

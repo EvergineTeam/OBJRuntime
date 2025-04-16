@@ -26,4 +26,7 @@
 		<PackageReference Include="Evergine.CodeScenes" Version="2025.3.18.7" />
 		<PackageReference Include="SkiaSharp" Version="3.116.1" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Evergine.Runtimes.OBJ\Evergine.Runtimes.OBJ.csproj" />
+	</ItemGroup>
 </Project>
