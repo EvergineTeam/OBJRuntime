@@ -25,8 +25,17 @@ namespace Evergine.Runtimes.OBJ
         {
             get
             {
-                Vector4 diffuse = this.OBJMaterial.Diffuse.ToVector4(this.OBJMaterial.Dissolve);
-                return Color.FromVector4(ref diffuse);
+                // Fix mtl issue when mtl use a texture but the diffuse color is black
+                if (!string.IsNullOrEmpty(this.OBJMaterial.DiffuseTexname) && this.OBJMaterial.Diffuse == Vector3.Zero)
+                {
+                    Vector4 diffuse = new Vector4(1, 1, 1, this.OBJMaterial.Dissolve);
+                    return Color.FromVector4(ref diffuse);
+                }
+                else
+                {
+                    Vector4 diffuse = this.OBJMaterial.Diffuse.ToVector4(this.OBJMaterial.Dissolve);
+                    return Color.FromVector4(ref diffuse);
+                }
             }
         }
 

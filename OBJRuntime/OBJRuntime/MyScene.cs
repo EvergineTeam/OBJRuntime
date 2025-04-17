@@ -44,7 +44,7 @@ namespace Evergine.Runtimes.OBJ
             //var model = await OBJRuntime.Instance.Read("Models/mitsuba/mitsuba.obj");                     // Ok
             //var model = await OBJRuntime.Instance.Read("Models/roadBike/roadBike.obj");                   // OK
             //var model = await OBJRuntime.Instance.Read("Models/bmw/bmw.obj");                             // Ok 
-            //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");       // Ok -> Textures
+            //var model = await OBJRuntime.Instance.Read("Models/breakfast_room/breakfast_room.obj");       // Ok
             var model = await OBJRuntime.Instance.Read("Models/oak/white_oak.obj");                       // Ok
             //var model = await OBJRuntime.Instance.Read("Models/buddha/buddha.obj");                       // Ok
             //var model = await OBJRuntime.Instance.Read("Models/erato/erato.obj");                         // Ok
