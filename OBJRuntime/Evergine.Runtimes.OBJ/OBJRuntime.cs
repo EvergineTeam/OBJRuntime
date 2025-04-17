@@ -344,11 +344,16 @@ namespace Evergine.Runtimes.OBJ
 
             // Get Layer
             RenderLayerDescription layer;
-            float alpha = data.BaseColor.A / 255.0f;
+            float alpha = (data.BaseColor.A / 255.0f);
             switch (data.AlphaMode)
             {
-                default:
                 case AlphaMode.Mask:
+                    layer = this.assetsService.Load<RenderLayerDescription>(DefaultResourcesIDs.OpaqueRenderLayerID);
+                    var renderstate = layer.RenderState;
+                    renderstate.RasterizerState.CullMode = CullMode.None;
+                    layer.RenderState = renderstate;
+                    break;
+                default:
                 case AlphaMode.Opaque:
                     layer = this.assetsService.Load<RenderLayerDescription>(DefaultResourcesIDs.OpaqueRenderLayerID);
                     break;
@@ -359,8 +364,8 @@ namespace Evergine.Runtimes.OBJ
 
             StandardMaterial material = new StandardMaterial(effect)
             {
-                LightingEnabled = data.HasVertexNormal,
-                IBLEnabled = data.HasVertexNormal,
+                LightingEnabled = true,
+                IBLEnabled = true,
                 BaseColor = data.BaseColor,
                 Alpha = alpha,
                 BaseColorTexture = baseColor.Texture,

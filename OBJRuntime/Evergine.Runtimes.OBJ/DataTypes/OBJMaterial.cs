@@ -42,7 +42,7 @@ namespace OBJRuntime.DataTypes
         public OBJTextureOption ReflectionTexopt = new OBJTextureOption();
 
         // PBR extension
-        public float Roughness = 0.0f;           // map_Pr
+        public float Roughness = 0.8f;           // map_Pr
         public float Metallic = 0.0f;            // map_Pm
         public float Sheen = 0.0f;               // map_Ps
         public float ClearcoatThickness = 0.0f;  // Pc

@@ -2,7 +2,9 @@
 
 using Evergine.Common.Graphics;
 using Evergine.Framework.Runtimes;
+using Evergine.Mathematics;
 using OBJRuntime.DataTypes;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Evergine.Runtimes.OBJ
@@ -19,7 +21,14 @@ namespace Evergine.Runtimes.OBJ
         public override string Name => this.OBJMaterial.Name ?? $"material{materialId}";
 
         /// <inheritdoc/>
-        public override Color BaseColor => Color.FromVector3(ref this.OBJMaterial.Diffuse);
+        public override Color BaseColor
+        {
+            get
+            {
+                Vector4 diffuse = this.OBJMaterial.Diffuse.ToVector4(this.OBJMaterial.Dissolve);
+                return Color.FromVector4(ref diffuse);
+            }
+        }
 
         /// <inheritdoc/>
         public override float MetallicFactor => this.OBJMaterial.Metallic;
@@ -31,7 +40,24 @@ namespace Evergine.Runtimes.OBJ
         public override LinearColor EmissiveColor => new LinearColor(this.OBJMaterial.Emission);
 
         /// <inheritdoc/>
-        public override AlphaMode AlphaMode => string.IsNullOrEmpty(this.OBJMaterial.AlphaTexname) ? AlphaMode.Opaque : AlphaMode.Mask;
+        public override AlphaMode AlphaMode
+        {
+            get
+            {
+                var result = AlphaMode.Opaque;
+                if (!string.IsNullOrEmpty(this.OBJMaterial.AlphaTexname) ||
+                    (Path.GetExtension(this.OBJMaterial.DiffuseTexname)) == ".png")
+                {
+                    result = AlphaMode.Mask;
+                }
+                else if (this.BaseColor.A < 255f)
+                {
+                    result = AlphaMode.Blend;
+                }
+
+                return result;
+            }
+        }
 
         /// <inheritdoc/>
         public override float AlphaCutoff => 0.5f;
