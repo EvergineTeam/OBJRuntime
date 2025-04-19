@@ -25,6 +25,9 @@ using Buffer = Evergine.Common.Graphics.Buffer;
 
 namespace Evergine.Runtimes.OBJ
 {
+    /// <summary>
+    /// Runtime for OBJ files.
+    /// </summary>
     public class OBJRuntime : ModelRuntime
     {
         /// <summary>
@@ -36,19 +39,32 @@ namespace Evergine.Runtimes.OBJ
         private AssetsService assetsService;
         private AssetsDirectory assetsDirectory;
 
-        public SamplerState LinearWrapSampler = null;
-        public SamplerState LinearClampSampler = null;
-
         private Dictionary<int, (string name, Material material)> materials = new Dictionary<int, (string, Material)>();
         private Func<MaterialData, Task<Material>> materialAssigner = null;
 
+        /// <summary>
+        /// Default sampler state for linear filtering with wrap mode.
+        /// </summary>
+        public SamplerState LinearWrapSampler = null;
+
+        /// <summary>
+        /// Default sampler state for linear filtering with clamp mode.
+        /// </summary>
+        public SamplerState LinearClampSampler = null;
+
+        /// <summary>
+        /// Gets or sets the working directory for the OBJ file.
+        /// </summary>
         public string WorkingDirectory { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to use smooth normals.
+        /// </summary>
         public bool UseSmoothNormals { get; set; }
 
         private OBJRuntime()
         {
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OBJRuntime"/> class.
@@ -63,20 +79,31 @@ namespace Evergine.Runtimes.OBJ
             this.assetsDirectory = assetsDirectory;
         }
 
+        /// <summary>
+        /// Gets the file extension for the OBJ runtime.
+        /// </summary>
         public override string Extentsion => ".obj";
 
+        /// <summary>
+        /// Reads a 3D format file from the specified file path and returns a model asset.
+        /// </summary>
+        /// <param name="filePath">The path to the OBJ file to be read.</param>
+        /// <param name="materialAssigner">A function to assign materials to the model. If null, default materials will be used.</param>
+        /// <param name="useSmoothNormals">A boolean indicating whether to compute and use smooth normals for the model.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the loaded <see cref="Model"/>.</returns>
+        /// <exception cref="ArgumentException">Thrown if the file stream is not readable or if the file cannot be opened.</exception>
         public async Task<Model> Read(string filePath, Func<MaterialData, Task<Material>> materialAssigner = null, bool useSmoothNormals = false)
         {
             Model model = null;
-            if (assetsDirectory == null)
+            if (this.assetsDirectory == null)
             {
-                assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
+                this.assetsDirectory = Application.Current.Container.Resolve<AssetsDirectory>();
             }
 
             this.WorkingDirectory = Path.GetDirectoryName(filePath);
             this.UseSmoothNormals = useSmoothNormals;
 
-            using (var stream = assetsDirectory.Open(filePath))
+            using (var stream = this.assetsDirectory.Open(filePath))
             {
                 if (stream == null || !stream.CanRead)
                 {
@@ -89,18 +116,26 @@ namespace Evergine.Runtimes.OBJ
                     {
                         stream.CopyTo(memoryStream);
                         memoryStream.Position = 0;
-                        model = await Read(memoryStream, materialAssigner);
+                        model = await this.Read(memoryStream, materialAssigner);
                     }
                 }
                 else
                 {
-                    model = await Read(stream, materialAssigner);
+                    model = await this.Read(stream, materialAssigner);
                 }
             }
 
             return model;
         }
 
+        /// <summary>
+        /// Reads a 3D format file from the specified stream and returns a model asset.
+        /// </summary>
+        /// <param name="stream">The stream containing the OBJ file data.</param>
+        /// <param name="materialAssigner">A function to assign materials to the model. If null, default materials will be used.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the loaded <see cref="Model"/>.</returns>
+        /// <exception cref="ArgumentException">Thrown if the stream is not readable or seekable.</exception>
+        /// <exception cref="Exception">Thrown if the OBJ file fails to load.</exception>
         public override async Task<Model> Read(Stream stream, Func<MaterialData, Task<Material>> materialAssigner = null)
         {
             if (stream == null || !stream.CanRead || !stream.CanSeek)
@@ -130,7 +165,7 @@ namespace Evergine.Runtimes.OBJ
             // Create meshes
             Vector3 min = new Vector3();
             Vector3 max = new Vector3();
-            List<Mesh> meshes = await CreateMeshes(attrib, shapes, materials);
+            List<Mesh> meshes = await this.CreateMeshes(attrib, shapes, materials);
 
             var meshContainer = new MeshContainer()
             {
@@ -282,9 +317,11 @@ namespace Evergine.Runtimes.OBJ
                     }
 
                     // Create vertex buffer
-                    var pBufferDescription = new BufferDescription((uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
-                                                 BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
-                                                 ResourceUsage.Default);
+                    var pBufferDescription = new BufferDescription(
+                                                (uint)(Unsafe.SizeOf<VertexPositionNormalTexture>() * vertices.Length),
+                                                BufferFlags.ShaderResource | BufferFlags.VertexBuffer,
+                                                ResourceUsage.Default);
+
                     Buffer pBuffer = this.graphicsContext.Factory.CreateBuffer(vertices, ref pBufferDescription);
                     VertexBuffer vertexBuffer = new VertexBuffer(pBuffer, VertexPositionNormalTexture.VertexFormat);
 
@@ -298,14 +335,15 @@ namespace Evergine.Runtimes.OBJ
                     }
 
                     // Create Mesh
-                    var Mesh = new Mesh([vertexBuffer], PrimitiveTopology.TriangleList, vertices.Length / 3, 0)
+                    var vertexBuffers = new VertexBuffer[] { vertexBuffer };
+                    var mesh = new Mesh(vertexBuffers, PrimitiveTopology.TriangleList, vertices.Length / 3, 0)
                     {
                         BoundingBox = new BoundingBox(min, max),
                         MaterialIndex = materialIndex,
                         AllowBatching = false,
                     };
 
-                    meshes.Add(Mesh);
+                    meshes.Add(mesh);
                 }
             });
 
@@ -344,7 +382,7 @@ namespace Evergine.Runtimes.OBJ
 
             // Get Layer
             RenderLayerDescription layer;
-            float alpha = (data.BaseColor.A / 255.0f);
+            float alpha = data.BaseColor.A / 255.0f;
             switch (data.AlphaMode)
             {
                 case AlphaMode.Mask:
@@ -380,6 +418,16 @@ namespace Evergine.Runtimes.OBJ
             return material.Material;
         }
 
+        /// <summary>
+        /// Reads a texture from the specified file name.
+        /// </summary>
+        /// <param name="diffuseTexname">The name of the texture file to be read.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains the loaded <see cref="Texture"/> object.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown if the texture file name is null or empty.</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the specified texture file does not exist in the assets directory.</exception>
+        /// <exception cref="Exception">Thrown if there is an error during the texture loading process.</exception>
         public async Task<Texture> ReadTexture(string diffuseTexname)
         {
             Texture result = null;
@@ -419,6 +467,7 @@ namespace Evergine.Runtimes.OBJ
                     fileStream.Flush();
                 }
             }
+
             return result;
         }
     }

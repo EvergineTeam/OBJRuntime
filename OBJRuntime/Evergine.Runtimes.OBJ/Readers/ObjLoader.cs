@@ -16,8 +16,25 @@ namespace OBJRuntime.Readers
     /// </summary>
     public static class OBJLoader
     {
+        /// <summary>
+        /// The index used to indicate an undefined or invalid index in the OBJ file.
+        /// </summary>
         public const int UndefinedIndex = int.MaxValue;
 
+        /// <summary>
+        /// Loads an OBJ file from the provided stream and parses its contents into attributes, shapes, and materials.
+        /// </summary>
+        /// <param name="inStream">The input stream containing the OBJ file data.</param>
+        /// <param name="attrib">The parsed attributes of the OBJ file, including vertices, normals, and texture coordinates.</param>
+        /// <param name="shapes">The list of shapes parsed from the OBJ file, including meshes, lines, and points.</param>
+        /// <param name="materials">The list of materials parsed from the OBJ file.</param>
+        /// <param name="warning">A string to capture any warnings encountered during parsing.</param>
+        /// <param name="error">A string to capture any errors encountered during parsing.</param>
+        /// <param name="assetsDirectory">The directory containing additional assets, such as material files.</param>
+        /// <param name="workingDirectory">The working directory for resolving relative paths in the OBJ file.</param>
+        /// <param name="triangulate">A flag indicating whether to triangulate faces with more than three vertices.</param>
+        /// <param name="defaultVcolsFallback">A flag indicating whether to use default vertex colors if none are found.</param>
+        /// <returns>Returns <c>true</c> if the OBJ file was successfully loaded; otherwise, <c>false</c>.</returns>
         public static bool Load(
             StreamReader inStream,
             ref OBJAttrib attrib,
@@ -68,12 +85,16 @@ namespace OBJRuntime.Readers
                 lineNo++;
                 string line = inStream.ReadLine()?.TrimEnd();
                 if (string.IsNullOrEmpty(line) || line[0] == '#')
+                {
                     continue;
+                }
 
                 var tokens = Helpers.Tokenize(line);
                 int tokenCount = tokens.Count;
                 if (tokenCount < 1)
+                {
                     continue;
+                }
 
                 var cmd = tokens[0];
                 switch (cmd)
@@ -111,12 +132,14 @@ namespace OBJRuntime.Readers
                                 warnSB.Append($"material [{matName}] not found.\n");
                             }
                         }
+
                         break;
                     case "mtllib":
                         ParseMaterialLib(tokens, tokenCount, assetsDirectory, workingDirectory, materials, materialMap, materialFilenames, warnSB, errSB);
                         break;
                     case "g":
                         ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
+
                         // Combine all tokens after "g" into a single group name.
                         currentGroupName = tokenCount > 1 ? string.Join(" ", tokens.GetRange(1, tokenCount - 1)) : string.Empty;
                         break;
@@ -135,7 +158,9 @@ namespace OBJRuntime.Readers
             ExportGroupsToShape(shapes, ref primGroup, currentGroupName, materialId, v, triangulate, warnSB);
 
             if (!foundAllColors && !defaultVcolsFallback)
+            {
                 vc.Clear();
+            }
 
             // Populate final OBJAttrib.
             attrib.Vertices.AddRange(v);
@@ -170,6 +195,7 @@ namespace OBJRuntime.Readers
                     vertexWeights.Add(w);
                     foundAllColors = false;
                 }
+
                 // When there are three extra tokens, treat them as vertex colors.
                 else if (tokenCount == 7)
                 {
@@ -208,7 +234,10 @@ namespace OBJRuntime.Readers
                 Helpers.TryParseFloat(tokens[1], out float u);
                 float vVal = 0;
                 if (tokenCount > 2)
+                {
                     Helpers.TryParseFloat(tokens[2], out vVal);
+                }
+
                 vt.Add(new Vector2(u, vVal));
             }
         }
@@ -226,6 +255,7 @@ namespace OBJRuntime.Readers
                         sw.WeightValues.Add(new OBJJointAndWeight { JointId = j, Weight = w });
                     }
                 }
+
                 vw.Add(sw);
             }
         }
@@ -233,44 +263,61 @@ namespace OBJRuntime.Readers
         private static void ParseFace(List<string> tokens, int tokenCount, PrimGroup primGroup, uint currentSmoothingId, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
+            {
                 return;
+            }
 
             var face = new Face { SmoothingGroupId = currentSmoothingId };
             for (int i = 1; i < tokenCount; i++)
             {
                 face.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
+
             primGroup.FaceGroup.Add(face);
         }
 
         private static void ParseLine(List<string> tokens, int tokenCount, PrimGroup primGroup, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
+            {
                 return;
+            }
 
             var lineGroup = new LineElm();
             for (int i = 1; i < tokenCount; i++)
             {
                 lineGroup.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
+
             primGroup.LineGroup.Add(lineGroup);
         }
 
         private static void ParsePoints(List<string> tokens, int tokenCount, PrimGroup primGroup, int vOffset, int vtOffset, int vnOffset)
         {
             if (tokenCount < 2)
+            {
                 return;
+            }
 
             var pointsGroup = new PointsElm();
             for (int i = 1; i < tokenCount; i++)
             {
                 pointsGroup.VertexIndices.Add(ParseRawTriple(tokens[i], vOffset, vtOffset, vnOffset));
             }
+
             primGroup.PointsGroup.Add(pointsGroup);
         }
 
-        private static void ParseMaterialLib(List<string> tokens, int tokenCount, AssetsDirectory assetsDirectory, string workingDirectory, List<OBJMaterial> materials,
-            Dictionary<string, int> materialMap, HashSet<string> materialFilenames, StringBuilder warnSB, StringBuilder errSB)
+        private static void ParseMaterialLib(
+            List<string> tokens,
+            int tokenCount,
+            AssetsDirectory assetsDirectory,
+            string workingDirectory,
+            List<OBJMaterial> materials,
+            Dictionary<string, int> materialMap,
+            HashSet<string> materialFilenames,
+            StringBuilder warnSB,
+            StringBuilder errSB)
         {
             if (tokenCount > 1)
             {
@@ -278,7 +325,9 @@ namespace OBJRuntime.Readers
                 {
                     string filename = tokens[i];
                     if (materialFilenames.Contains(filename))
+                    {
                         continue;
+                    }
 
                     string filePath = Path.Combine(workingDirectory, filename);
                     if (assetsDirectory != null && assetsDirectory.Exists(filePath))
@@ -295,6 +344,7 @@ namespace OBJRuntime.Readers
                             {
                                 warnSB.Append(warnMtl);
                             }
+
                             materialFilenames.Add(filename);
                         }
                     }
@@ -312,7 +362,9 @@ namespace OBJRuntime.Readers
             StringBuilder warnSB)
         {
             if (!primGroup.HasData())
+            {
                 return;
+            }
 
             var shape = new OBJShape { Name = groupName };
 
@@ -324,6 +376,7 @@ namespace OBJRuntime.Readers
                     warnSB.Append("Degenerate face found.\n");
                     continue;
                 }
+
                 if (triangulate && nVerts > 3)
                 {
                     for (int i = 1; i < nVerts - 1; i++)
@@ -366,24 +419,41 @@ namespace OBJRuntime.Readers
             primGroup.Clear();
         }
 
-
-        // Raw triple parse: i, i/j, i/j/k, i//k
+        /// <summary>
+        /// Parses a raw triple from an OBJ file, which can represent vertex, texture coordinate, and normal indices.
+        /// // Raw triple parse: i, i/j, i/j/k, i//k.
+        /// </summary>
+        /// <param name="token">The raw string token from the OBJ file, typically in the format "v", "v/vt", "v/vt/vn", or "v//vn".</param>
+        /// <param name="vOffset">The offset for vertex indices, used to adjust the index to a 0-based system.</param>
+        /// <param name="vtoffset">The offset for texture coordinate indices, used to adjust the index to a 0-based system.</param>
+        /// <param name="vnoffset">The offset for normal indices, used to adjust the index to a 0-based system.</param>
+        /// <returns>
+        /// An <see cref="OBJIndex"/> structure containing the parsed vertex, texture coordinate, and normal indices.
+        /// If an index is not specified in the token, it will be set to <see cref="UndefinedIndex"/>.
+        /// </returns>
         public static OBJIndex ParseRawTriple(string token, int vOffset, int vtoffset, int vnoffset)
         {
             OBJIndex idx = new OBJIndex() { VertexIndex = 0, TexcoordIndex = 0, NormalIndex = 0 };
+
             // We just do naive splitting by '/'
             // If there's no '/', it's just the v index
             string[] parts = token.Split('/');
             int vIdx = 0, vtIdx = 0, vnIdx = 0;
 
             if (!string.IsNullOrEmpty(parts[0]))
+            {
                 int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out vIdx);
+            }
 
             if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1]))
+            {
                 int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out vtIdx);
+            }
 
             if (parts.Length > 2 && !string.IsNullOrEmpty(parts[2]))
+            {
                 int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out vnIdx);
+            }
 
             vIdx = TranslateIndex(vIdx, vOffset);
             vtIdx = TranslateIndex(vtIdx, vtoffset);
@@ -441,14 +511,14 @@ namespace OBJRuntime.Readers
 
             public void Clear()
             {
-                FaceGroup.Clear();
-                LineGroup.Clear();
-                PointsGroup.Clear();
+                this.FaceGroup.Clear();
+                this.LineGroup.Clear();
+                this.PointsGroup.Clear();
             }
 
             public bool HasData()
             {
-                return FaceGroup.Count > 0 || LineGroup.Count > 0 || PointsGroup.Count > 0;
+                return this.FaceGroup.Count > 0 || this.LineGroup.Count > 0 || this.PointsGroup.Count > 0;
             }
         }
     }

@@ -9,16 +9,25 @@ using System.Threading.Tasks;
 
 namespace Evergine.Runtimes.OBJ
 {
+    /// <summary>
+    /// Represents the material data for an OBJ file.
+    /// </summary>
     public class OBJMaterialData : MaterialData
     {
-        public OBJMaterial OBJMaterial;
-
         private int materialId;
 
+        /// <summary>
+        /// The material data parsed from the OBJ file.
+        /// </summary>
+        public OBJMaterial OBJMaterial;
+
+        /// <summary>
+        /// The unique identifier for the material.
+        /// </summary>
         public OBJRuntime OBJ;
 
         /// <inheritdoc/>
-        public override string Name => this.OBJMaterial.Name ?? $"material{materialId}";
+        public override string Name => this.OBJMaterial.Name ?? $"material{this.materialId}";
 
         /// <inheritdoc/>
         public override Color BaseColor
@@ -55,7 +64,7 @@ namespace Evergine.Runtimes.OBJ
             {
                 var result = AlphaMode.Opaque;
                 if (!string.IsNullOrEmpty(this.OBJMaterial.AlphaTexname) ||
-                    (Path.GetExtension(this.OBJMaterial.DiffuseTexname)) == ".png")
+                    Path.GetExtension(this.OBJMaterial.DiffuseTexname) == ".png")
                 {
                     result = AlphaMode.Mask;
                 }
@@ -86,6 +95,12 @@ namespace Evergine.Runtimes.OBJ
         /// <inheritdoc/>
         public override bool HasDoubleSided => false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OBJMaterialData"/> class.
+        /// </summary>
+        /// <param name="objMaterial">The material data parsed from the OBJ file.</param>
+        /// <param name="materialId">The unique identifier for the material.</param>
+        /// <param name="objRuntime">The runtime instance responsible for handling OBJ assets.</param>
         public OBJMaterialData(OBJMaterial objMaterial, int materialId, OBJRuntime objRuntime)
         {
             this.OBJMaterial = objMaterial;

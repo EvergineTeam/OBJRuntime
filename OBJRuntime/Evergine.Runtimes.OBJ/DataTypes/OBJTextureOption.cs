@@ -50,21 +50,81 @@ namespace OBJRuntime.DataTypes
     //         cube_front  | cube_back   |      # side of the cube is specified
     //         separately
     //         cube_left   | cube_right
+
+    /// <summary>
+    /// Represents the options for configuring a texture in an OBJ file.
+    /// </summary>
     public class OBJTextureOption
     {
+        /// <summary>
+        /// Specifies the type of texture (e.g., None, Sphere, Cube).
+        /// </summary>
         public OBJTextureType Type = OBJTextureType.None;
+
+        /// <summary>
+        /// Controls the sharpness of the texture. Default is 1.0.
+        /// </summary>
         public float Sharpness = 1.0f;
+
+        /// <summary>
+        /// Adjusts the brightness of the texture. Default is 0.0.
+        /// </summary>
         public float Brightness = 0.0f;
+
+        /// <summary>
+        /// Adjusts the contrast of the texture. Default is 1.0.
+        /// </summary>
         public float Contrast = 1.0f;
+
+        /// <summary>
+        /// Specifies the origin offset of the texture. Default is [0, 0, 0].
+        /// </summary>
         public float[] OriginOffset = new float[3] { 0, 0, 0 };
+
+        /// <summary>
+        /// Specifies the scale of the texture. Default is [1, 1, 1].
+        /// </summary>
         public float[] Scale = new float[3] { 1, 1, 1 };
+
+        /// <summary>
+        /// Specifies the turbulence of the texture. Default is [0, 0, 0].
+        /// </summary>
         public float[] Turbulence = new float[3] { 0, 0, 0 };
+
+        /// <summary>
+        /// Specifies the texture resolution. Default is -1 (unspecified).
+        /// </summary>
         public int TextureResolution = -1;
+
+        /// <summary>
+        /// Indicates whether the texture is clamped to the 0-1 range. Default is false.
+        /// </summary>
         public bool Clamp = false;
-        public char Imfchan = 'm';  // default to 'm' (for decal)
+
+        /// <summary>
+        /// Specifies the channel of the file used to create a scalar or bump texture.
+        /// Default is 'm' (matte).
+        /// </summary>
+        public char Imfchan = 'm';
+
+        /// <summary>
+        /// Indicates whether horizontal texture blending is enabled. Default is true.
+        /// </summary>
         public bool Blendu = true;
+
+        /// <summary>
+        /// Indicates whether vertical texture blending is enabled. Default is true.
+        /// </summary>
         public bool Blendv = true;
+
+        /// <summary>
+        /// Specifies the bump multiplier for bump maps. Default is 1.0.
+        /// </summary>
         public float BumpMultiplier = 1.0f;
-        public string Colorspace = ""; // e.g. "sRGB" or "linear"
+
+        /// <summary>
+        /// Specifies the color space of the texture (e.g., "sRGB" or "linear").
+        /// </summary>
+        public string Colorspace = string.Empty; // e.g. "sRGB" or "linear"
     }
 }
