@@ -208,32 +208,32 @@ namespace OBJRuntime.DataTypes
         /// <summary>
         /// Gets or sets the texture options for the roughness map.
         /// </summary>
-        public OBJTextureOption roughness_texopt = new OBJTextureOption();
+        public OBJTextureOption Roughness_texopt = new OBJTextureOption();
 
         /// <summary>
         /// Gets or sets the texture options for the metallic map.
         /// </summary>
-        public OBJTextureOption metallic_texopt = new OBJTextureOption();
+        public OBJTextureOption Metallic_texopt = new OBJTextureOption();
 
         /// <summary>
         /// Gets or sets the texture options for the sheen map.
         /// </summary>
-        public OBJTextureOption sheen_texopt = new OBJTextureOption();
+        public OBJTextureOption Sheen_texopt = new OBJTextureOption();
 
         /// <summary>
         /// Gets or sets the texture options for the emissive map.
         /// </summary>
-        public OBJTextureOption emissive_texopt = new OBJTextureOption();
+        public OBJTextureOption Emissive_texopt = new OBJTextureOption();
 
         /// <summary>
         /// Gets or sets the texture options for the normal map.
         /// </summary>
-        public OBJTextureOption normal_texopt = new OBJTextureOption();
+        public OBJTextureOption Normal_texopt = new OBJTextureOption();
 
         /// <summary>
         /// Gets or sets the padding value.
         /// </summary>
-        public int pad2;
+        public int Pad2;
 
         /// <summary>
         /// Gets or sets the key-value pairs for unknown parameters.

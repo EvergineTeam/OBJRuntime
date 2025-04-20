@@ -116,7 +116,7 @@ namespace Evergine.Runtimes.OBJ
             if (this.OBJMaterial != null && !string.IsNullOrEmpty(this.OBJMaterial.DiffuseTexname))
             {
                 diffuseTexture = await this.OBJ.ReadTexture(this.OBJMaterial.DiffuseTexname);
-                diffuseSampler = this.OBJMaterial.DiffuseTexopt.Clamp ? this.OBJ.LinearWrapSampler : this.OBJ.LinearWrapSampler;
+                diffuseSampler = this.OBJMaterial.DiffuseTexopt.Clamp ? this.OBJ.LinearClampSampler : this.OBJ.LinearWrapSampler;
             }
 
             return (diffuseTexture, diffuseSampler);

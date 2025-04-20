@@ -204,19 +204,19 @@ namespace OBJRuntime.Readers
                         ParseTextureAndOption(line.Substring(4).Trim(), ref material.ReflectionTexname, material.ReflectionTexopt);
                         break;
                     case "map_Pr":
-                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.RoughnessTexname, material.roughness_texopt);
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.RoughnessTexname, material.Roughness_texopt);
                         break;
                     case "map_Pm":
-                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.MetallicTexname, material.metallic_texopt);
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.MetallicTexname, material.Metallic_texopt);
                         break;
                     case "map_Ps":
-                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.SheenTexname, material.sheen_texopt);
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.SheenTexname, material.Sheen_texopt);
                         break;
                     case "map_Ke":
-                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.EmissiveTexname, material.emissive_texopt);
+                        ParseTextureAndOption(line.Substring(6).Trim(), ref material.EmissiveTexname, material.Emissive_texopt);
                         break;
                     case "norm":
-                        ParseTextureAndOption(line.Substring(4).Trim(), ref material.NormalTexname, material.normal_texopt);
+                        ParseTextureAndOption(line.Substring(4).Trim(), ref material.NormalTexname, material.Normal_texopt);
                         break;
                     case "Pr":
                         if (tokenCount >= 2 && Helpers.TryParseFloat(tokens[1], out float pr))
